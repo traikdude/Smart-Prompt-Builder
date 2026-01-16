@@ -1,0 +1,5 @@
+{
+  "name": "Smart Prompt Builder",
+  "description": "A tool to generate optimized AI prompts using specialized templates for system instructions, direct messages, blog posts, and CLI support.",
+  "requestFramePermissions": []
+}
