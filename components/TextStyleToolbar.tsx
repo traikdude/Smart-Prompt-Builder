@@ -93,37 +93,39 @@ const ModifierDropdown: React.FC<{
             </button>
           )}
 
-          {/* Modifier options */}
-          {category.modifiers.map(mod => (
-            <button
-              key={mod.id}
-              onClick={() => { onSelect(mod.id); setIsOpen(false); }}
-              className={`
-                flex items-center gap-3 w-full text-left px-4 py-3 text-sm transition-all
-                ${selectedId === mod.id
-                  ? `${category.bgClass} ${category.textClass}`
-                  : 'text-slate-300 hover:bg-slate-800'
-                }
-              `}
-            >
-              <span className="text-lg w-6 text-center">{mod.emoji}</span>
-              <div className="flex-grow">
-                <div className="font-semibold">{mod.name}</div>
-                <div className="text-[10px] text-slate-500 line-clamp-1">{mod.description}</div>
-              </div>
-              {selectedId === mod.id && (
-                <span className={`${category.textClass} text-sm`}>✓</span>
-              )}
-            </button>
-          ))}
+          {/* Scrollable Modifier options */}
+          <div className="max-h-80 overflow-y-auto overscroll-contain">
+            {category.modifiers.map(mod => (
+              <button
+                key={mod.id}
+                onClick={() => { onSelect(mod.id); setIsOpen(false); }}
+                className={`
+                  flex items-center gap-3 w-full text-left px-4 py-3 text-sm transition-all
+                  ${selectedId === mod.id
+                    ? `${category.bgClass} ${category.textClass}`
+                    : 'text-slate-300 hover:bg-slate-800'
+                  }
+                `}
+              >
+                <span className="text-lg w-6 text-center">{mod.emoji}</span>
+                <div className="flex-grow">
+                  <div className="font-semibold">{mod.name}</div>
+                  <div className="text-[10px] text-slate-500 line-clamp-1">{mod.description}</div>
+                </div>
+                {selectedId === mod.id && (
+                  <span className={`${category.textClass} text-sm`}>✓</span>
+                )}
+              </button>
+            ))}
 
-          {/* Empty state */}
-          {category.modifiers.length === 0 && (
-            <div className="px-4 py-6 text-center text-slate-500 text-xs">
-              <div className="text-2xl mb-2 opacity-50">🚧</div>
-              <div>Coming soon — prompts pending</div>
-            </div>
-          )}
+            {/* Empty state */}
+            {category.modifiers.length === 0 && (
+              <div className="px-4 py-6 text-center text-slate-500 text-xs">
+                <div className="text-2xl mb-2 opacity-50">🚧</div>
+                <div>Coming soon — prompts pending</div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
