@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
+import { GoogleGenAI } from "@google/genai";
 import Header from './components/Header';
 import Footer from './components/Footer';
 import PromptForm from './components/PromptForm';
@@ -171,7 +172,7 @@ const App: React.FC = () => {
 
         // --- Examples Feature Logic ---
         if (includeExamples) {
-          finalPrompt += `\n\n### Requirement: Multiple Options\nPlease provide 4 distinct numbered examples (1-4) of the result, varying in tone, style, or approach to help me choose the best one.`;
+          finalPrompt += `\n\n### Requirement: Multiple Options\nPlease provide 4 distinct numbered versions (1-4) of the result, varying in tone, style, or approach to help me choose the best one.`;
         }
 
         // --- Character Constraint Feature Logic ---
@@ -194,6 +195,87 @@ Step 4: Provide the user with their desired output based on the aforementioned i
       setIsLoading(false);
     }, 800); // Slightly longer delay to build anticipation
   }, [selectedTemplateId, userContent, templates, recentPrompts, includeExamples, charLimit]);
+
+  const handleAIGenerate = useCallback(async (mode: 'smart' | 'fast' | 'thinking') => {
+    if (!userContent.trim()) {
+      showToastMessage('Please enter some content first', 'info');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const template = templates.find(t => t.id === selectedTemplateId);
+      if (!template) throw new Error("Template not found");
+
+      // Initialize Gemini Client
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      
+      let model = 'gemini-3-flash-preview'; // Default for 'smart' - Balanced intelligence
+      let config: any = {};
+
+      if (mode === 'fast') {
+        model = 'gemini-flash-lite-latest'; // Fast AI responses
+      } else if (mode === 'thinking') {
+        model = 'gemini-3-pro-preview'; // Extended thinking
+        config = {
+          thinkingConfig: { thinkingBudget: 32768 }
+        };
+      }
+
+      const systemInstruction = "You are an expert prompt engineer. Your goal is to generate a high-quality, optimized prompt based on a given template and user input. The output should be ready to use.";
+      
+      let promptText = `
+      TASK: Transform the following User Content into a structured prompt based on the provided Template.
+      
+      TEMPLATE NAME: ${template.name}
+      TEMPLATE DESCRIPTION: ${template.description}
+      TEMPLATE STRUCTURE: 
+      ${template.content}
+
+      USER CONTENT:
+      ${userContent}
+
+      INSTRUCTIONS:
+      1. Analyze the User Content and the Template.
+      2. Construct a final prompt by applying the User Content to the Template's structure.
+      3. Optimize the phrasing for clarity and effectiveness.
+      4. Ensure the placeholders in the template are filled intelligently.
+      `;
+
+      if (includeExamples) {
+        promptText += "\nRequirement: Provide 4 distinct numbered versions (1-4) of the result, varying in tone, style, or approach.";
+      }
+
+      if (charLimit) {
+        promptText += `\nRequirement: The output length should be approximately ${charLimit} characters.`;
+      }
+
+      const response = await ai.models.generateContent({
+        model: model,
+        contents: promptText,
+        config: {
+          ...config,
+          systemInstruction,
+        }
+      });
+
+      const generatedText = response.text;
+      
+      if (generatedText) {
+        setGeneratedPrompt(generatedText);
+        saveToHistory(template, userContent, generatedText);
+        triggerCelebration();
+        showToastMessage(`Generated with ${mode === 'thinking' ? 'Deep Thinking' : mode === 'fast' ? 'Flash Lite' : 'Gemini'}! 🧠`);
+      }
+
+    } catch (error: any) {
+      console.error("AI Generation Error:", error);
+      showToastMessage(`AI Error: ${error.message || 'Generation failed'}`, 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userContent, selectedTemplateId, templates, includeExamples, charLimit, recentPrompts]);
 
   const handleCopy = async () => {
     if (generatedPrompt) {
@@ -332,7 +414,7 @@ Step 4: Provide the user with their desired output based on the aforementioned i
       {/* Sidebar Toggle (Mobile/Desktop) */}
       <button 
         onClick={() => setIsSidebarOpen(true)}
-        className={`fixed top-4 right-4 z-30 p-2 bg-white/80 backdrop-blur rounded-full shadow-md text-gray-600 hover:text-purple-600 hover:scale-110 transition-all ${isSidebarOpen ? 'hidden' : 'block'}`}
+        className={`fixed top-3 right-3 sm:top-4 sm:right-4 z-30 p-2.5 bg-white/80 backdrop-blur rounded-full shadow-md text-gray-600 hover:text-purple-600 hover:scale-110 transition-all active:scale-95 ${isSidebarOpen ? 'hidden' : 'block'}`}
         title="Recent Prompts"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -340,8 +422,9 @@ Step 4: Provide the user with their desired output based on the aforementioned i
         </svg>
       </button>
 
-      <div className="flex-grow py-8 px-4 sm:px-6 lg:px-8 transition-all duration-300">
-        <div className="max-w-3xl mx-auto">
+      {/* Main Content Area - Optimized for mobile padding */}
+      <div className="flex-grow py-6 px-3 sm:py-8 sm:px-6 lg:px-8 transition-all duration-300">
+        <div className="max-w-3xl mx-auto w-full">
           <Header />
           
           <main>
@@ -356,6 +439,7 @@ Step 4: Provide the user with their desired output based on the aforementioned i
               onExamplesChange={(e) => setIncludeExamples(e.target.checked)}
               onCharLimitChange={setCharLimit}
               onGenerate={handleGenerate}
+              onAIGenerate={handleAIGenerate}
               isLoading={isLoading}
               onNewTemplate={() => setIsModalOpen(true)}
               onLoadSyntaxTest={handleLoadSyntaxTest}

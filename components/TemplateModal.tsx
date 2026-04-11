@@ -41,7 +41,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSave }
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 animate-fade-in-up"
+        className="bg-white rounded-xl shadow-xl w-[95%] sm:w-full max-w-lg p-5 sm:p-6 animate-fade-in-up max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
@@ -66,7 +66,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSave }
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none text-base"
               placeholder="e.g., My SEO Template"
               autoFocus
             />
@@ -78,7 +78,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSave }
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none text-base"
               placeholder="Short description of what this does"
             />
           </div>
@@ -91,7 +91,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSave }
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none font-mono text-sm"
+              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none font-mono text-sm sm:text-sm text-[16px]"
               placeholder="Example: Rewrite this text: {{content}}"
             />
           </div>
