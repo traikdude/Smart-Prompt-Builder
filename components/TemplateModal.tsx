@@ -37,16 +37,26 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSave }
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#05050A]/80 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0A12]/80 backdrop-blur-md"
       onClick={onClose}
     >
       <div 
-        className="bg-slate-900 border border-slate-700 rounded-xl shadow-[0_0_30px_rgba(34,211,238,0.2)] w-[95%] sm:w-full max-w-lg p-5 sm:p-6 animate-fade-in-up max-h-[90vh] overflow-y-auto"
+        className="bg-slate-900 border border-slate-700 rounded-2xl w-[95%] sm:w-full max-w-lg p-5 sm:p-6 animate-fade-in-up max-h-[90vh] overflow-y-auto"
+        style={{ boxShadow: '0 0 40px rgba(168,85,247,0.15), 0 0 80px rgba(255,107,157,0.08)' }}
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
-          <h2 className="text-xl font-bold text-cyan-400 font-mono tracking-wide">INITIALIZE PROTOCOL</h2>
-          <button onClick={onClose} className="text-slate-500 hover:text-cyan-400">
+        {/* Rainbow top bar */}
+        <div className="rainbow-bar -mx-5 sm:-mx-6 -mt-5 sm:-mt-6 mb-5 rounded-t-2xl"></div>
+        
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <span className="text-2xl">🆕</span>
+            <span 
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: 'linear-gradient(135deg, #FF6B9D, #A855F7, #22D3EE)' }}
+            >Create Template</span>
+          </h2>
+          <button onClick={onClose} className="text-slate-500 hover:text-pink-400 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -54,61 +64,61 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSave }
         </div>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-900/30 text-red-400 text-sm rounded-lg border border-red-500/30">
-            {error}
+          <div className="mb-4 p-3 bg-red-500/10 text-red-400 text-sm rounded-lg border border-red-500/30 flex items-center gap-2">
+            <span>⚠️</span> {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-1">Protocol Name</label>
+            <label className="block text-sm font-semibold text-slate-300 mb-1.5">Template Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none text-base text-slate-200 placeholder-slate-500"
+              className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-base text-slate-200 placeholder-slate-500 transition-all hover:border-slate-600"
               placeholder="e.g., My SEO Template"
               autoFocus
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-1">Description (Optional)</label>
+            <label className="block text-sm font-semibold text-slate-300 mb-1.5">Description (Optional)</label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none text-base text-slate-200 placeholder-slate-500"
+              className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-base text-slate-200 placeholder-slate-500 transition-all hover:border-slate-600"
               placeholder="Short description of what this does"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-1">Protocol Directives</label>
+            <label className="block text-sm font-semibold text-slate-300 mb-1.5">Template Content</label>
             <p className="text-xs text-slate-400 mb-2">
-              Use <code className="text-amber-400 bg-slate-800 px-1 py-0.5 rounded border border-slate-700/50 font-mono">{`{{content}}`}</code> to indicate where input payload goes.
+              Use <code className="text-amber-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700/50 font-mono">{`{{content}}`}</code> to mark where input goes.
             </p>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full h-32 px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none resize-none font-mono text-sm sm:text-sm text-[16px] text-slate-200 placeholder-slate-500"
-              placeholder="Example: SYSTEM OVERRIDE: {{content}}"
+              className="w-full h-32 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none font-mono text-sm sm:text-sm text-[16px] text-slate-200 placeholder-slate-500 transition-all hover:border-slate-600"
+              placeholder="Example: Rewrite this text: {{content}}"
             />
           </div>
 
-          <div className="flex justify-end gap-2 mt-6">
+          <div className="flex justify-end gap-3 mt-6 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition-colors font-semibold uppercase tracking-wide text-sm"
+              className="px-5 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors font-semibold text-sm"
             >
-              Abort
+              Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-mono font-bold rounded-lg hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all uppercase tracking-widest text-sm"
+              className="px-5 py-2.5 btn-joyful rounded-xl text-sm tracking-wide"
             >
-              Commit Protocol
+              ✨ Save Template
             </button>
           </div>
         </form>

@@ -8,15 +8,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
       :root {
-        /* 🌌 Elite Architect Palette */
-        --primary: #00F0FF;
-        --primary-light: #80f8ff;
-        --primary-dark: #0099a3;
-        --secondary: #9D4EDD;
-        --accent: #E0A96D;
+        /* 🌈 Prismatic Palette — Vibrant & Playful */
+        --pink: #FF6B9D;
+        --coral: #FF8E53;
+        --purple: #A855F7;
+        --cyan: #22D3EE;
+        --emerald: #34D399;
+        --amber: #FBBF24;
+        --blue: #6366F1;
+        --rose: #FB7185;
         
-        --bg-color: #05050A;
+        --bg-color: #0A0A12;
+        --surface: rgba(15,15,25,0.75);
         --text-color: #E2E8F0;
+        --text-muted: #94A3B8;
       }
 
       body {
@@ -24,126 +29,123 @@
         background-color: var(--bg-color);
         overflow-x: hidden;
         color: var(--text-color);
-        background-image: 
-          radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.05), transparent 25%),
-          radial-gradient(circle at 85% 30%, rgba(157, 78, 221, 0.05), transparent 25%);
+        background-image:
+          radial-gradient(circle at 10% 20%, rgba(168,85,247,0.08), transparent 30%),
+          radial-gradient(circle at 90% 80%, rgba(255,107,157,0.06), transparent 30%),
+          radial-gradient(circle at 50% 50%, rgba(34,211,238,0.04), transparent 40%);
       }
 
-      /* 🫧 Holographic Background Orbs */
+      /* 🌈 Living Background Orbs */
       .blob-cont {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: -1;
-        overflow: hidden;
-        pointer-events: none;
+        position: fixed; top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        z-index: -1; overflow: hidden; pointer-events: none;
       }
-      
       .blob {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(80px);
-        opacity: 0.15;
-        animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        position: absolute; border-radius: 50%;
+        filter: blur(90px); opacity: 0.2;
+        animation: float 20s infinite alternate cubic-bezier(0.4,0,0.2,1);
       }
 
       .blob-1 {
-        top: -10%;
-        left: -10%;
-        width: 50vw;
-        height: 50vw;
-        background: var(--primary);
-        animation-duration: 25s;
+        top: -15%; left: -10%;
+        width: 55vw; height: 55vw;
+        background: linear-gradient(135deg, var(--pink), var(--coral));
+        animation-duration: 28s;
       }
-      
       .blob-2 {
-        bottom: -10%;
-        right: -10%;
-        width: 40vw;
-        height: 40vw;
-        background: var(--secondary);
-        animation-duration: 30s;
+        bottom: -15%; right: -12%;
+        width: 45vw; height: 45vw;
+        background: linear-gradient(135deg, var(--purple), var(--blue));
+        animation-duration: 32s;
         animation-direction: alternate-reverse;
       }
-
       .blob-3 {
-        bottom: 20%;
-        left: 20%;
-        width: 30vw;
-        height: 30vw;
-        background: #FF0055;
-        animation-duration: 22s;
-        opacity: 0.1;
+        bottom: 15%; left: 15%;
+        width: 35vw; height: 35vw;
+        background: linear-gradient(135deg, var(--cyan), var(--emerald));
+        animation-duration: 24s; opacity: 0.15;
       }
 
       @keyframes float {
-        0% { transform: translate(0, 0) scale(1); }
-        100% { transform: translate(30px, 50px) scale(1.1); }
+        0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+        100% { transform: translate(40px, 60px) scale(1.15) rotate(5deg); }
       }
 
-      /* Custom scrollbar */
-      textarea::-webkit-scrollbar, pre::-webkit-scrollbar, div::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      textarea::-webkit-scrollbar-track, pre::-webkit-scrollbar-track, div::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.02); 
-        border-radius: 4px;
-      }
-      textarea::-webkit-scrollbar-thumb, pre::-webkit-scrollbar-thumb, div::-webkit-scrollbar-thumb {
-        background: rgba(0, 240, 255, 0.3); 
-        border-radius: 4px;
-      }
-      textarea::-webkit-scrollbar-thumb:hover, pre::-webkit-scrollbar-thumb:hover, div::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 240, 255, 0.6); 
-      }
-      
+      /* 🎨 Scrollbar */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 4px; }
+      ::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.35); border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: rgba(168,85,247,0.7); }
+
       @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(15px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
       }
-      .animate-fade-in-up {
-        animation: fadeInUp 0.4s ease-out forwards;
-      }
+      .animate-fade-in-up { animation: fadeInUp 0.45s ease-out forwards; }
 
-      /* ✨ Cyber Button Effect */
+      /* ✨ Rainbow shimmer on hover */
       @keyframes shimmer {
-        0% { background-position: -200% 0; }
+        0%   { background-position: -200% 0; }
         100% { background-position: 200% 0; }
       }
-      
-      .btn-joyful {
-        background: linear-gradient(90deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        background-size: 200% 100%;
-        border: 1px solid rgba(0, 240, 255, 0.3);
-        box-shadow: 0 0 10px rgba(0, 240, 255, 0.1), inset 0 0 10px rgba(0, 240, 255, 0.05);
-        color: var(--primary);
-        transition: all 0.2s ease-out;
+      @keyframes rainbowBorder {
+        0%   { border-color: var(--pink); box-shadow: 0 0 12px rgba(255,107,157,0.25); }
+        25%  { border-color: var(--amber); box-shadow: 0 0 12px rgba(251,191,36,0.25); }
+        50%  { border-color: var(--cyan); box-shadow: 0 0 12px rgba(34,211,238,0.25); }
+        75%  { border-color: var(--emerald); box-shadow: 0 0 12px rgba(52,211,153,0.25); }
+        100% { border-color: var(--purple); box-shadow: 0 0 12px rgba(168,85,247,0.25); }
       }
-      .btn-joyful:hover {
-        background-position: 100% 0;
-        border-color: rgba(0, 240, 255, 0.8);
-        box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), inset 0 0 15px rgba(0, 240, 255, 0.1);
-        text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
-      }
-      .btn-joyful:active {
-        transform: scale(0.98);
+      @keyframes gradientShift {
+        0%   { background-position: 0% 50%; }
+        50%  { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
       }
 
-      /* Tech Glass Panels */
+      .btn-joyful {
+        background: linear-gradient(135deg, var(--pink), var(--coral), var(--purple));
+        background-size: 300% 300%;
+        animation: gradientShift 4s ease infinite;
+        border: none;
+        color: #FFF;
+        font-weight: 700;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 20px rgba(255,107,157,0.35);
+        transition: all 0.25s ease-out;
+      }
+      .btn-joyful:hover {
+        box-shadow: 0 6px 30px rgba(255,107,157,0.5), 0 0 15px rgba(168,85,247,0.3);
+        transform: translateY(-2px) scale(1.01);
+      }
+      .btn-joyful:active { transform: translateY(0) scale(0.98); }
+
+      /* Glass panels with subtle rainbow top accent */
       .glass-panel {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        background: var(--surface);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      }
+
+      /* 🏷️ Category color system */
+      .cat-communication { --cat: var(--pink); }
+      .cat-technical     { --cat: var(--cyan); }
+      .cat-creative      { --cat: var(--amber); }
+      .cat-analysis      { --cat: var(--emerald); }
+      .cat-development   { --cat: var(--blue); }
+      .cat-custom        { --cat: var(--purple); }
+
+      /* Animated top rainbow bar */
+      .rainbow-bar {
+        height: 3px;
+        background: linear-gradient(90deg, var(--pink), var(--coral), var(--amber), var(--emerald), var(--cyan), var(--blue), var(--purple), var(--pink));
+        background-size: 400% 100%;
+        animation: gradientShift 6s linear infinite;
+      }
+
+      /* Input glow effect */
+      textarea:focus, select:focus, input:focus {
+        box-shadow: 0 0 0 2px rgba(168,85,247,0.25), 0 0 15px rgba(168,85,247,0.1) !important;
       }
     </style>
   <script type="importmap">

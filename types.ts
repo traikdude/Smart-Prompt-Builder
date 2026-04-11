@@ -1,3 +1,11 @@
+export type TemplateCategory = 
+  | 'communication' 
+  | 'technical' 
+  | 'creative' 
+  | 'analysis' 
+  | 'development'
+  | 'custom';
+
 export interface PromptTemplate {
   id: string;
   name: string;
@@ -5,6 +13,7 @@ export interface PromptTemplate {
   content: string;
   placeholderTrigger?: string; // The string in the content to replace
   isCustom?: boolean;
+  category?: TemplateCategory; // Color-coded category badge
 }
 
 export interface RecentPrompt {

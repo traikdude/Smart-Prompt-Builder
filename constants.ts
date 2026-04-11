@@ -12,6 +12,7 @@ export const TEMPLATES: PromptTemplate[] = [
     id: 'master-system',
     name: 'Master System Instruction',
     description: 'Transforms unclear writing into clear, effective messages with clarity scoring',
+    category: 'communication',
     placeholderTrigger: `"\n\n\n"`,
     content: `###Intelligent Message Transformation & Enhancement System
 You are an expert communication specialist tasked with transforming unclear or underdeveloped writing into clear, effective messages. Your goal is to preserve the original intent while significantly improving clarity, structure, and impact.
@@ -150,6 +151,7 @@ Note: Present only your final enhanced version unless the user requests the tran
     id: 'direct-message',
     name: 'Direct Message Enhancer',
     description: 'Quick 5-step enhancement for direct messages and communications',
+    category: 'communication',
     placeholderTrigger: `"\n\n\n"`,
     content: `DIRECT MESSAGE ENHANCEMENT REQUEST 🚀
 Step 1: Carefully analyze my original message to understand what I'm trying to convey: 
@@ -168,6 +170,7 @@ Important: I need you to enhance MY message so it better reflects what I'm tryin
     id: 'blog-post',
     name: 'Blog Post Generator',
     description: 'Creates SEO-optimized blog posts with structure and CTA',
+    category: 'creative',
     placeholderTrigger: `[Paste your specific topic or outline here]`,
     content: `### BLOG POST GENERATOR
 
@@ -196,6 +199,7 @@ Important: I need you to enhance MY message so it better reflects what I'm tryin
     id: 'cli-support',
     name: 'CLI Support (C4)',
     description: 'Structures coding problems for AI CLI tools like Gemini CLI or Claude Code',
+    category: 'development',
     placeholderTrigger: ` " \n\n"`, // Custom trigger to append at end
     content: `### [For the AI - please me feed the complete context, constraints, and instructions for all 8 phases into the AI agent in a single, coherent request, ensuring it generates the solution for the whole project rather than fragmented parts. ]
 Consider using this framework:
@@ -467,6 +471,7 @@ APPLY THE ABOVE AFOREMENTIONED FRAMEWORK so that I can copy and paste the block 
     id: 'voice-to-text-editor',
     name: 'Advanced Voice Transcription Editor',
     description: 'Expert AI transcription editor for correcting, repairing, and polishing voice-to-text data',
+    category: 'analysis',
     placeholderTrigger: `\n\n[Paste your raw voice transcription here]\n\n`,
     content: `Elite Multi-Channel Communication Architect: Unified Analysis & Implementation System - Expanded FrameworkAdvanced Voice-to-Text Transcription Analysis and Correction System: A Deep DiveI. Role Definition: The Quintessential Linguistic Alchemist
 
@@ -616,6 +621,7 @@ A clear methodology for dealing with unavoidable gaps or uncertainties in the so
     id: 'response-refiner',
     name: 'Professional Response Refiner',
     description: 'Elevates AI output by enhancing formality, persuasiveness, and depth.',
+    category: 'communication',
     placeholderTrigger: `\n\n`,
     content: `I'd like to request a more refined and elaborated version of your previous response, addressing the following specific areas where greater depth and polish would significantly strengthen the output:
 
@@ -634,6 +640,7 @@ I believe that addressing these three dimensions in the revised output will brin
     id: 'pats-tracker',
     name: 'P.A.T.S. - Prompt Articulation Tracker',
     description: 'Systematic Solution Tracking & Analysis for CLI Articulation',
+    category: 'analysis',
     placeholderTrigger: `\n\n[Paste session log or articulation details here]\n\n`,
     content: `🔍 P.A.T.S. - Prompt Articulation Tracking System
 CLI Issue Articulation Agent Companion
@@ -1088,6 +1095,7 @@ P.A.T.S. v1.0 - Companion to CLI Issue Articulation Agent`
     id: 'expert-communications-editor',
     name: 'Expert Communications Editor',
     description: 'Transforms raw, causal, or varied messages into polished, articulate direct communications.',
+    category: 'communication',
     placeholderTrigger: `\n\n[Paste original draft or raw thought here]\n\n`,
     content: `You are an expert communications editor specializing in high-end message transformation. Your expertise is turning raw, casual, brief, fragmented, emotionally written, vague, or loosely structured messages into polished, professional, highly articulate direct communications that are ready to send.
 
