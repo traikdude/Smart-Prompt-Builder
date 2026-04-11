@@ -1,7 +1,5 @@
 const CONFIG = {
-  // TODO: Replace with your actual Google Sheet ID
-  SHEET_ID: "YOUR_GOOGLE_SHEET_ID_HERE",
-  SHEET_NAME: "Sheet1"
+  DOC_ID: "1fuoaLaI7u4ndUbbq_X-1X1c0d6dXROV0iQmlx570Kz0",
 };
 
 function doGet(e) {
@@ -12,17 +10,28 @@ function doGet(e) {
 }
 
 /**
- * Saves data to the configured Google Sheet
+ * Saves data to the configured Google Document
  * Called from the frontend via google.script.run
  */
 function saveDataFromFrontend(data) {
   try {
-    const sheet = SpreadsheetApp.openById(CONFIG.SHEET_ID).getSheetByName(CONFIG.SHEET_NAME);
-    if (!sheet) throw new Error("Sheet not found");
+    const doc = DocumentApp.openById(CONFIG.DOC_ID);
+    if (!doc) throw new Error("Document not found");
     
-    // Example: appending a row with the timestamp and the data payload
-    sheet.appendRow([new Date(), JSON.stringify(data)]);
-    return { success: true, message: "Data saved successfully!" };
+    const body = doc.getBody();
+    
+    // Format the entry for the Google Doc
+    body.appendParagraph(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+    body.appendParagraph(`timestamp: ${new Date().toLocaleString()}`);
+    body.appendParagraph(`template: ${data.templateName}`);
+    body.appendParagraph(`\n[USER INPUT]`);
+    body.appendParagraph(data.userContent);
+    body.appendParagraph(`\n[GENERATED PROMPT]`);
+    body.appendParagraph(data.generatedContent);
+    body.appendParagraph(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+    
+    doc.saveAndClose();
+    return { success: true, message: "Data saved to Google Doc successfully!" };
   } catch (error) {
     console.error("Error saving data:", error);
     return { success: false, error: error.toString() };
@@ -30,36 +39,12 @@ function saveDataFromFrontend(data) {
 }
 
 /**
- * Retrieves data from the configured Google Sheet
- * Called from the frontend via google.script.run
+ * Reading structured data from a plain text Document is complex,
+ * so we return an empty history array for remote sync, relying on LocalStorage
+ * for the sidebar instead!
  */
 function loadDataForFrontend() {
-  try {
-    const sheet = SpreadsheetApp.openById(CONFIG.SHEET_ID).getSheetByName(CONFIG.SHEET_NAME);
-    if (!sheet) throw new Error("Sheet not found");
-    
-    const dataRange = sheet.getDataRange();
-    const values = dataRange.getValues();
-    
-    // Assuming First Row contains headers
-    if (values.length <= 1) return { success: true, data: [] };
-    
-    const headers = values[0];
-    const rows = values.slice(1);
-    
-    const formattedData = rows.map(row => {
-        let obj = {};
-        headers.forEach((header, idx) => {
-            obj[header] = row[idx];
-        });
-        return obj;
-    });
-    
-    return { success: true, data: formattedData };
-  } catch (error) {
-    console.error("Error loading data:", error);
-    return { success: false, error: error.toString() };
-  }
+  return { success: true, data: [] };
 }
 
 function fetchPageContent(url) {

@@ -222,9 +222,9 @@ const App: React.FC = () => {
       const ai = new GoogleGenAI({ apiKey });
       
       const modelMap = {
-        'fast': 'gemini-flash-lite-latest',
-        'smart': 'gemini-3-flash-preview',
-        'thinking': 'gemini-3-pro-preview'
+        'fast': 'gemini-2.5-flash',
+        'smart': 'gemini-2.5-flash',
+        'thinking': 'gemini-2.5-pro'
       };
       
       const model = modelMap[mode];
@@ -232,7 +232,7 @@ const App: React.FC = () => {
         systemInstruction: "You are an expert prompt engineer. Your goal is to generate a high-quality, optimized prompt based on a given template and user input. The output should be ready to use.",
       };
 
-      if (mode === 'thinking') config.thinkingConfig = { thinkingBudget: 32768 };
+      if (mode === 'thinking') config.thinkingConfig = { thinkingBudget: 1024 }; // Optimized budget for 2.5 Pro
 
       let promptText = `TASK: Transform User Content into a structured prompt based on the Template.\nTEMPLATE NAME: ${template.name}\nTEMPLATE STRUCTURE: \n${template.content}\nUSER CONTENT:\n${userContent}\nINSTRUCTIONS:\n1. Apply User Content to Template structure.\n2. Optimize phrasing for clarity.\n3. Ensure semantic flow.`;
 
