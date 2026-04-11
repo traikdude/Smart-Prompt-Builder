@@ -629,5 +629,459 @@ While the core information was present, the response did not fully honor the req
 The closing section, in particular, could have been more thoughtfully crafted. A stronger conclusion would not only reinforce the main message but also strike a warmer, more appreciative and collaborative tone — one that acknowledges the shared effort and invites continued engagement in a genuine and respectful way.
 
 I believe that addressing these three dimensions in the revised output will bring it much closer to the standard of the reference version, and I very much look forward to seeing the enhanced result. Thank you sincerely for your attention to this feedback — your continued effort and care in refining this work are genuinely appreciated.`
+  },
+  {
+    id: 'pats-tracker',
+    name: 'P.A.T.S. - Prompt Articulation Tracker',
+    description: 'Systematic Solution Tracking & Analysis for CLI Articulation',
+    placeholderTrigger: `\n\n[Paste session log or articulation details here]\n\n`,
+    content: `🔍 P.A.T.S. - Prompt Articulation Tracking System
+CLI Issue Articulation Agent Companion
+Systematic Solution Tracking & What Worked/Didn't Work Analysis
+
+
+📋 SYSTEM PURPOSE
+P.A.T.S. ensures you never repeat failed prompt articulation strategies and always explore fresh approaches when communicating issues to CLI coding assistants. This companion document helps you:
+Track which articulation methods produced successful solutions
+Identify patterns in what works for different CLI tools
+Avoid repeating unsuccessful communication strategies
+Build institutional knowledge of effective prompt patterns
+
+
+🎯 PART ONE: INPUT REQUIREMENTS
+Before analyzing prompt effectiveness, gather:
+Requirement
+Description
+Example
+Original Problem
+Raw user description
+"My script doesn't work"
+Articulated Prompt
+Structured version sent to CLI
+Full formatted prompt
+CLI Tool Used
+Target assistant
+Gemini CLI / Claude Code / Codex
+Response Quality
+Solution effectiveness
+Solved / Partial / Failed
+Iteration Count
+Clarifications needed
+0 = first try success
+
+
+
+📊 PART TWO: ARTICULATION ELEMENT TRACKING
+Category Classification Matrix
+Track which articulation elements were included in each prompt:
+╔══════════════════════════════════════════════════════════════════════════════╗
+║          ARTICULATION ELEMENTS CHECKLIST             ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ ELEMENT CATEGORY    │ INCLUDED │ QUALITY │ IMPACT ON RESULT      ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ ENV: Environment Context                          ║
+║ ├─ Operating System   │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Shell Type      │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Runtime Version   │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Working Directory  │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ └─ Package Manager State │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ ERR: Error Information                           ║
+║ ├─ Complete Error Message│ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Full Stack Trace   │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Exit Codes      │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ └─ Error Frequency   │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ BEH: Behavioral Context                           ║
+║ ├─ Expected Behavior  │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Actual Behavior   │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Reproduction Steps  │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ └─ Trigger Conditions  │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ CON: Constraints & Requirements                       ║
+║ ├─ Technical Constraints │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Compatibility Needs │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Performance Targets │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ └─ Preferences Stated  │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ SUC: Success Criteria                            ║
+║ ├─ Primary Success Def │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Verification Method │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ └─ Edge Cases Noted   │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ ATT: Previous Attempts                           ║
+║ ├─ Solutions Tried   │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ ├─ Why They Failed   │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+║ └─ Research Done    │ □ Yes/No │ 1-5  │ [Critical/Helpful/None]  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+🔬 PART THREE: ARTICULATION STYLE TRACKING
+Communication Approach Log
+Track which communication styles were used:
+Structure Styles:
+[ ] Flat narrative (paragraph form)
+[ ] Bulleted lists
+[ ] Numbered sequences
+[ ] Hierarchical sections (headers)
+[ ] XML/structured markup
+[ ] Code-first with context
+[ ] Template-based fill-in
+Tone/Voice:
+[ ] Technical/precise
+[ ] Conversational/natural
+[ ] Minimal/telegraphic
+[ ] Verbose/comprehensive
+[ ] Question-forward
+[ ] Directive/commanding
+Context Ordering:
+[ ] Environment → Problem → Error → Goal
+[ ] Error → Environment → Goal → Constraints
+[ ] Goal → Problem → Environment → Error
+[ ] Problem → Expected → Actual → Environment
+[ ] Custom ordering: _______________
+
+
+📈 PART FOUR: COVERAGE ANALYSIS SCORES
+Calculate your articulation coverage:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 ARTICULATION COVERAGE SCORES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🖥️ Environment Context Coverage:  X/5 elements included
+   □ OS Version  □ Shell Type  □ Runtime  □ Directory  □ Packages
+🚨 Error Information Coverage:   X/4 elements included  
+   □ Error Message  □ Stack Trace  □ Exit Code  □ Frequency
+🎯 Behavioral Context Coverage:   X/4 elements included
+   □ Expected  □ Actual  □ Repro Steps  □ Trigger
+⚙️ Constraints Coverage:      X/4 elements included
+   □ Technical  □ Compatibility  □ Performance  □ Preferences
+✅ Success Criteria Coverage:    X/3 elements included
+   □ Primary Goal  □ Verification  □ Edge Cases
+🔄 Previous Attempts Coverage:   X/3 elements included
+   □ What Tried  □ Why Failed  □ Research Done
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📈 OVERALL ARTICULATION COVERAGE: XX/23 (XX%)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Coverage Thresholds:
+Score
+Rating
+Recommendation
+90-100%
+Excellent
+Comprehensive articulation
+75-89%
+Good
+Minor gaps, likely successful
+60-74%
+Adequate
+May need follow-up clarification
+40-59%
+Weak
+High risk of misunderstanding
+<40%
+Poor
+Retry with more context
+
+
+
+✅❌ PART FIVE: WHAT WORKED / DIDN'T WORK LOG
+Session Tracking Template
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║ 📋 ARTICULATION SESSION LOG                         ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+📅 Date: _______________
+🛠️ CLI Tool: □ Gemini CLI □ Claude Code □ Codex CLI □ Other: _______
+🎯 Problem Type: □ Error/Bug □ Feature □ Debug □ Review □ How-To
+📊 Result: □ First-Try Success □ Needed Clarification □ Failed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ WHAT WORKED (Keep Doing)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Element             │ Why It Helped
+─────────────────────────────────┼───────────────────────────────────────────
+[e.g., Full stack trace]    │ [AI immediately identified the issue]
+[e.g., Explicit success criteria]│ [Solution matched exactly what was needed]
+[e.g., Minimal reproduction]  │ [AI could test and verify approach]
+                                 │
+                                 │
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ WHAT DIDN'T WORK (Stop/Modify)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Element             │ Why It Failed / What Happened
+─────────────────────────────────┼───────────────────────────────────────────
+[e.g., Vague "it doesn't work"] │ [AI asked 5 clarifying questions]
+[e.g., No version numbers]   │ [Solution was for wrong version]
+[e.g., Missing OS context]   │ [Got Linux solution for Windows]
+                                 │
+                                 │
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔄 WHAT TO TRY DIFFERENTLY NEXT TIME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. ___________________________________________________________________
+2. ___________________________________________________________________
+3. ___________________________________________________________________
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💡 KEY INSIGHT FROM THIS SESSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[One sentence summary of the most important learning]
+
+
+
+
+🚫 PART SIX: EXCLUSION MATRIX
+Articulation Approaches Exhausted
+Track patterns that consistently fail for each CLI tool:
+╔══════════════════════════════════════════════════════════════════════════════╗
+║       EXCLUSION MATRIX - APPROACHES TO AVOID             ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ CLI TOOL   │ EXHAUSTED APPROACHES   │ BETTER ALTERNATIVES      ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ GEMINI CLI  │              │                ║
+║       │ ○ [approach that failed] │ → [what works instead]    ║
+║       │ ○ [approach that failed] │ → [what works instead]    ║
+║       │ ○ [approach that failed] │ → [what works instead]    ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ CLAUDE CODE │              │                ║
+║       │ ○ [approach that failed] │ → [what works instead]    ║
+║       │ ○ [approach that failed] │ → [what works instead]    ║
+║       │ ○ [approach that failed] │ → [what works instead]    ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ CODEX CLI  │              │                ║
+║       │ ○ [approach that failed] │ → [what works instead]    ║
+║       │ ○ [approach that failed] │ → [what works instead]    ║
+║       │ ○ [approach that failed] │ → [what works instead]    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Known Anti-Patterns by Problem Type
+╔══════════════════════════════════════════════════════════════════════════════╗
+║       ANTI-PATTERNS BY PROBLEM TYPE                 ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ PROBLEM TYPE │ COMMON MISTAKES      │ PROVEN FIXES         ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ ERROR/BUG  │ □ Paraphrasing error msg │ → Always paste exact message ║
+║       │ □ Omitting stack trace  │ → Include full trace     ║
+║       │ □ "It doesn't work"    │ → Describe actual behavior  ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ FEATURE REQ │ □ Vague outcomes     │ → Define success precisely  ║
+║       │ □ No constraints listed  │ → State limits upfront    ║
+║       │ □ Missing edge cases   │ → List 2-3 edge scenarios   ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ DEBUG SESSION │ □ No hypothesis      │ → State what you suspect   ║
+║       │ □ Missing working state  │ → Compare works vs broken   ║
+║       │ □ No isolation attempt  │ → Show minimal reproduction  ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ CODE REVIEW │ □ Whole file dump     │ → Highlight specific concerns ║
+║       │ □ No context       │ → Explain purpose/usage    ║
+║       │ □ Generic "review this"  │ → Ask specific questions   ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ WSL-SPECIFIC │ □ Assuming Linux-only   │ → State WSL explicitly    ║
+║       │ □ Windows paths in bash  │ → Show path translation issue ║
+║       │ □ Missing interop context │ → Note if crossing boundaries ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+📊 PART SEVEN: TOOL-SPECIFIC EFFECTIVENESS PATTERNS
+Gemini CLI - What Works Best
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ✅ HIGH SUCCESS PATTERNS                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Conversational, natural language descriptions              │
+│ • Context built up progressively (background → problem → goal)      │
+│ • Questions embedded naturally ("I'm trying to X but Y happens")     │
+│ • Real-world analogies for complex concepts                │
+│ • Collaborative framing ("help me figure out...")             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ ❌ LOW SUCCESS PATTERNS                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Overly formal/robotic structure                     │
+│ • Dense technical jargon without explanation               │
+│ • Missing the "why" behind what you're doing               │
+│ • Abrupt problem statements without context                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Claude Code CLI - What Works Best
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ✅ HIGH SUCCESS PATTERNS                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Hierarchical structure with clear sections               │
+│ • XML markup for complex, multi-part issues                │
+│ • Explicit constraints and requirements upfront              │
+│ • Clearly defined success criteria                    │
+│ • Reasoning transparency (show your thought process)           │
+│ • Hypothesis-first for debugging ("I suspect X because Y")        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ ❌ LOW SUCCESS PATTERNS                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Unstructured stream-of-consciousness                  │
+│ • Missing measurable success criteria                   │
+│ • Ambiguous pronouns ("it", "this", "that")                │
+│ • Implicit assumptions not stated                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Codex CLI - What Works Best
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ✅ HIGH SUCCESS PATTERNS                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Code-first presentation (show relevant code immediately)        │
+│ • Minimal prose, maximum signal                      │
+│ • Pattern-matching friendly (show input → expected output)        │
+│ • Clear function signatures and type hints                │
+│ • Focused, single-purpose requests                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ ❌ LOW SUCCESS PATTERNS                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Heavy narrative without code samples                  │
+│ • Multi-part requests in single prompt                  │
+│ • Abstract descriptions without concrete examples             │
+│ • Verbose explanations that bury the actual need             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+🎯 PART EIGHT: PROMPT QUALITY SCORECARD
+Rate each articulated prompt before sending:
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║ 📊 PROMPT QUALITY SCORECARD                         ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ DIMENSION     │ SCORE │ CRITERIA                    ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ 📌 CLARITY    │ _/5 │ Is the problem unambiguous?          ║
+║          │   │ 1=Vague, 3=Mostly clear, 5=Crystal clear    ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ 📦 COMPLETENESS  │ _/5 │ Is all necessary context included?       ║
+║          │   │ 1=Major gaps, 3=Minor gaps, 5=Fully complete  ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ 🎯 SPECIFICITY  │ _/5 │ Are details concrete, not abstract?      ║
+║          │   │ 1=Too general, 3=Somewhat specific, 5=Precise ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ ⚡ ACTIONABILITY │ _/5 │ Can the AI act immediately?          ║
+║          │   │ 1=Needs clarification, 3=Mostly ready, 5=Ready ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ 🧭 GOAL ALIGNMENT │ _/5 │ Is success criteria well-defined?       ║
+║          │   │ 1=No criteria, 3=Implicit, 5=Explicit & testable║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║          │   │                        ║
+║ 📈 TOTAL SCORE  │ __/25 │ Target: 20+ for first-try success       ║
+║          │   │                        ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+SCORE INTERPRETATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+22-25: Excellent - High confidence in first-try success
+18-21: Good - Likely successful, minor clarification possible
+14-17: Adequate - Expect 1-2 follow-up questions
+10-13: Weak - Significant clarification likely needed
+<10: Poor - Re-articulate before sending
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+🔄 PART NINE: CONTINUOUS IMPROVEMENT PROTOCOL
+After Each Session
+Log the session using the template in Part Five
+Update the exclusion matrix if you discovered new anti-patterns
+Note tool-specific learnings in Part Seven
+Calculate your coverage score to identify systematic gaps
+Weekly Review
+Review all session logs from the week
+Identify recurring patterns (good and bad)
+Update your personal "quick reference" of what works
+Set one improvement goal for next week
+Monthly Analysis
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║ 📊 MONTHLY ARTICULATION EFFECTIVENESS REPORT                ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ Period: _____________                            ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ METRIC             │ THIS MONTH │ LAST MONTH │ TREND      ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ Total prompts sent       │      │      │ ↑ ↓ →      ║
+║ First-try success rate     │    % │    % │ ↑ ↓ →      ║
+║ Average clarifications needed │      │      │ ↑ ↓ →      ║
+║ Average quality score     │  /25  │  /25  │ ↑ ↓ →      ║
+║ Average coverage score     │    % │    % │ ↑ ↓ →      ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ TOP 3 IMPROVEMENTS MADE:                          ║
+║ 1. ________________________________________________________________    ║
+║ 2. ________________________________________________________________    ║
+║ 3. ________________________________________________________________    ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ TOP 3 AREAS NEEDING WORK:                          ║
+║ 1. ________________________________________________________________    ║
+║ 2. ________________________________________________________________    ║
+║ 3. ________________________________________________________________    ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+
+📝 PART TEN: QUICK REFERENCE DECISION TREES
+When Prompt Fails - What To Check First
+PROMPT DIDN'T WORK?
+        │
+        ├─→ AI asked clarifying questions
+        │ └─→ Check: What info was missing?
+        │   ├─→ Environment? → Add OS/shell/version
+        │   ├─→ Error details? → Add full message/trace
+        │   ├─→ Goal? → Add success criteria
+        │   └─→ Context? → Add repro steps/constraints
+        │
+        ├─→ AI gave wrong solution
+        │ └─→ Check: Why was it wrong?
+        │   ├─→ Wrong platform? → Clarify OS/environment
+        │   ├─→ Wrong version? → Specify versions explicitly
+        │   ├─→ Wrong approach? → State constraints/preferences
+        │   └─→ Misunderstood goal? → Restate success criteria
+        │
+        ├─→ AI gave partial solution
+        │ └─→ Check: What was missing?
+        │   ├─→ Edge cases? → List them explicitly
+        │   ├─→ Integration? → Describe full context
+        │   └─→ Error handling? → Request it specifically
+        │
+        └─→ AI seemed confused
+            └─→ Check: Was articulation clear?
+                ├─→ Too long/complex? → Simplify, focus on core issue
+                ├─→ Too short/vague? → Add more context
+                ├─→ Contradictory? → Review for consistency
+                └─→ Wrong tool match? → Try different CLI tool
+
+Choosing The Right CLI Tool
+WHAT'S YOUR PROBLEM TYPE?
+        │
+        ├─→ Complex, multi-layered issue
+        │ └─→ Claude Code CLI (structured analysis)
+        │
+        ├─→ Quick code generation/modification
+        │ └─→ Codex CLI (pattern-focused)
+        │
+        ├─→ Need conversational exploration
+        │ └─→ Gemini CLI (dialogue-friendly)
+        │
+        ├─→ Deep debugging session
+        │ └─→ Claude Code CLI (hypothesis testing)
+        │
+        ├─→ Simple "how do I..."
+        │ └─→ Any tool (Gemini for explanation, Codex for code)
+        │
+        └─→ Code review/optimization
+            └─→ Claude Code CLI (detailed analysis)
+
+
+✅ SYSTEM GUARANTEES
+This tracking system guarantees:
+✅ Never repeating failed articulation approaches
+✅ Systematic identification of what works per tool
+✅ Measurable improvement in prompt effectiveness
+✅ Evidence-based pattern recognition
+✅ Continuous learning and adaptation
+✅ Clear decision support for tool selection
+✅ Comprehensive gap identification
+
+
+🚀 GETTING STARTED
+First session: Fill out the Session Log template after your next CLI interaction
+Score your prompt: Use the Quality Scorecard before sending
+Track patterns: Update the Exclusion Matrix when you discover anti-patterns
+Review weekly: Look for recurring themes in your logs
+Improve monthly: Set specific articulation improvement goals
+
+
+P.A.T.S. v1.0 - Companion to CLI Issue Articulation Agent`
   }
 ];
