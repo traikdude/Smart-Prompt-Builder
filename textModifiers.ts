@@ -13,7 +13,7 @@ export interface TextModifier {
 }
 
 export interface ModifierCategory {
-  id: 'font' | 'emoji' | 'ascii';
+  id: 'font' | 'emoji' | 'ascii' | 'xml';
   label: string;
   emoji: string;
   color: string;        // Tailwind color prefix (e.g., 'pink', 'amber')
@@ -1246,6 +1246,113 @@ Apply the most appropriate Text Decoration style to the following text:`
 ];
 
 // ═══════════════════════════════════════════
+// 🏷️ XML TAG EXTRACTOR MODIFIERS
+// ═══════════════════════════════════════════
+
+const XML_MODIFIERS: TextModifier[] = [
+  {
+    id: 'xml-prompt',
+    name: '<prompt>',
+    description: 'Extracts text from <prompt></prompt> tags',
+    emoji: '📝',
+    prompt: `You are a precise XML Tag Text Extractor. Your ONLY task is to find <prompt> and </prompt> tags in the provided text and return ONLY the text content between those tags.
+
+RULES:
+1. Search the provided text for <prompt> and </prompt> tag pairs
+2. Extract ONLY the text between the opening <prompt> and closing </prompt> tags
+3. Return the extracted text with NO XML tags, NO labels, NO extra formatting, NO commentary
+4. If multiple <prompt> tag pairs exist, extract the content from ALL of them, separated by line breaks
+5. If no <prompt> tags are found, respond with: "No <prompt> tags found in the provided text."
+6. Preserve the original formatting, spacing, and line breaks of the inner text
+7. Do NOT add any explanation before or after the extracted text
+
+Your output must be ONLY the raw text that was inside the <prompt> tags. Nothing else.
+
+Extract text from <prompt> tags in the following content:`
+  },
+  {
+    id: 'xml-image-description',
+    name: '<image_description>',
+    description: 'Extracts text from <image_description></image_description> tags',
+    emoji: '🖼️',
+    prompt: `You are a precise XML Tag Text Extractor. Your ONLY task is to find <image_description> and </image_description> tags in the provided text and return ONLY the text content between those tags.
+
+RULES:
+1. Search the provided text for <image_description> and </image_description> tag pairs
+2. Extract ONLY the text between the opening <image_description> and closing </image_description> tags
+3. Return the extracted text with NO XML tags, NO labels, NO extra formatting, NO commentary
+4. If multiple tag pairs exist, extract the content from ALL of them, separated by line breaks
+5. If no <image_description> tags are found, respond with: "No <image_description> tags found in the provided text."
+6. Preserve the original formatting, spacing, and line breaks of the inner text
+7. Do NOT add any explanation before or after the extracted text
+
+Your output must be ONLY the raw text that was inside the <image_description> tags. Nothing else.
+
+Extract text from <image_description> tags in the following content:`
+  },
+  {
+    id: 'xml-revised-text',
+    name: '<revised_text>',
+    description: 'Extracts text from <revised_text></revised_text> tags',
+    emoji: '✏️',
+    prompt: `You are a precise XML Tag Text Extractor. Your ONLY task is to find <revised_text> and </revised_text> tags in the provided text and return ONLY the text content between those tags.
+
+RULES:
+1. Search the provided text for <revised_text> and </revised_text> tag pairs
+2. Extract ONLY the text between the opening <revised_text> and closing </revised_text> tags
+3. Return the extracted text with NO XML tags, NO labels, NO extra formatting, NO commentary
+4. If multiple tag pairs exist, extract the content from ALL of them, separated by line breaks
+5. If no <revised_text> tags are found, respond with: "No <revised_text> tags found in the provided text."
+6. Preserve the original formatting, spacing, and line breaks of the inner text
+7. Do NOT add any explanation before or after the extracted text
+
+Your output must be ONLY the raw text that was inside the <revised_text> tags. Nothing else.
+
+Extract text from <revised_text> tags in the following content:`
+  },
+  {
+    id: 'xml-final-answer',
+    name: '<final_answer>',
+    description: 'Extracts text from <final_answer></final_answer> tags',
+    emoji: '✅',
+    prompt: `You are a precise XML Tag Text Extractor. Your ONLY task is to find <final_answer> and </final_answer> tags in the provided text and return ONLY the text content between those tags.
+
+RULES:
+1. Search the provided text for <final_answer> and </final_answer> tag pairs
+2. Extract ONLY the text between the opening <final_answer> and closing </final_answer> tags
+3. Return the extracted text with NO XML tags, NO labels, NO extra formatting, NO commentary
+4. If multiple tag pairs exist, extract the content from ALL of them, separated by line breaks
+5. If no <final_answer> tags are found, respond with: "No <final_answer> tags found in the provided text."
+6. Preserve the original formatting, spacing, and line breaks of the inner text
+7. Do NOT add any explanation before or after the extracted text
+
+Your output must be ONLY the raw text that was inside the <final_answer> tags. Nothing else.
+
+Extract text from <final_answer> tags in the following content:`
+  },
+  {
+    id: 'xml-revised-prompt',
+    name: '<revised_prompt>',
+    description: 'Extracts text from <revised_prompt></revised_prompt> tags',
+    emoji: '🔄',
+    prompt: `You are a precise XML Tag Text Extractor. Your ONLY task is to find <revised_prompt> and </revised_prompt> tags in the provided text and return ONLY the text content between those tags.
+
+RULES:
+1. Search the provided text for <revised_prompt> and </revised_prompt> tag pairs
+2. Extract ONLY the text between the opening <revised_prompt> and closing </revised_prompt> tags
+3. Return the extracted text with NO XML tags, NO labels, NO extra formatting, NO commentary
+4. If multiple tag pairs exist, extract the content from ALL of them, separated by line breaks
+5. If no <revised_prompt> tags are found, respond with: "No <revised_prompt> tags found in the provided text."
+6. Preserve the original formatting, spacing, and line breaks of the inner text
+7. Do NOT add any explanation before or after the extracted text
+
+Your output must be ONLY the raw text that was inside the <revised_prompt> tags. Nothing else.
+
+Extract text from <revised_prompt> tags in the following content:`
+  },
+];
+
+// ═══════════════════════════════════════════
 // CATEGORY DEFINITIONS
 // ═══════════════════════════════════════════
 
@@ -1282,5 +1389,16 @@ export const MODIFIER_CATEGORIES: ModifierCategory[] = [
     borderClass: 'border-cyan-500/30',
     glowClass: 'shadow-[0_0_12px_rgba(34,211,238,0.25)]',
     modifiers: ASCII_MODIFIERS,
+  },
+  {
+    id: 'xml',
+    label: 'XML Extractor',
+    emoji: '🏷️',
+    color: 'emerald',
+    bgClass: 'bg-emerald-500/15',
+    textClass: 'text-emerald-400',
+    borderClass: 'border-emerald-500/30',
+    glowClass: 'shadow-[0_0_12px_rgba(52,211,153,0.25)]',
+    modifiers: XML_MODIFIERS,
   },
 ];

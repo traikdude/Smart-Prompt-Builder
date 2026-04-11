@@ -5,11 +5,12 @@ export interface SelectedModifiers {
   font: string | null;
   emoji: string | null;
   ascii: string | null;
+  xml: string | null;
 }
 
 interface TextStyleToolbarProps {
   selectedModifiers: SelectedModifiers;
-  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii', modifierId: string | null) => void;
+  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii' | 'xml', modifierId: string | null) => void;
 }
 
 /** Single dropdown for a modifier category */
@@ -134,7 +135,7 @@ const ModifierDropdown: React.FC<{
 // ═══════════════════════════════════════════
 
 const TextStyleToolbar: React.FC<TextStyleToolbarProps> = ({ selectedModifiers, onModifierChange }) => {
-  const activeCount = [selectedModifiers.font, selectedModifiers.emoji, selectedModifiers.ascii].filter(Boolean).length;
+  const activeCount = [selectedModifiers.font, selectedModifiers.emoji, selectedModifiers.ascii, selectedModifiers.xml].filter(Boolean).length;
 
   return (
     <div className="flex flex-col gap-3">

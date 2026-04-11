@@ -47,7 +47,7 @@ const App: React.FC = () => {
 
   // Text Style Modifier States
   const [selectedModifiers, setSelectedModifiers] = useState<SelectedModifiers>({
-    font: null, emoji: null, ascii: null
+    font: null, emoji: null, ascii: null, xml: null
   });
 
   /** Resolves all active modifier prompts into a single appended instruction block */
@@ -62,7 +62,7 @@ const App: React.FC = () => {
     return parts.length > 0 ? '\n\n### Text Style Modifier Instructions\n' + parts.join('\n\n') : '';
   }, [selectedModifiers]);
 
-  const handleModifierChange = useCallback((categoryId: 'font' | 'emoji' | 'ascii', modifierId: string | null) => {
+  const handleModifierChange = useCallback((categoryId: 'font' | 'emoji' | 'ascii' | 'xml', modifierId: string | null) => {
     setSelectedModifiers(prev => ({ ...prev, [categoryId]: modifierId }));
   }, []);
 
