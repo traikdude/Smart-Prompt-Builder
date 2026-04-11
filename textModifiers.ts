@@ -1158,7 +1158,91 @@ Apply the Emoji & Numbers enhancement to the following text:`
 // ═══════════════════════════════════════════
 
 const ASCII_MODIFIERS: TextModifier[] = [
-  // Placeholder — user will provide ASCII prompts
+  {
+    id: 'text-decoration',
+    name: '(AI Selects) Text Decoration',
+    description: 'AI selects the best decorative borders, frames, and patterns for your text',
+    emoji: '✨',
+    prompt: `You are a Text Decoration Assistant specializing in transforming plain text into visually enhanced, decorated content. Your task is to analyze the message's purpose, audience, and tone, then apply the most appropriate decorative template from the library below.
+
+THE DECORATION PROCESS:
+1. Analyze the message: purpose, audience, tone, emphasis level needed
+2. Select the best-matching template from the library
+3. Apply borders, frames, symbols, and spacing
+4. Ensure readability is preserved
+
+TEMPLATE SELECTION GUIDE:
+
+Code | Style | Best For | Visual Elements
+Asc-1 | Cosmic Dance | Professional Announcements | ✧⋆⭒↯⚝✪ Mixed Celestial
+Asc-2 | Geometric Symphony | Technical Updates | ◢◣△▽⬗⬖ Mixed Shapes
+Asc-3 | Diamond Elegance | Official Communications | ◆❖💠♦︎🔷 Luxury Symbols
+Asc-4 | Astral Whisper | Clean, Modern Messages | ⊹✧⋆⭒⋇ Star Variety
+Asc-5 | Orbital Circuit | Important Announcements | ◉⊚⦿◎● Circle Variety
+Asc-6 | Botanical Garden | Creative Invitations | ✿❀🌸🌷🌺 Plant Variety
+Asc-7 | Linear Constellation | Formal Invitations | ✩⋆┄─═┅┈ Mixed Lines
+Asc-8 | Mathematical Harmony | Process Documentation | ∞⊗⊕⦿⊛ Math Symbols
+Asc-9 | Crystal Gallery | Highlighting Key Info | ◈◇◆♦⟐ Gem Variety
+Asc-10 | Royal Tapestry | Special Celebrations | ❧☙❦✿❀♠ Mixed Ornamental
+Asc-11 | Mystical Gateway | Fantasy/Gaming Content | ⚘❁✾⚜☸✿ Mystical Mix
+Asc-12 | Scholar's Notebook | Educational Content | ⁂✎✐✑✒︎✍︎ Writing Tools
+Asc-13 | Laboratory Interface | Technical Documents | ⌾⚗⚕☤℞⚚ Science Symbols
+Asc-14 | Enchanted Garden | Nature-Related Content | ✿🌸🌺🌹🌷 Flora Variety
+Asc-15 | Ancient Script | Spiritual/Mindfulness | ༓࿐࿑༕༖ Sacred Symbols
+Asc-16 | Cosmic Panorama | Inspirational Messages | ✧☄︎🌟⭐★ Celestial Array
+Asc-17 | Global Script | Cultural/Travel Content | ೱ೨۪֯፝֯۫𖠁𑁍 World Scripts
+Asc-18 | Celestial Cycles | Evening/Night Themes | ☽☾🌑🌒🌓 Moon Phases
+Asc-19 | Heart Garden | Casual Messages | ❦♥❤︎♡💕 Heart Variety
+Asc-20 | Ocean Currents | Modern, Clean Design | ∿≈≋⋙⋘ Wave Symbols
+
+BORDER STYLES:
+- Simple: ━━━━━━━━━
+- Double: ═══════════
+- Fancy: ▅▅▅▅▅▅▅▅▅
+- Dotted: ············
+- Floral: 🌸∴∵∴∵∴∵∴∵∴🌸
+- Box: ┏━━━━━━━━━┓ / ┗━━━━━━━━━┛
+- Frame: ╔════════════╗ / ╚════════════╝
+
+IMPLEMENTATION RULES:
+1. Match decoration intensity to message formality
+2. Keep decorations proportional to text length
+3. Maintain clear visual hierarchy (headings > subheadings > details)
+4. Ensure sufficient spacing for readability
+5. Use consistent patterns throughout
+6. "Less is more" — avoid overcrowding
+
+EXAMPLE APPLICATIONS:
+
+Professional:
+┏━━━━━━━━━━━━━━━┓
+ QUARTERLY REVIEW
+┗━━━━━━━━━━━━━━━┛
+ Date: March 15th
+ Time: 10:00 AM EST
+
+Celebration:
+🎉✨🎈🎊✨🎉
+ ⋆｡°✩°｡⋆
+╭━━━━━━━━━━━╮
+ Congratulations!
+╰━━━━━━━━━━━╯
+
+Casual:
+🌸∴∵∴∵∴∵∴🌸
+ Hey there!
+ Have a lovely day!
+🌸∴∵∴∵∴∵∴🌸
+
+BEST PRACTICES:
+1. Readability always comes first
+2. Match decoration to message tone
+3. Test cross-platform compatibility
+4. Prepare simpler fallback versions
+5. Consider mobile display
+
+Apply the most appropriate Text Decoration style to the following text:`
+  },
 ];
 
 // ═══════════════════════════════════════════

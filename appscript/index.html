@@ -2665,7 +2665,85 @@ STEP-BY-STEP PROCESS:
 
 REMEMBER: Emojis must be spread WITHIN the text, not just at the end of sentences.
 
-Apply the Emoji & Numbers enhancement to the following text:`}],_M=[],Gd=[{id:"font",label:"Font Style",emoji:"🔤",color:"pink",bgClass:"bg-pink-500/15",textClass:"text-pink-400",borderClass:"border-pink-500/30",glowClass:"shadow-[0_0_12px_rgba(255,107,157,0.25)]",modifiers:vM},{id:"emoji",label:"Emoji",emoji:"😀",color:"amber",bgClass:"bg-amber-500/15",textClass:"text-amber-400",borderClass:"border-amber-500/30",glowClass:"shadow-[0_0_12px_rgba(251,191,36,0.25)]",modifiers:TM},{id:"ascii",label:"ASCII Art",emoji:"⌨️",color:"cyan",bgClass:"bg-cyan-500/15",textClass:"text-cyan-400",borderClass:"border-cyan-500/30",glowClass:"shadow-[0_0_12px_rgba(34,211,238,0.25)]",modifiers:_M}],AM=({category:e,selectedId:t,onSelect:n})=>{const[a,o]=Re.useState(!1),l=Re.useRef(null),u=e.modifiers.find(m=>m.id===t),p=e.modifiers.length>0;return Re.useEffect(()=>{const m=f=>{l.current&&!l.current.contains(f.target)&&o(!1)};return a&&document.addEventListener("mousedown",m),()=>document.removeEventListener("mousedown",m)},[a]),L.jsxs("div",{ref:l,className:"relative",children:[L.jsxs("button",{onClick:()=>p&&o(!a),className:`
+Apply the Emoji & Numbers enhancement to the following text:`}],_M=[{id:"text-decoration",name:"(AI Selects) Text Decoration",description:"AI selects the best decorative borders, frames, and patterns for your text",emoji:"✨",prompt:`You are a Text Decoration Assistant specializing in transforming plain text into visually enhanced, decorated content. Your task is to analyze the message's purpose, audience, and tone, then apply the most appropriate decorative template from the library below.
+
+THE DECORATION PROCESS:
+1. Analyze the message: purpose, audience, tone, emphasis level needed
+2. Select the best-matching template from the library
+3. Apply borders, frames, symbols, and spacing
+4. Ensure readability is preserved
+
+TEMPLATE SELECTION GUIDE:
+
+Code | Style | Best For | Visual Elements
+Asc-1 | Cosmic Dance | Professional Announcements | ✧⋆⭒↯⚝✪ Mixed Celestial
+Asc-2 | Geometric Symphony | Technical Updates | ◢◣△▽⬗⬖ Mixed Shapes
+Asc-3 | Diamond Elegance | Official Communications | ◆❖💠♦︎🔷 Luxury Symbols
+Asc-4 | Astral Whisper | Clean, Modern Messages | ⊹✧⋆⭒⋇ Star Variety
+Asc-5 | Orbital Circuit | Important Announcements | ◉⊚⦿◎● Circle Variety
+Asc-6 | Botanical Garden | Creative Invitations | ✿❀🌸🌷🌺 Plant Variety
+Asc-7 | Linear Constellation | Formal Invitations | ✩⋆┄─═┅┈ Mixed Lines
+Asc-8 | Mathematical Harmony | Process Documentation | ∞⊗⊕⦿⊛ Math Symbols
+Asc-9 | Crystal Gallery | Highlighting Key Info | ◈◇◆♦⟐ Gem Variety
+Asc-10 | Royal Tapestry | Special Celebrations | ❧☙❦✿❀♠ Mixed Ornamental
+Asc-11 | Mystical Gateway | Fantasy/Gaming Content | ⚘❁✾⚜☸✿ Mystical Mix
+Asc-12 | Scholar's Notebook | Educational Content | ⁂✎✐✑✒︎✍︎ Writing Tools
+Asc-13 | Laboratory Interface | Technical Documents | ⌾⚗⚕☤℞⚚ Science Symbols
+Asc-14 | Enchanted Garden | Nature-Related Content | ✿🌸🌺🌹🌷 Flora Variety
+Asc-15 | Ancient Script | Spiritual/Mindfulness | ༓࿐࿑༕༖ Sacred Symbols
+Asc-16 | Cosmic Panorama | Inspirational Messages | ✧☄︎🌟⭐★ Celestial Array
+Asc-17 | Global Script | Cultural/Travel Content | ೱ೨۪֯፝֯۫𖠁𑁍 World Scripts
+Asc-18 | Celestial Cycles | Evening/Night Themes | ☽☾🌑🌒🌓 Moon Phases
+Asc-19 | Heart Garden | Casual Messages | ❦♥❤︎♡💕 Heart Variety
+Asc-20 | Ocean Currents | Modern, Clean Design | ∿≈≋⋙⋘ Wave Symbols
+
+BORDER STYLES:
+- Simple: ━━━━━━━━━
+- Double: ═══════════
+- Fancy: ▅▅▅▅▅▅▅▅▅
+- Dotted: ············
+- Floral: 🌸∴∵∴∵∴∵∴∵∴🌸
+- Box: ┏━━━━━━━━━┓ / ┗━━━━━━━━━┛
+- Frame: ╔════════════╗ / ╚════════════╝
+
+IMPLEMENTATION RULES:
+1. Match decoration intensity to message formality
+2. Keep decorations proportional to text length
+3. Maintain clear visual hierarchy (headings > subheadings > details)
+4. Ensure sufficient spacing for readability
+5. Use consistent patterns throughout
+6. "Less is more" — avoid overcrowding
+
+EXAMPLE APPLICATIONS:
+
+Professional:
+┏━━━━━━━━━━━━━━━┓
+ QUARTERLY REVIEW
+┗━━━━━━━━━━━━━━━┛
+ Date: March 15th
+ Time: 10:00 AM EST
+
+Celebration:
+🎉✨🎈🎊✨🎉
+ ⋆｡°✩°｡⋆
+╭━━━━━━━━━━━╮
+ Congratulations!
+╰━━━━━━━━━━━╯
+
+Casual:
+🌸∴∵∴∵∴∵∴🌸
+ Hey there!
+ Have a lovely day!
+🌸∴∵∴∵∴∵∴🌸
+
+BEST PRACTICES:
+1. Readability always comes first
+2. Match decoration to message tone
+3. Test cross-platform compatibility
+4. Prepare simpler fallback versions
+5. Consider mobile display
+
+Apply the most appropriate Text Decoration style to the following text:`}],Gd=[{id:"font",label:"Font Style",emoji:"🔤",color:"pink",bgClass:"bg-pink-500/15",textClass:"text-pink-400",borderClass:"border-pink-500/30",glowClass:"shadow-[0_0_12px_rgba(255,107,157,0.25)]",modifiers:vM},{id:"emoji",label:"Emoji",emoji:"😀",color:"amber",bgClass:"bg-amber-500/15",textClass:"text-amber-400",borderClass:"border-amber-500/30",glowClass:"shadow-[0_0_12px_rgba(251,191,36,0.25)]",modifiers:TM},{id:"ascii",label:"ASCII Art",emoji:"⌨️",color:"cyan",bgClass:"bg-cyan-500/15",textClass:"text-cyan-400",borderClass:"border-cyan-500/30",glowClass:"shadow-[0_0_12px_rgba(34,211,238,0.25)]",modifiers:_M}],AM=({category:e,selectedId:t,onSelect:n})=>{const[a,o]=Re.useState(!1),l=Re.useRef(null),u=e.modifiers.find(m=>m.id===t),p=e.modifiers.length>0;return Re.useEffect(()=>{const m=f=>{l.current&&!l.current.contains(f.target)&&o(!1)};return a&&document.addEventListener("mousedown",m),()=>document.removeEventListener("mousedown",m)},[a]),L.jsxs("div",{ref:l,className:"relative",children:[L.jsxs("button",{onClick:()=>p&&o(!a),className:`
           flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
           border transition-all duration-300 group relative overflow-hidden
           ${t?`${e.bgClass} ${e.textClass} ${e.borderClass} ${e.glowClass}`:`bg-slate-800/60 text-slate-400 border-slate-700 ${p?"hover:border-slate-600 hover:text-slate-300 cursor-pointer":"opacity-40 cursor-not-allowed"}`}
