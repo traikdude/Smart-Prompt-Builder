@@ -1957,7 +1957,58 @@ IMPORTANT NOTES:
 - Sometimes standard notation (², ³) may be more suitable
 - Follow domain-specific conventions for academic and scientific usage
 
-Apply the Superscript formatting to the following text:`}],TM=[],_M=[],Gd=[{id:"font",label:"Font Style",emoji:"🔤",color:"pink",bgClass:"bg-pink-500/15",textClass:"text-pink-400",borderClass:"border-pink-500/30",glowClass:"shadow-[0_0_12px_rgba(255,107,157,0.25)]",modifiers:vM},{id:"emoji",label:"Emoji",emoji:"😀",color:"amber",bgClass:"bg-amber-500/15",textClass:"text-amber-400",borderClass:"border-amber-500/30",glowClass:"shadow-[0_0_12px_rgba(251,191,36,0.25)]",modifiers:TM},{id:"ascii",label:"ASCII Art",emoji:"⌨️",color:"cyan",bgClass:"bg-cyan-500/15",textClass:"text-cyan-400",borderClass:"border-cyan-500/30",glowClass:"shadow-[0_0_12px_rgba(34,211,238,0.25)]",modifiers:_M}],AM=({category:e,selectedId:t,onSelect:n})=>{const[a,o]=Re.useState(!1),l=Re.useRef(null),u=e.modifiers.find(m=>m.id===t),p=e.modifiers.length>0;return Re.useEffect(()=>{const m=f=>{l.current&&!l.current.contains(f.target)&&o(!1)};return a&&document.addEventListener("mousedown",m),()=>document.removeEventListener("mousedown",m)},[a]),O.jsxs("div",{ref:l,className:"relative",children:[O.jsxs("button",{onClick:()=>p&&o(!a),className:`
+Apply the Superscript formatting to the following text:`},{id:"cursive",name:"Cursive",description:"Converts text into elegant mathematical cursive script (𝓐 𝓑 𝓒)",emoji:"𝓐",prompt:`You are a Text Formatting Assistant specializing in converting regular text into elegant mathematical cursive script characters. Your role is to help users create beautifully formatted cursive text while ensuring both aesthetic appeal and readability.
+
+CORE INSTRUCTIONS:
+
+Text Transformation Principles:
+1. Convert standard letters to their mathematical cursive equivalents
+2. Preserve spaces and punctuation
+3. Maintain the flowing, connected appearance
+4. Consider the overall visual harmony
+5. Ensure readability despite decorative elements
+
+Understanding Cursive Script Usage:
+- Formal invitations and announcements
+- Decorative headings and titles
+- Signature lines and personal branding
+- Artistic text presentations
+- Distinguished certificates and awards
+
+VALIDATION CHECKS:
+Before converting text, verify:
+1. The text is appropriate for cursive formatting
+2. The length maintains readability
+3. The context suits formal presentation
+
+RESPONSE FORMAT:
+For each conversion request:
+1. Present the converted text with proper spacing
+2. Confirm the text meets formal presentation standards
+
+EXAMPLE INTERACTIONS:
+
+User: Convert "Welcome" to cursive
+A: Here's your text in elegant cursive script: "𝓦𝓮𝓵𝓬𝓸𝓶𝓮"
+
+User: Make "Certificate of Excellence" cursive
+A: Here's your text in formal cursive: "𝓒𝓮𝓻𝓽𝓲𝓯𝓲𝓬𝓪𝓽𝓮 𝓸𝓯 𝓔𝔁𝓬𝓮𝓵𝓵𝓮𝓷𝓬𝓮"
+
+User: Convert "Special Invitation" to cursive
+A: Here's your text in graceful cursive: "𝓢𝓹𝓮𝓬𝓲𝓪𝓵 𝓘𝓷𝓿𝓲𝓽𝓪𝓽𝓲𝓸𝓷"
+
+CHARACTER REFERENCE:
+Uppercase Cursive: 𝓐 𝓑 𝓒 𝓓 𝓔 𝓕 𝓖 𝓗 𝓘 𝓙 𝓚 𝓛 𝓜 𝓝 𝓞 𝓟 𝓠 𝓡 𝓢 𝓣 𝓤 𝓥 𝓦 𝓧 𝓨 𝓩
+Lowercase Cursive: 𝓪 𝓫 𝓬 𝓭 𝓮 𝓯 𝓰 𝓱 𝓲 𝓳 𝓴 𝓵 𝓶 𝓷 𝓸 𝓹 𝓺 𝓻 𝓼 𝓽 𝓾 𝓿 𝔀 𝔁 𝔂 𝔃
+
+BEST PRACTICES:
+1. Keep cursive text brief for maximum impact
+2. Allow adequate space between words
+3. Reserve for formal or special occasions
+4. Use larger sizes for better readability
+5. Use sparingly for maximum effect
+
+Apply the Cursive formatting to the following text:`}],TM=[],_M=[],Gd=[{id:"font",label:"Font Style",emoji:"🔤",color:"pink",bgClass:"bg-pink-500/15",textClass:"text-pink-400",borderClass:"border-pink-500/30",glowClass:"shadow-[0_0_12px_rgba(255,107,157,0.25)]",modifiers:vM},{id:"emoji",label:"Emoji",emoji:"😀",color:"amber",bgClass:"bg-amber-500/15",textClass:"text-amber-400",borderClass:"border-amber-500/30",glowClass:"shadow-[0_0_12px_rgba(251,191,36,0.25)]",modifiers:TM},{id:"ascii",label:"ASCII Art",emoji:"⌨️",color:"cyan",bgClass:"bg-cyan-500/15",textClass:"text-cyan-400",borderClass:"border-cyan-500/30",glowClass:"shadow-[0_0_12px_rgba(34,211,238,0.25)]",modifiers:_M}],AM=({category:e,selectedId:t,onSelect:n})=>{const[a,o]=Re.useState(!1),l=Re.useRef(null),u=e.modifiers.find(m=>m.id===t),p=e.modifiers.length>0;return Re.useEffect(()=>{const m=f=>{l.current&&!l.current.contains(f.target)&&o(!1)};return a&&document.addEventListener("mousedown",m),()=>document.removeEventListener("mousedown",m)},[a]),O.jsxs("div",{ref:l,className:"relative",children:[O.jsxs("button",{onClick:()=>p&&o(!a),className:`
           flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
           border transition-all duration-300 group relative overflow-hidden
           ${t?`${e.bgClass} ${e.textClass} ${e.borderClass} ${e.glowClass}`:`bg-slate-800/60 text-slate-400 border-slate-700 ${p?"hover:border-slate-600 hover:text-slate-300 cursor-pointer":"opacity-40 cursor-not-allowed"}`}
