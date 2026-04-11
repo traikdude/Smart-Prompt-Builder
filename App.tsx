@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { GoogleGenAI } from "@google/genai";
+
+// Components
 import Header from './components/Header';
 import Footer from './components/Footer';
 import PromptForm from './components/PromptForm';
@@ -8,8 +10,13 @@ import OutputCard from './components/OutputCard';
 import Toast from './components/Toast';
 import Sidebar from './components/Sidebar';
 import TemplateModal from './components/TemplateModal';
+
+// Types & Constants
 import { TEMPLATES as DEFAULT_TEMPLATES } from './constants';
 import { ToastState, PromptTemplate, RecentPrompt } from './types';
+
+// Global declaration for Google Apps Script environment
+declare const google: any;
 
 const SYNTAX_TEST_DATA = `python
 def validate_highlighting():  
@@ -21,7 +28,7 @@ def validate_highlighting():
     return True`;
 
 const App: React.FC = () => {
-  // --- State ---
+  // --- State Management ---
   const [templates, setTemplates] = useState<PromptTemplate[]>(DEFAULT_TEMPLATES);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(DEFAULT_TEMPLATES[0].id);
   const [userContent, setUserContent] = useState<string>('');
@@ -31,41 +38,34 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
   
-  // Sidebar & History
+  // UI States
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [recentPrompts, setRecentPrompts] = useState<RecentPrompt[]>([]);
-
-  // Modal
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   // --- Effects ---
 
-  // Load Custom Templates & History from LocalStorage on mount
+  // Initialize Local Storage Data
   useEffect(() => {
-    const savedTemplates = localStorage.getItem('custom_templates');
-    if (savedTemplates) {
-      try {
+    try {
+      const savedTemplates = localStorage.getItem('custom_templates');
+      if (savedTemplates) {
         const parsed = JSON.parse(savedTemplates);
-        // Deduplicate in case defaults changed or IDs collide
         const customOnly = parsed.filter((p: PromptTemplate) => p.isCustom);
         setTemplates([...DEFAULT_TEMPLATES, ...customOnly]);
-      } catch (e) {
-        console.error("Failed to parse custom templates", e);
       }
-    }
 
-    const savedHistory = localStorage.getItem('recent_prompts');
-    if (savedHistory) {
-      try {
-        const parsed = JSON.parse(savedHistory);
-        setRecentPrompts(parsed);
-      } catch (e) {
-        console.error("Failed to parse history", e);
+      const savedHistory = localStorage.getItem('recent_prompts');
+      if (savedHistory) {
+        setRecentPrompts(JSON.parse(savedHistory));
       }
+    } catch (e) {
+      console.error("Failed to parse local storage data during initialization:", e);
+      showToastMessage("Warning: Failed to load local history.", "error");
     }
   }, []);
 
-  // Handle Toast Timeout
+  // Manage Toast Auto-hide
   useEffect(() => {
     if (toast.show) {
       const timer = setTimeout(() => {
@@ -75,18 +75,55 @@ const App: React.FC = () => {
     }
   }, [toast.show]);
 
-  // --- Handlers ---
+  // Handle Global Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + Enter to trigger generation
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        if (userContent.trim() && !isLoading) {
+          handleGenerate();
+        }
+      }
+    };
 
-  const showToastMessage = (message: string, type: 'success' | 'info' | 'error' = 'success') => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [userContent, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // --- Utility Configurations ---
+
+  const showToastMessage = useCallback((message: string, type: 'success' | 'info' | 'error' = 'success') => {
     setToast({ show: true, message, type });
-  };
+  }, []);
 
-  const saveToHistory = (template: PromptTemplate, content: string, generated: string) => {
-    // Prevent duplicates: Check if the latest entry is identical
+  /**
+   * Safely bridges the application back to the Google Apps Script backend.
+   * This pushes the prompt log securely to the spreadsheet.
+   */
+  const syncWithGoogleAppsScript = useCallback((data: RecentPrompt) => {
+    if (typeof google === 'undefined' || typeof google.script === 'undefined') {
+      console.log("ℹ️ Local environment detected. Skipped sending to Google Apps Script.");
+      return;
+    }
+
+    try {
+      google.script.run
+        .withSuccessHandler((response: any) => console.log('✅ Sheet Sync Success:', response))
+        .withFailureHandler((error: any) => {
+          console.error('❌ Sheet Sync Failed:', error);
+          showToastMessage('Could not sync to Google Sheets.', 'error');
+        })
+        .saveDataFromFrontend(data);
+    } catch (error) {
+      console.error("Execution context exception during Apps Script sync.", error);
+    }
+  }, [showToastMessage]);
+
+  const saveToHistory = useCallback((template: PromptTemplate, content: string, generated: string) => {
     if (recentPrompts.length > 0) {
       const latest = recentPrompts[0];
       if (latest.templateId === template.id && latest.userContent === content) {
-        return; // Don't save duplicate consecutive prompts
+        return; // Prevent duplicate consecutive saves
       }
     }
 
@@ -99,103 +136,74 @@ const App: React.FC = () => {
       timestamp: Date.now()
     };
 
-    const updatedHistory = [newEntry, ...recentPrompts].slice(0, 5); // Keep last 5
+    const updatedHistory = [newEntry, ...recentPrompts].slice(0, 5); 
     setRecentPrompts(updatedHistory);
     localStorage.setItem('recent_prompts', JSON.stringify(updatedHistory));
-  };
+    
+    // Google Integration Hook 🔥
+    syncWithGoogleAppsScript(newEntry);
+  }, [recentPrompts, syncWithGoogleAppsScript]);
 
   const triggerCelebration = () => {
-    // Joyful UI Palette for Confetti
     const joyfulColors = ['#FF6B9D', '#FF8E53', '#6B7BFF', '#FF3D7F', '#FFB3C6'];
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: joyfulColors, disableForReducedMotion: true });
 
-    // 1. Immediate central burst
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: joyfulColors,
-      disableForReducedMotion: true
-    });
-
-    // 2. Sustained side cannons
-    const duration = 2500;
-    const end = Date.now() + duration;
-
-    const frame = () => {
-      // Left cannon
-      confetti({
-        particleCount: 2,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors: joyfulColors
-      });
-      // Right cannon
-      confetti({
-        particleCount: 2,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors: joyfulColors
-      });
-
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
-    };
-    frame();
+    let count = 0;
+    const interval = setInterval(() => {
+      if (count > 2) return clearInterval(interval);
+      confetti({ particleCount: 20, angle: 60, spread: 55, origin: { x: 0 }, colors: joyfulColors });
+      confetti({ particleCount: 20, angle: 120, spread: 55, origin: { x: 1 }, colors: joyfulColors });
+      count++;
+    }, 400);
   };
 
+  /**
+   * Generates standard prompt by concatenating templates and appending configurations
+   */
   const handleGenerate = useCallback(() => {
     if (!userContent.trim()) return;
 
     setIsLoading(true);
     
+    // Simulate slight delay for perceived compilation
     setTimeout(() => {
-      const template = templates.find(t => t.id === selectedTemplateId);
-      
-      if (template) {
+      try {
+        const template = templates.find(t => t.id === selectedTemplateId);
+        if (!template) throw new Error("Template mapping failure.");
+
         let finalPrompt = '';
-        
-        // Use custom placeholder trigger if present, otherwise default replacement or append
-        const placeholder = template.placeholderTrigger || "{{content}}"; // Support the placeholder from modal
+        const placeholder = template.placeholderTrigger || "{{content}}"; 
 
         if (template.content.includes(placeholder)) {
           finalPrompt = template.content.replace(placeholder, userContent);
-        } else if (template.placeholderTrigger && template.content.includes(template.placeholderTrigger)) {
-             // Fallback to strict placeholder from constants if defined there
-             finalPrompt = template.content.replace(template.placeholderTrigger, userContent);
         } else {
-          // If no specific placeholder found (or strict logic applies), append to a logical place or end
           finalPrompt = `${template.content}\n\n${userContent}`;
         }
 
-        // --- Examples Feature Logic ---
         if (includeExamples) {
           finalPrompt += `\n\n### Requirement: Multiple Options\nPlease provide 4 distinct numbered versions (1-4) of the result, varying in tone, style, or approach to help me choose the best one.`;
         }
 
-        // --- Character Constraint Feature Logic ---
         if (charLimit) {
-           finalPrompt += `\n\n### Requirement: Length Constraint
-Step 1: Carefully analyze & review to understand the provided text (see above).
-Step 2: Count how many characters that text has.
-Step 3: Provide me with a revised version of the text by MAKING THE TEXT EQUAL TO approximately ${charLimit} characters, while preserving the original meaning of the provided text.
-Step 4: Provide the user with their desired output based on the aforementioned instructions.`;
+           finalPrompt += `\n\n### Requirement: Length Constraint\nStep 1: Carefully analyze meaning.\nStep 2: Rewrite text to EQUAL approximately ${charLimit} characters.`;
         }
 
         setGeneratedPrompt(finalPrompt);
         saveToHistory(template, userContent, finalPrompt);
-        triggerCelebration(); // 🎉 Trigger Confetti!
+        triggerCelebration(); 
         showToastMessage('✨ Prompt Generated!');
-      } else {
-        showToastMessage('Error finding template', 'error');
+      } catch (error) {
+        console.error("Generation logic failed:", error);
+        showToastMessage('Error generating prompt', 'error');
+      } finally {
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
-    }, 800); // Slightly longer delay to build anticipation
-  }, [selectedTemplateId, userContent, templates, recentPrompts, includeExamples, charLimit]);
+    }, 400); 
+  }, [selectedTemplateId, userContent, templates, includeExamples, charLimit, saveToHistory, showToastMessage]);
 
+  /**
+   * Delegates prompt expansion to Gemini AI capabilities
+   */
   const handleAIGenerate = useCallback(async (mode: 'smart' | 'fast' | 'thinking') => {
     if (!userContent.trim()) {
       showToastMessage('Please enter some content first', 'info');
@@ -207,126 +215,88 @@ Step 4: Provide the user with their desired output based on the aforementioned i
     try {
       const template = templates.find(t => t.id === selectedTemplateId);
       if (!template) throw new Error("Template not found");
-
-      // Initialize Gemini Client
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
-      let model = 'gemini-3-flash-preview'; // Default for 'smart' - Balanced intelligence
-      let config: any = {};
-
-      if (mode === 'fast') {
-        model = 'gemini-flash-lite-latest'; // Fast AI responses
-      } else if (mode === 'thinking') {
-        model = 'gemini-3-pro-preview'; // Extended thinking
-        config = {
-          thinkingConfig: { thinkingBudget: 32768 }
-        };
-      }
-
-      const systemInstruction = "You are an expert prompt engineer. Your goal is to generate a high-quality, optimized prompt based on a given template and user input. The output should be ready to use.";
+      const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+      if (!apiKey) throw new Error("API Key not found in environment securely.");
       
-      let promptText = `
-      TASK: Transform the following User Content into a structured prompt based on the provided Template.
+      const ai = new GoogleGenAI({ apiKey });
       
-      TEMPLATE NAME: ${template.name}
-      TEMPLATE DESCRIPTION: ${template.description}
-      TEMPLATE STRUCTURE: 
-      ${template.content}
+      const modelMap = {
+        'fast': 'gemini-flash-lite-latest',
+        'smart': 'gemini-3-flash-preview',
+        'thinking': 'gemini-3-pro-preview'
+      };
+      
+      const model = modelMap[mode];
+      const config: any = {
+        systemInstruction: "You are an expert prompt engineer. Your goal is to generate a high-quality, optimized prompt based on a given template and user input. The output should be ready to use.",
+      };
 
-      USER CONTENT:
-      ${userContent}
+      if (mode === 'thinking') config.thinkingConfig = { thinkingBudget: 32768 };
 
-      INSTRUCTIONS:
-      1. Analyze the User Content and the Template.
-      2. Construct a final prompt by applying the User Content to the Template's structure.
-      3. Optimize the phrasing for clarity and effectiveness.
-      4. Ensure the placeholders in the template are filled intelligently.
-      `;
+      let promptText = `TASK: Transform User Content into a structured prompt based on the Template.\nTEMPLATE NAME: ${template.name}\nTEMPLATE STRUCTURE: \n${template.content}\nUSER CONTENT:\n${userContent}\nINSTRUCTIONS:\n1. Apply User Content to Template structure.\n2. Optimize phrasing for clarity.\n3. Ensure semantic flow.`;
 
-      if (includeExamples) {
-        promptText += "\nRequirement: Provide 4 distinct numbered versions (1-4) of the result, varying in tone, style, or approach.";
-      }
-
-      if (charLimit) {
-        promptText += `\nRequirement: The output length should be approximately ${charLimit} characters.`;
-      }
+      if (includeExamples) promptText += "\nRequirement: Provide 4 distinct numbered variations.";
+      if (charLimit) promptText += `\nRequirement: Target length is approximately ${charLimit} characters.`;
 
       const response = await ai.models.generateContent({
-        model: model,
+        model,
         contents: promptText,
-        config: {
-          ...config,
-          systemInstruction,
-        }
+        config
       });
 
-      const generatedText = response.text;
-      
-      if (generatedText) {
-        setGeneratedPrompt(generatedText);
-        saveToHistory(template, userContent, generatedText);
+      if (response.text) {
+        setGeneratedPrompt(response.text);
+        saveToHistory(template, userContent, response.text);
         triggerCelebration();
-        showToastMessage(`Generated with ${mode === 'thinking' ? 'Deep Thinking' : mode === 'fast' ? 'Flash Lite' : 'Gemini'}! 🧠`);
+        showToastMessage(`Generated with ${mode.toUpperCase()} mode! 🧠`);
+      } else {
+        throw new Error("Received empty response from AI engine.");
       }
-
     } catch (error: any) {
-      console.error("AI Generation Error:", error);
-      showToastMessage(`AI Error: ${error.message || 'Generation failed'}`, 'error');
+      console.error("AI Generation Runtime Error:", error);
+      showToastMessage(`AI Exception: ${error.message || 'Engine failed'}`, 'error');
     } finally {
       setIsLoading(false);
     }
-  }, [userContent, selectedTemplateId, templates, includeExamples, charLimit, recentPrompts]);
+  }, [userContent, selectedTemplateId, templates, includeExamples, charLimit, saveToHistory, showToastMessage]);
 
-  const handleCopy = async () => {
-    if (generatedPrompt) {
-      try {
-        await navigator.clipboard.writeText(generatedPrompt);
-        showToastMessage('Copied! ✅');
-        
-        // Mini confetti on copy
-        confetti({
-          particleCount: 40,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#6B7BFF', '#A5B4FC'], // Cooler colors for copy action
-          disableForReducedMotion: true
-        });
-      } catch (err) {
-        showToastMessage('Failed to copy', 'error');
-      }
+  // --- Output Interactions ---
+
+  const handleCopy = useCallback(async () => {
+    if (!generatedPrompt) return;
+    try {
+      await navigator.clipboard.writeText(generatedPrompt);
+      showToastMessage('Copied! ✅');
+      confetti({ particleCount: 40, spread: 70, origin: { y: 0.6 }, colors: ['#6B7BFF', '#A5B4FC'], disableForReducedMotion: true });
+    } catch (err) {
+      showToastMessage('Failed to trigger native copy protocol', 'error');
     }
-  };
+  }, [generatedPrompt, showToastMessage]);
 
-  const handleExport = (format: 'txt' | 'md') => {
+  const handleExport = useCallback((format: 'txt' | 'md') => {
     if (!generatedPrompt) return;
     
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    
-    const timestamp = `${year}${month}${day}_${hours}${minutes}`;
-    const filename = `prompt_${timestamp}.${format}`;
+    // ISO string formatting for file name consistency
+    const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
     const blob = new Blob([generatedPrompt], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     
     const a = document.createElement('a');
     a.href = url;
-    a.download = filename;
+    a.download = `smart_prompt_${timestamp}.${format}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    showToastMessage(`Exported as .${format}`);
-  };
+    showToastMessage(`Exported securely as .${format}`);
+  }, [generatedPrompt, showToastMessage]);
 
-  const handleSaveTemplate = (name: string, description: string, content: string) => {
+  const handleSaveTemplate = useCallback((name: string, description: string, content: string) => {
     const customTemplates = templates.filter(t => t.isCustom);
     if (customTemplates.length >= 10) {
-      showToastMessage('Max 10 custom templates allowed.', 'error');
+      showToastMessage('Quota exceeded: Maximum of 10 custom templates allowed.', 'error');
       return;
     }
 
@@ -336,82 +306,43 @@ Step 4: Provide the user with their desired output based on the aforementioned i
       description,
       content,
       isCustom: true,
-      placeholderTrigger: '{{content}}' // Default placeholder for custom templates
+      placeholderTrigger: '{{content}}'
     };
 
     const updatedTemplates = [...templates, newTemplate];
     setTemplates(updatedTemplates);
-    setSelectedTemplateId(newTemplate.id); // Auto-select new template
+    setSelectedTemplateId(newTemplate.id); 
     
-    // Save only custom templates to local storage
     localStorage.setItem('custom_templates', JSON.stringify(updatedTemplates.filter(t => t.isCustom)));
-    
     setIsModalOpen(false);
-    showToastMessage('Template saved! ★');
-  };
+    showToastMessage('Template successfully documented! ★');
+  }, [templates, showToastMessage]);
 
-  const handleDeleteTemplate = (id: string) => {
+  const handleDeleteTemplate = useCallback((id: string) => {
     const updatedTemplates = templates.filter(t => t.id !== id);
     setTemplates(updatedTemplates);
+    if (selectedTemplateId === id) setSelectedTemplateId(DEFAULT_TEMPLATES[0].id);
     
-    if (selectedTemplateId === id) {
-      setSelectedTemplateId(DEFAULT_TEMPLATES[0].id);
-    }
-
     localStorage.setItem('custom_templates', JSON.stringify(updatedTemplates.filter(t => t.isCustom)));
-    showToastMessage('Template deleted.');
-  };
+    showToastMessage('Template purged from environment.');
+  }, [templates, selectedTemplateId, showToastMessage]);
 
-  const handleRestoreFromHistory = (prompt: RecentPrompt) => {
-      // Check if template exists
+  const handleRestoreFromHistory = useCallback((prompt: RecentPrompt) => {
       const templateExists = templates.some(t => t.id === prompt.templateId);
       if (templateExists) {
         setSelectedTemplateId(prompt.templateId);
       } else {
-        showToastMessage('Original template missing, restoring content only.', 'info');
+        showToastMessage('Orphaned template: Restoring isolated prompt content context.', 'info');
       }
       
       setUserContent(prompt.userContent);
       setGeneratedPrompt(prompt.generatedContent);
-      
-      // Auto-open sidebar on mobile, keep open on desktop
       if (window.innerWidth < 1024) setIsSidebarOpen(false);
-      
-      showToastMessage('Restored from history! 🕒');
-  };
-
-  const handleLoadSyntaxTest = () => {
-      const dmTemplate = templates.find(t => t.id === 'direct-message');
-      if (dmTemplate) {
-          setSelectedTemplateId('direct-message');
-      }
-      setUserContent(SYNTAX_TEST_DATA);
-      showToastMessage('Test data loaded. Click Generate!');
-  };
-
-  const handleClear = () => {
-    setGeneratedPrompt(null);
-    setUserContent('');
-  };
-
-  // Keyboard shortcut: Ctrl + Enter to generate
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        if (userContent.trim()) {
-          handleGenerate();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [userContent, handleGenerate]);
+      showToastMessage('State restored from history ledger! 🕒');
+  }, [templates, showToastMessage]);
 
   return (
     <div className="min-h-screen relative flex flex-col md:flex-row">
-      
-      {/* Sidebar Toggle (Mobile/Desktop) */}
       <button 
         onClick={() => setIsSidebarOpen(true)}
         className={`fixed top-3 right-3 sm:top-4 sm:right-4 z-30 p-2.5 bg-white/80 backdrop-blur rounded-full shadow-md text-gray-600 hover:text-purple-600 hover:scale-110 transition-all active:scale-95 ${isSidebarOpen ? 'hidden' : 'block'}`}
@@ -422,11 +353,9 @@ Step 4: Provide the user with their desired output based on the aforementioned i
         </svg>
       </button>
 
-      {/* Main Content Area - Optimized for mobile padding */}
       <div className="flex-grow py-6 px-3 sm:py-8 sm:px-6 lg:px-8 transition-all duration-300">
         <div className="max-w-3xl mx-auto w-full">
           <Header />
-          
           <main>
             <PromptForm
               templates={templates}
@@ -442,18 +371,21 @@ Step 4: Provide the user with their desired output based on the aforementioned i
               onAIGenerate={handleAIGenerate}
               isLoading={isLoading}
               onNewTemplate={() => setIsModalOpen(true)}
-              onLoadSyntaxTest={handleLoadSyntaxTest}
+              onLoadSyntaxTest={() => {
+                if (templates.some(t => t.id === 'direct-message')) setSelectedTemplateId('direct-message');
+                setUserContent(SYNTAX_TEST_DATA);
+                showToastMessage('Validation syntax payload loaded against scope.');
+              }}
               onDeleteTemplate={handleDeleteTemplate}
             />
 
             <OutputCard
               content={generatedPrompt}
               onCopy={handleCopy}
-              onClear={handleClear}
+              onClear={() => { setGeneratedPrompt(null); setUserContent(''); }}
               onExport={handleExport}
             />
           </main>
-
           <Footer />
         </div>
       </div>
