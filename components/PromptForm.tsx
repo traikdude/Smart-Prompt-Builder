@@ -1,6 +1,7 @@
 import React from 'react';
 import { PromptTemplate, TemplateCategory } from '../types';
 import { CHAR_LIMIT_OPTIONS } from '../constants';
+import TextStyleToolbar, { SelectedModifiers } from './TextStyleToolbar';
 
 interface PromptFormProps {
   templates: PromptTemplate[];
@@ -18,6 +19,8 @@ interface PromptFormProps {
   onNewTemplate: () => void;
   onLoadSyntaxTest: () => void;
   onDeleteTemplate?: (id: string) => void;
+  selectedModifiers: SelectedModifiers;
+  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii', modifierId: string | null) => void;
 }
 
 /** Color config for each category */
@@ -45,7 +48,9 @@ const PromptForm: React.FC<PromptFormProps> = ({
   isLoading,
   onNewTemplate,
   onLoadSyntaxTest,
-  onDeleteTemplate
+  onDeleteTemplate,
+  selectedModifiers,
+  onModifierChange
 }) => {
   const currentTemplate = templates.find(t => t.id === selectedTemplateId);
   const cat = CATEGORY_COLORS[currentTemplate?.category || 'custom'] || CATEGORY_COLORS.custom;
@@ -138,6 +143,14 @@ const PromptForm: React.FC<PromptFormProps> = ({
           </div>
         </div>
       )}
+
+      {/* 🎨 Text Style Toolbar — Font / Emoji / ASCII dropdowns */}
+      <div className="mb-6 sm:mb-8 bg-slate-800/30 border border-slate-700/50 rounded-xl p-4">
+        <TextStyleToolbar
+          selectedModifiers={selectedModifiers}
+          onModifierChange={onModifierChange}
+        />
+      </div>
 
       {/* User Content */}
       <div className="mb-4 relative z-10">

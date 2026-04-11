@@ -14,6 +14,8 @@ import TemplateModal from './components/TemplateModal';
 // Types & Constants
 import { TEMPLATES as DEFAULT_TEMPLATES } from './constants';
 import { ToastState, PromptTemplate, RecentPrompt } from './types';
+import { MODIFIER_CATEGORIES } from './textModifiers';
+import { SelectedModifiers } from './components/TextStyleToolbar';
 
 // Global declaration for Google Apps Script environment
 declare const google: any;
@@ -42,6 +44,27 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [recentPrompts, setRecentPrompts] = useState<RecentPrompt[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  // Text Style Modifier States
+  const [selectedModifiers, setSelectedModifiers] = useState<SelectedModifiers>({
+    font: null, emoji: null, ascii: null
+  });
+
+  /** Resolves all active modifier prompts into a single appended instruction block */
+  const getModifierPromptText = useCallback((): string => {
+    const parts: string[] = [];
+    for (const cat of MODIFIER_CATEGORIES) {
+      const modId = selectedModifiers[cat.id];
+      if (!modId) continue;
+      const mod = cat.modifiers.find(m => m.id === modId);
+      if (mod) parts.push(mod.prompt);
+    }
+    return parts.length > 0 ? '\n\n### Text Style Modifier Instructions\n' + parts.join('\n\n') : '';
+  }, [selectedModifiers]);
+
+  const handleModifierChange = useCallback((categoryId: 'font' | 'emoji' | 'ascii', modifierId: string | null) => {
+    setSelectedModifiers(prev => ({ ...prev, [categoryId]: modifierId }));
+  }, []);
 
   // --- Effects ---
 
@@ -188,6 +211,9 @@ const App: React.FC = () => {
            finalPrompt += `\n\n### Requirement: Length Constraint\nStep 1: Carefully analyze meaning.\nStep 2: Rewrite text to EQUAL approximately ${charLimit} characters.`;
         }
 
+        // Inject text style modifiers
+        finalPrompt += getModifierPromptText();
+
         setGeneratedPrompt(finalPrompt);
         saveToHistory(template, userContent, finalPrompt);
         triggerCelebration(); 
@@ -199,7 +225,7 @@ const App: React.FC = () => {
         setIsLoading(false);
       }
     }, 400); 
-  }, [selectedTemplateId, userContent, templates, includeExamples, charLimit, saveToHistory, showToastMessage]);
+  }, [selectedTemplateId, userContent, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
 
   /**
    * Delegates prompt expansion to Gemini AI capabilities
@@ -238,6 +264,7 @@ const App: React.FC = () => {
 
       if (includeExamples) promptText += "\nRequirement: Provide 4 distinct numbered variations.";
       if (charLimit) promptText += `\nRequirement: Target length is approximately ${charLimit} characters.`;
+      promptText += getModifierPromptText();
 
       const response = await ai.models.generateContent({
         model,
@@ -259,7 +286,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [userContent, selectedTemplateId, templates, includeExamples, charLimit, saveToHistory, showToastMessage]);
+  }, [userContent, selectedTemplateId, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
 
   // --- Output Interactions ---
 
@@ -377,6 +404,8 @@ const App: React.FC = () => {
                 showToastMessage('Validation syntax payload loaded against scope.');
               }}
               onDeleteTemplate={handleDeleteTemplate}
+              selectedModifiers={selectedModifiers}
+              onModifierChange={handleModifierChange}
             />
 
             <OutputCard
