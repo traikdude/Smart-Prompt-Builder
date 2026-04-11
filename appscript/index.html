@@ -1736,7 +1736,48 @@ Strikethrough Alphabet:
 A̶ B̶ C̶ D̶ E̶ F̶ G̶ H̶ I̶ J̶ K̶ L̶ M̶ N̶ O̶ P̶ Q̶ R̶ S̶ T̶ U̶ V̶ W̶ X̶ Y̶ Z̶
 a̶ b̶ c̶ d̶ e̶ f̶ g̶ h̶ i̶ j̶ k̶ l̶ m̶ n̶ o̶ p̶ q̶ r̶ s̶ t̶ u̶ v̶ w̶ x̶ y̶ z̶
 
-Apply the strikethrough formatting to the following text:`}],TM=[],_M=[],Gd=[{id:"font",label:"Font Style",emoji:"🔤",color:"pink",bgClass:"bg-pink-500/15",textClass:"text-pink-400",borderClass:"border-pink-500/30",glowClass:"shadow-[0_0_12px_rgba(255,107,157,0.25)]",modifiers:vM},{id:"emoji",label:"Emoji",emoji:"😀",color:"amber",bgClass:"bg-amber-500/15",textClass:"text-amber-400",borderClass:"border-amber-500/30",glowClass:"shadow-[0_0_12px_rgba(251,191,36,0.25)]",modifiers:TM},{id:"ascii",label:"ASCII Art",emoji:"⌨️",color:"cyan",bgClass:"bg-cyan-500/15",textClass:"text-cyan-400",borderClass:"border-cyan-500/30",glowClass:"shadow-[0_0_12px_rgba(34,211,238,0.25)]",modifiers:_M}],AM=({category:e,selectedId:t,onSelect:n})=>{const[a,o]=Re.useState(!1),l=Re.useRef(null),u=e.modifiers.find(m=>m.id===t),p=e.modifiers.length>0;return Re.useEffect(()=>{const m=f=>{l.current&&!l.current.contains(f.target)&&o(!1)};return a&&document.addEventListener("mousedown",m),()=>document.removeEventListener("mousedown",m)},[a]),L.jsxs("div",{ref:l,className:"relative",children:[L.jsxs("button",{onClick:()=>p&&o(!a),className:`
+Apply the strikethrough formatting to the following text:`},{id:"white-circle",name:"White Circle",description:"Converts letters into circled Unicode characters (Ⓐ Ⓑ Ⓒ)",emoji:"Ⓐ",prompt:`You are a Text Formatting Assistant specializing in converting standard text into circled letter formats. Your role is to help users understand and implement this distinct character style effectively in various contexts.
+
+UNDERSTANDING THE ALPHABET:
+
+This specialized alphabet represents each letter within a distinct circular enclosure, creating a visually appealing and easily distinguishable style. These characters are often used to draw attention, provide emphasis, or differentiate specific text elements within a larger body of content.
+
+Design Characteristics and Technical Elements:
+Each character in this system features several distinctive elements:
+- Each letter is enclosed within a consistent circular border.
+- Characters maintain uniform size and weight.
+- The circular enclosure creates clear visual separation.
+- Letters remain highly legible within their circular borders.
+
+CHARACTER REFERENCE:
+
+A → Ⓐ, B → Ⓑ, C → Ⓒ, D → Ⓓ, E → Ⓔ, F → Ⓕ, G → Ⓖ, H → Ⓗ, I → Ⓘ, J → Ⓙ, K → Ⓚ, L → Ⓛ, M → Ⓜ, N → Ⓝ, O → Ⓞ, P → Ⓟ, Q → Ⓠ, R → Ⓡ, S → Ⓢ, T → Ⓣ, U → Ⓤ, V → Ⓥ, W → Ⓦ, X → Ⓧ, Y → Ⓨ, Z → Ⓩ
+
+IMPLEMENTATION GUIDELINES:
+1. Maintain consistent spacing between circled characters.
+2. Ensure proper alignment with surrounding text.
+3. Verify clarity in both digital and print formats.
+4. Maintain readability and avoid overuse.
+5. Verify proper rendering across platforms and devices.
+
+EXAMPLE APPLICATIONS:
+
+Educational Example:
+- Standard: "Step 1: Gather Materials"
+- Circled: "ⓈⓉⒺⓅ ①: ⒼⒶⓉⒽⒺⓇ ⓂⒶⓉⒺⓇⒾⒶⓁⓈ"
+
+Marketing Example:
+- Standard: "New! Limited Time Offer"
+- Circled: "ⓃⒺⓌ! ⓁⒾⓂⒾⓉⒺⒹ ⓉⒾⓂⒺ ⓄⒻⒻⒺⓇ"
+
+BEST PRACTICES:
+1. Use judiciously for emphasis and visual appeal.
+2. Maintain consistency throughout documents or projects.
+3. Consider the context and target audience.
+4. Ensure proper technical support and compatibility.
+5. Prioritize readability and accessibility in all applications.
+
+Apply the White Circle formatting to the following text:`}],TM=[],_M=[],Gd=[{id:"font",label:"Font Style",emoji:"🔤",color:"pink",bgClass:"bg-pink-500/15",textClass:"text-pink-400",borderClass:"border-pink-500/30",glowClass:"shadow-[0_0_12px_rgba(255,107,157,0.25)]",modifiers:vM},{id:"emoji",label:"Emoji",emoji:"😀",color:"amber",bgClass:"bg-amber-500/15",textClass:"text-amber-400",borderClass:"border-amber-500/30",glowClass:"shadow-[0_0_12px_rgba(251,191,36,0.25)]",modifiers:TM},{id:"ascii",label:"ASCII Art",emoji:"⌨️",color:"cyan",bgClass:"bg-cyan-500/15",textClass:"text-cyan-400",borderClass:"border-cyan-500/30",glowClass:"shadow-[0_0_12px_rgba(34,211,238,0.25)]",modifiers:_M}],AM=({category:e,selectedId:t,onSelect:n})=>{const[a,o]=Re.useState(!1),l=Re.useRef(null),u=e.modifiers.find(m=>m.id===t),p=e.modifiers.length>0;return Re.useEffect(()=>{const m=f=>{l.current&&!l.current.contains(f.target)&&o(!1)};return a&&document.addEventListener("mousedown",m),()=>document.removeEventListener("mousedown",m)},[a]),L.jsxs("div",{ref:l,className:"relative",children:[L.jsxs("button",{onClick:()=>p&&o(!a),className:`
           flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
           border transition-all duration-300 group relative overflow-hidden
           ${t?`${e.bgClass} ${e.textClass} ${e.borderClass} ${e.glowClass}`:`bg-slate-800/60 text-slate-400 border-slate-700 ${p?"hover:border-slate-600 hover:text-slate-300 cursor-pointer":"opacity-40 cursor-not-allowed"}`}
