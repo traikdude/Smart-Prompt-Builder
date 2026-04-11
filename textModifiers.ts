@@ -1098,7 +1098,59 @@ Apply the Black Circle formatting to the following text:`
 // ═══════════════════════════════════════════
 
 const EMOJI_MODIFIERS: TextModifier[] = [
-  // Placeholder — user will provide emoji prompts
+  {
+    id: 'emoji-numbers-enhancer',
+    name: 'Emoji & Numbers Enhancer',
+    description: 'Converts digits to emoji numbers and adds contextual emojis throughout text',
+    emoji: '🔢',
+    prompt: `You are an Enhanced Text and Numeric Conversion Assistant. Your task is to transform ordinary text into a visually enhanced format through strategic emoji insertion and numeric/special character conversion. The process preserves the original meaning and structure while adding visual elements that improve engagement.
+
+KEY CONVERSION RULES:
+
+1. NUMERIC DIGIT TRANSFORMATION:
+Convert each individual numeric digit to its emoji equivalent:
+0 → 0️⃣, 1 → 1️⃣, 2 → 2️⃣, 3 → 3️⃣, 4 → 4️⃣, 5 → 5️⃣, 6 → 6️⃣, 7 → 7️⃣, 8 → 8️⃣, 9 → 9️⃣
+Convert each digit individually, not entire numbers. "123" becomes "1️⃣2️⃣3️⃣".
+
+2. SPECIAL CHARACTER CONVERSION:
+$ → 💲, ! → ❗, ? → ❓, & → ➕, @ → 📧, % → 💯, # → #⃣, * → ✨, + → ➕, - → ➖
+Word replacements: back → 🔙, on → 🔛, end → 🔚, top → 🔝, soon → 🔜, new → 🆕, ok → 🆗, free → 🆓, up → 🆙, cool → 🆒, off → 📴
+
+3. EMOJI ADDITION:
+- Add between 4 (minimum) and 25 (maximum) diverse emojis throughout the text
+- Never use the same emoji more than once
+- Distribute emojis naturally throughout the ENTIRE text, not just at ends of sentences
+- Retain any emojis already in the original text
+- Select emojis that complement the context and tone
+
+4. CONTENT PRESERVATION:
+- All words must remain unchanged — no rephrasing
+- Preserve all formatting: capitalization, spacing, line breaks, paragraph structure
+- Keep existing emojis intact
+
+EXAMPLE CONVERSIONS:
+
+Original: "I have 3 apples and 25 oranges."
+Converted: "I have 3️⃣ apples and 2️⃣5️⃣ oranges. 🍎 🍊 🥭 🧺"
+
+Original: "100% satisfaction guaranteed! Have questions?"
+Converted: "1️⃣0️⃣0️⃣💯 satisfaction guaranteed❗ Have questions❓ 👍 🌟 ✅ 🔍"
+
+Original: "Hey big bro just touching base with you Wanted to know if calling you around 7 or 8 would be appropriate"
+Converted: "Hey big bro 👋 just touching base with you 🌟 Wanted to know 💭 if calling you around 7️⃣ or 8️⃣ would be appropriate 📱 please let me know 🙏 whenever you get the chance ⏰"
+
+STEP-BY-STEP PROCESS:
+1. Scan text for numeric digits and special characters
+2. Replace each according to conversion maps
+3. Select diverse, contextually appropriate emojis
+4. Distribute new emojis naturally throughout the text
+5. Verify preservation of all original text and structure
+6. Present converted text in plain format (no code blocks)
+
+REMEMBER: Emojis must be spread WITHIN the text, not just at the end of sentences.
+
+Apply the Emoji & Numbers enhancement to the following text:`
+  },
 ];
 
 // ═══════════════════════════════════════════
