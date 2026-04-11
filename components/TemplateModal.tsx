@@ -37,16 +37,16 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSave }
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#05050A]/80 backdrop-blur-md"
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-xl shadow-xl w-[95%] sm:w-full max-w-lg p-5 sm:p-6 animate-fade-in-up max-h-[90vh] overflow-y-auto"
+        className="bg-slate-900 border border-slate-700 rounded-xl shadow-[0_0_30px_rgba(34,211,238,0.2)] w-[95%] sm:w-full max-w-lg p-5 sm:p-6 animate-fade-in-up max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Create Custom Template</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+        <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+          <h2 className="text-xl font-bold text-cyan-400 font-mono tracking-wide">INITIALIZE PROTOCOL</h2>
+          <button onClick={onClose} className="text-slate-500 hover:text-cyan-400">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -54,45 +54,45 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSave }
         </div>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+          <div className="mb-4 p-3 bg-red-900/30 text-red-400 text-sm rounded-lg border border-red-500/30">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Template Name</label>
+            <label className="block text-sm font-semibold text-slate-300 mb-1">Protocol Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none text-base"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none text-base text-slate-200 placeholder-slate-500"
               placeholder="e.g., My SEO Template"
               autoFocus
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Description (Optional)</label>
+            <label className="block text-sm font-semibold text-slate-300 mb-1">Description (Optional)</label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none text-base"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none text-base text-slate-200 placeholder-slate-500"
               placeholder="Short description of what this does"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Template Content</label>
-            <p className="text-xs text-gray-500 mb-2">
-              Use <code>{`{{content}}`}</code> to indicate where your input text should be placed.
+            <label className="block text-sm font-semibold text-slate-300 mb-1">Protocol Directives</label>
+            <p className="text-xs text-slate-400 mb-2">
+              Use <code className="text-amber-400 bg-slate-800 px-1 py-0.5 rounded border border-slate-700/50 font-mono">{`{{content}}`}</code> to indicate where input payload goes.
             </p>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none font-mono text-sm sm:text-sm text-[16px]"
-              placeholder="Example: Rewrite this text: {{content}}"
+              className="w-full h-32 px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none resize-none font-mono text-sm sm:text-sm text-[16px] text-slate-200 placeholder-slate-500"
+              placeholder="Example: SYSTEM OVERRIDE: {{content}}"
             />
           </div>
 
@@ -100,15 +100,15 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSave }
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              className="px-4 py-2 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition-colors font-semibold uppercase tracking-wide text-sm"
             >
-              Cancel
+              Abort
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-md transition-all"
+              className="px-4 py-2 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-mono font-bold rounded-lg hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all uppercase tracking-widest text-sm"
             >
-              Save Template
+              Commit Protocol
             </button>
           </div>
         </form>

@@ -345,8 +345,8 @@ const App: React.FC = () => {
     <div className="min-h-screen relative flex flex-col md:flex-row">
       <button 
         onClick={() => setIsSidebarOpen(true)}
-        className={`fixed top-3 right-3 sm:top-4 sm:right-4 z-30 p-2.5 bg-white/80 backdrop-blur rounded-full shadow-md text-gray-600 hover:text-purple-600 hover:scale-110 transition-all active:scale-95 ${isSidebarOpen ? 'hidden' : 'block'}`}
-        title="Recent Prompts"
+        className={`fixed top-3 right-3 sm:top-4 sm:right-4 z-30 p-2.5 bg-slate-900/80 backdrop-blur rounded-full shadow-[0_0_15px_rgba(34,211,238,0.2)] border border-slate-700 text-slate-400 hover:text-cyan-400 hover:border-cyan-500 hover:scale-110 transition-all active:scale-95 ${isSidebarOpen ? 'hidden' : 'block'}`}
+        title="Protocol Matrix"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

@@ -28,21 +28,21 @@ const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExp
   if (!content) return null;
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-0 overflow-hidden animate-fade-in-up mb-24 relative">
+    <div className="glass-panel rounded-2xl p-0 overflow-hidden animate-fade-in-up mb-24 relative">
       {/* Top Accent Line */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-[#6B7BFF] via-[#FF6B9D] to-[#FF8E53]"></div>
+      <div className="h-1 w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 animate-pulse"></div>
       
       <div className="p-4 sm:p-6 md:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h2 className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-3">
             <span className="text-xl sm:text-2xl">📋</span> 
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600">Generated Prompt</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-200 to-slate-400 font-mono tracking-widest uppercase text-sm sm:text-base">OUTPUT PAYLOAD</span>
           </h2>
           
           <div className="flex flex-wrap gap-2 justify-end">
             <button
               onClick={onClear}
-              className="px-3 py-2 text-sm font-bold text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="px-3 py-2 text-sm font-bold text-slate-400 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-colors border border-transparent hover:border-red-500/30"
             >
               Clear
             </button>
@@ -51,7 +51,7 @@ const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExp
             <div className="relative">
                <button
                  onClick={() => setShowFontMenu(!showFontMenu)}
-                 className="flex items-center justify-center h-10 px-3 gap-2 bg-gray-50 hover:bg-[#FCE7F3] hover:text-[#FF6B9D] border border-gray-200 hover:border-[#FBCFE8] text-gray-600 rounded-xl transition-all font-medium text-sm"
+                 className="flex items-center justify-center h-10 px-3 gap-2 bg-slate-800 hover:bg-slate-700 hover:text-cyan-400 border border-slate-700 hover:border-cyan-500 text-slate-300 rounded-xl transition-all font-medium text-sm shadow-sm"
                  title="Change Font"
                >
                  <span className="text-lg">Aa</span>
@@ -60,18 +60,18 @@ const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExp
                  </svg>
                </button>
                {showFontMenu && (
-                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 z-20 border border-gray-100 ring-1 ring-black ring-opacity-5">
-                   <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Select Typography</div>
+                 <div className="absolute right-0 mt-2 w-48 bg-slate-900 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.15)] py-2 z-20 border border-slate-700 ring-1 ring-black ring-opacity-5">
+                   <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Select Typography</div>
                    {FONTS.map(font => (
                      <button
                         key={font.value}
                         onClick={() => { setCurrentFont(font); setShowFontMenu(false); }}
-                        className={`flex items-center w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors ${currentFont.value === font.value ? 'text-[#FF6B9D] bg-pink-50' : 'text-gray-700'}`}
+                        className={`flex items-center w-full text-left px-4 py-2.5 text-sm hover:bg-slate-800 transition-colors ${currentFont.value === font.value ? 'text-cyan-400 bg-cyan-900/20' : 'text-slate-300'}`}
                         style={{ fontFamily: font.family }}
                      >
                        {font.name}
                        {currentFont.value === font.value && (
-                         <span className="ml-auto text-[#FF6B9D]">✓</span>
+                         <span className="ml-auto text-cyan-400">✓</span>
                        )}
                      </button>
                    ))}
@@ -84,7 +84,7 @@ const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExp
             <div className="relative">
               <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
-                className="flex items-center justify-center w-10 h-10 bg-gray-50 hover:bg-[#E0F2FE] hover:text-[#0284C7] border border-gray-200 hover:border-[#BAE6FD] text-gray-600 rounded-xl transition-all"
+                className="flex items-center justify-center w-10 h-10 bg-slate-800 hover:bg-slate-700 hover:text-purple-400 border border-slate-700 hover:border-purple-500 text-slate-300 rounded-xl transition-all shadow-sm"
                 title="Save to file"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -92,19 +92,19 @@ const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExp
                 </svg>
               </button>
               {showExportMenu && (
-                 <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl py-2 z-20 border border-gray-100 ring-1 ring-black ring-opacity-5">
-                   <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Export As</div>
+                 <div className="absolute right-0 mt-2 w-40 bg-slate-900 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.15)] py-2 z-20 border border-slate-700 ring-1 ring-black ring-opacity-5">
+                   <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Export As</div>
                    <button
                       onClick={() => { onExport('txt'); setShowExportMenu(false); }}
-                      className="flex items-center w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#6B7BFF] transition-colors"
+                      className="flex items-center w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors"
                    >
-                     <span className="w-6 text-center mr-2 font-mono text-xs border border-gray-200 rounded bg-gray-50">TXT</span> Text File
+                     <span className="w-6 text-center mr-2 font-mono text-xs border border-slate-700 rounded bg-slate-800 text-slate-400">TXT</span> Text File
                    </button>
                    <button
                       onClick={() => { onExport('md'); setShowExportMenu(false); }}
-                      className="flex items-center w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#FF6B9D] transition-colors"
+                      className="flex items-center w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-purple-400 transition-colors"
                    >
-                     <span className="w-6 text-center mr-2 font-mono text-xs border border-gray-200 rounded bg-gray-50">MD</span> Markdown
+                     <span className="w-6 text-center mr-2 font-mono text-xs border border-slate-700 rounded bg-slate-800 text-slate-400">MD</span> Markdown
                    </button>
                  </div>
               )}
@@ -118,7 +118,7 @@ const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExp
 
             <button
               onClick={onCopy}
-              className="flex items-center gap-2 px-4 sm:px-5 py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-sm sm:text-base"
+              className="flex items-center gap-2 px-4 sm:px-5 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-xl shadow-[0_0_10px_rgba(34,211,238,0.1)] hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-all transform hover:-translate-y-0.5 text-sm sm:text-base font-mono uppercase tracking-wide font-bold"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
@@ -128,9 +128,9 @@ const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExp
           </div>
         </div>
         
-        <div className="bg-[#f8fafc] rounded-xl border border-gray-200 p-4 sm:p-6 max-h-[600px] overflow-y-auto shadow-inner transition-all duration-300">
+        <div className="bg-slate-900/80 rounded-xl border border-slate-700 p-4 sm:p-6 max-h-[600px] overflow-y-auto shadow-inner transition-all duration-300">
           <div 
-            className="prose prose-sm sm:prose-base max-w-none prose-headings:font-bold prose-h1:text-[#6B7BFF] prose-h2:text-[#FF6B9D] prose-h3:text-[#FF8E53] prose-a:text-[#6B7BFF] prose-strong:text-gray-900 prose-code:text-[#FF3D7F] prose-pre:bg-[#1e1e1e] prose-pre:shadow-lg prose-pre:rounded-xl"
+            className="prose prose-sm sm:prose-base max-w-none text-slate-300 prose-headings:font-bold prose-headings:text-slate-200 prose-h1:text-cyan-400 prose-h2:text-purple-400 prose-h3:text-amber-500 prose-a:text-cyan-400 prose-strong:text-slate-200 prose-code:text-amber-400 prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-slate-700/50 prose-pre:shadow-lg prose-pre:rounded-xl"
             style={{ fontFamily: currentFont.family }}
           >
             <ReactMarkdown
@@ -148,7 +148,7 @@ const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExp
                       customStyle={{ margin: 0, padding: '1rem', borderRadius: '0.75rem', fontSize: '0.85rem', fontFamily: "'Fira Code', monospace" }}
                     />
                   ) : (
-                    <code {...rest} className={`${className} bg-pink-50 text-[#FF3D7F] px-1.5 py-0.5 rounded border border-pink-100 text-sm font-mono`}>
+                    <code {...rest} className={`${className} bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded border border-slate-700/50 text-sm font-mono`}>
                       {children}
                     </code>
                   );

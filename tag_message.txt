@@ -1,0 +1,9 @@
+Release v2.0.0: Google Apps Script Migration Finalized
+
+📅 Release Date: Saturday, April 11, 2026 at 05:47 PM EDT
+🏷️ Tag: smart-prompt-builder-v2.0.0
+📦 Commit: c3b0a9f
+📄 Files: smart-prompt-builder-v2.0.0.zip
+
+## Summary
+Complete architectural migration from standard React hosting to Google Apps Script (via Clasp). Features Vite single-file deployment and native Google Sheets backend synchronization utilizing the React google.script.run bridge.
