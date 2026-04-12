@@ -13,7 +13,7 @@ export interface TextModifier {
 }
 
 export interface ModifierCategory {
-  id: 'font' | 'emoji' | 'ascii' | 'xml' | 'infographic';
+  id: 'font' | 'emoji' | 'ascii' | 'xml' | 'infographic' | 'slideshow';
   label: string;
   emoji: string;
   color: string;        // Tailwind color prefix (e.g., 'pink', 'amber')
@@ -1503,8 +1503,152 @@ Output ONLY the final injected image generation prompt text.`
 ];
 
 // ═══════════════════════════════════════════
+// 🎞️ SLIDESHOW STYLES
+// ═══════════════════════════════════════════
+
+const SLIDESHOW_MODIFIERS: TextModifier[] = [
+  {
+    id: 'slide-design-concept',
+    name: 'Design Concept Presentation',
+    description: 'A presentation communicating design directions and decisions.',
+    emoji: '🎨',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: DESIGN CONCEPT PRESENTATION]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Create a presentation deck communicating the design concepts in this source. 
+Open with a mood/vision slide establishing the aesthetic direction. 
+Then one slide per major design decision: what was chosen, why, and what alternatives were considered. 
+Close with a "Where This Goes" slide. 
+Clean, gallery-style layout with generous white space.`
+  },
+  {
+    id: 'slide-framework-explainer',
+    name: 'Framework Explainer Deck',
+    description: 'Explains conceptual frameworks to a non-specialist audience.',
+    emoji: '🧩',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: FRAMEWORK EXPLAINER]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Build a slide deck explaining the conceptual framework or theory in this material to an intelligent but non-specialist audience. 
+Start with the problem the framework addresses. 
+Then introduce each core component one slide at a time. 
+Close with real-world applications and a limitations slide. 
+Educational tone, clear diagrams, minimal jargon.`
+  },
+  {
+    id: 'slide-research-deep-dive',
+    name: 'Research Deep-Dive Deck',
+    description: 'Data-driven, academic research briefing deck.',
+    emoji: '🔬',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: RESEARCH DEEP-DIVE]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Create a structured research briefing deck from this material.
+Slides: (1) Research question & context, (2) Key findings by theme, (3) Evidence quality & caveats, (4) What this changes or confirms, (5) Open questions & next directions. 
+Data-driven, academic yet readable.`
+  },
+  {
+    id: 'slide-brainstorm',
+    name: 'Brainstorm Synthesis Deck',
+    description: 'A synthesis deck mapping out brainstormed ideas.',
+    emoji: '💡',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: BRAINSTORM SYNTHESIS]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Build a synthesis deck from this brainstorm material. 
+First slide: the challenge or opportunity being explored. 
+Middle slides: idea clusters organized by theme, each with 2-3 standout concepts highlighted. 
+Final slides: top ideas ranked by potential + feasibility and suggested next exploration steps. 
+Energetic but focused visual style.`
+  },
+  {
+    id: 'slide-project-vision',
+    name: 'Project Vision & Scope Deck',
+    description: 'A structured project overview capturing scope and stakeholders.',
+    emoji: '🔭',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: PROJECT VISION & SCOPE]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Create a project overview deck that captures the bigger picture. 
+Include: vision statement, strategic rationale, scope definition (in/out of scope), key stakeholders, major milestones (not task lists), risks and assumptions, and success definition. 
+Executive-ready design, clean and authoritative.`
+  },
+  {
+    id: 'slide-task-detailed',
+    name: 'One Task Per Slide',
+    description: 'A detailed slide deck where each task gets its own slide.',
+    emoji: '📋',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: DETAILED TASK DECK]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Create a detailed slide deck where each task gets its own slide. 
+Slide structure: task title as header, subtasks as numbered list with status indicators, progress bar showing completion, and any notes or deadlines. 
+Include a title slide summarizing all tasks and a final summary slide with overall progress. 
+Clean white background, professional typography.`
+  },
+  {
+    id: 'slide-task-walkthrough',
+    name: 'Task Walkthrough Slides',
+    description: 'Presenter-style slides walking through each task sequentially.',
+    emoji: '🎤',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: PRESENTER TASK WALKTHROUGH]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Create presenter-style slides walking through each task sequentially. 
+One task per slide with only the task name and 3-4 key talking points from subtasks. 
+Minimal text, large bold headings. 
+Include a visual icon or metaphor for each task category. 
+Clean, TED-talk style design.`
+  },
+  {
+    id: 'slide-status-report',
+    name: 'Project Status Report Deck',
+    description: 'A status report covering overall progress and task execution.',
+    emoji: '📈',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: PROJECT STATUS REPORT]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Create a status report slide deck. 
+Start with executive summary slide showing overall progress. 
+Then one slide per project/category grouping related tasks. 
+Each slide shows task names, completion percentages, blockers, and next actions. 
+End with a timeline slide showing upcoming deadlines. Professional business style.`
+  },
+  {
+    id: 'slide-drill-down',
+    name: 'Task Drill-Down Deck',
+    description: 'Pairs of slides connecting high-level overviews to nested tasks.',
+    emoji: '🔽',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: TASK DRILL-DOWN DECK]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Create a drill-down slide deck. 
+First slide shows all tasks as high-level cards. 
+Then each subsequent pair of slides shows: (1) the task overview and (2) the detailed subtask breakdown with individual statuses. 
+Include transition text connecting each task to the next. 
+White background, black text, accent color for status.`
+  },
+  {
+    id: 'slide-kanban-board',
+    name: 'Visual Task Board Deck',
+    description: 'Slides designed to resemble an immersive Kanban board.',
+    emoji: '🗂️',
+    prompt: `[SLIDESHOW BLUEPRINT DIRECTIVE: VISUAL TASK KANBAN]
+Your goal is to output a text-only blueprint for a presentation deck.
+Formatting rules (Do not generate actual graphics, output text layout only):
+Design slides that resemble a Kanban board. 
+Group tasks by status columns: To Do, In Progress, Done. 
+Each task appears as a card with subtask count. 
+One slide per project or category. 
+Include swimlanes if tasks have different owners. 
+Sleek design with subtle card shadows.`
+  }
+];
+
+// ═══════════════════════════════════════════
 // CATEGORY DEFINITIONS
 // ═══════════════════════════════════════════
+
 
 export const MODIFIER_CATEGORIES: ModifierCategory[] = [
   {
@@ -1561,5 +1705,16 @@ export const MODIFIER_CATEGORIES: ModifierCategory[] = [
     borderClass: 'border-indigo-500/30',
     glowClass: 'shadow-[0_0_12px_rgba(99,102,241,0.25)]',
     modifiers: INFOGRAPHIC_MODIFIERS,
+  },
+  {
+    id: 'slideshow',
+    label: 'Slideshows',
+    emoji: '🎞️',
+    color: 'sky',
+    bgClass: 'bg-sky-500/15',
+    textClass: 'text-sky-400',
+    borderClass: 'border-sky-500/30',
+    glowClass: 'shadow-[0_0_12px_rgba(14,165,233,0.25)]',
+    modifiers: SLIDESHOW_MODIFIERS,
   },
 ];

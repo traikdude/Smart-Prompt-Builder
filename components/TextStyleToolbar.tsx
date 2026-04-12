@@ -8,11 +8,12 @@ export interface SelectedModifiers {
   ascii: string | null;
   xml: string[];
   infographic?: string | null;
+  slideshow?: string | null;
 }
 
 interface TextStyleToolbarProps {
   selectedModifiers: SelectedModifiers;
-  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii' | 'xml' | 'infographic', modifierId: string | string[] | null) => void;
+  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii' | 'xml' | 'infographic' | 'slideshow', modifierId: string | string[] | null) => void;
   onInsertTag?: (tag: string) => void;
 }
 
@@ -376,7 +377,8 @@ const TextStyleToolbar: React.FC<TextStyleToolbarProps> = ({ selectedModifiers, 
     selectedModifiers.font, 
     selectedModifiers.emoji, 
     selectedModifiers.ascii,
-    selectedModifiers.infographic
+    selectedModifiers.infographic,
+    selectedModifiers.slideshow
   ].filter(Boolean).length + (selectedModifiers.xml?.length || 0);
 
   return (

@@ -26,7 +26,7 @@ interface PromptFormProps {
   onLoadSyntaxTest: () => void;
   onDeleteTemplate?: (id: string) => void;
   selectedModifiers: SelectedModifiers;
-  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii' | 'xml', modifierId: string | null) => void;
+  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii' | 'xml' | 'infographic' | 'slideshow', modifierId: string | string[] | null) => void;
   selectedEngineSource: string;
   onEngineSourceChange: (sourceId: string) => void;
   selectedEngineFormats: string[];
