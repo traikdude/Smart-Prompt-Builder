@@ -457,8 +457,8 @@ const App: React.FC = () => {
           'thinking': 'gemini-2.5-pro'
         },
         '3.1': {
-          'fast': 'gemini-3.1-flash',
-          'smart': 'gemini-3.1-flash',
+          'fast': 'gemini-3-flash',
+          'smart': 'gemini-3-flash',
           'thinking': 'gemini-3.1-pro'
         }
       };
@@ -640,7 +640,7 @@ const App: React.FC = () => {
       };
 
       const response = await ai.models.generateContent({
-        model: modelFamily === '3.1' ? 'gemini-3.1-flash' : 'gemini-2.5-flash',
+        model: modelFamily === '3.1' ? 'gemini-3-flash' : 'gemini-2.5-flash',
         contents: `${promptMap[action]}\n\n[TEXT_TO_${action.toUpperCase()}]\n${userContent}\n[/TEXT_TO_${action.toUpperCase()}]`,
       });
 
