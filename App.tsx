@@ -12,7 +12,7 @@ import Sidebar from './components/Sidebar';
 import TemplateModal from './components/TemplateModal';
 
 // Types & Constants
-import { TEMPLATES as DEFAULT_TEMPLATES } from './constants';
+import { TEMPLATES as DEFAULT_TEMPLATES, FORMAT_STYLES } from './constants';
 import { ToastState, PromptTemplate, RecentPrompt } from './types';
 import { MODIFIER_CATEGORIES } from './textModifiers';
 import { SelectedModifiers } from './components/TextStyleToolbar';
@@ -33,6 +33,7 @@ const App: React.FC = () => {
   // --- State Management ---
   const [templates, setTemplates] = useState<PromptTemplate[]>(DEFAULT_TEMPLATES);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(DEFAULT_TEMPLATES[0].id);
+  const [selectedFormatId, setSelectedFormatId] = useState<string>('none');
   const [userContent, setUserContent] = useState<string>('');
   const [includeExamples, setIncludeExamples] = useState<boolean>(false);
   const [charLimit, setCharLimit] = useState<number | null>(null);
@@ -214,6 +215,14 @@ const App: React.FC = () => {
         // Inject text style modifiers
         finalPrompt += getModifierPromptText();
 
+        // Inject format style override if selected (The Lens)
+        if (selectedFormatId && selectedFormatId !== 'none') {
+          const formatStyle = FORMAT_STYLES.find(f => f.id === selectedFormatId);
+          if (formatStyle) {
+            finalPrompt += `\n\n[CRITICAL PRESENTATION REQUIREMENT — STRUCTURAL FORMAT OVERRIDE]\nIMPORTANT: Regardless of any formatting conventions implied or suggested within the primary directives above, you are strictly required to adhere to the following structural format when composing and delivering your final output. Do not deviate from this presentation architecture under any circumstances.\n\n${formatStyle.content}`;
+          }
+        }
+
         setGeneratedPrompt(finalPrompt);
         saveToHistory(template, userContent, finalPrompt);
         triggerCelebration(); 
@@ -225,7 +234,7 @@ const App: React.FC = () => {
         setIsLoading(false);
       }
     }, 400); 
-  }, [selectedTemplateId, userContent, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
+  }, [selectedTemplateId, selectedFormatId, userContent, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
 
   /**
    * Delegates prompt expansion to Gemini AI capabilities
@@ -266,6 +275,14 @@ const App: React.FC = () => {
       if (charLimit) promptText += `\nRequirement: Target length is approximately ${charLimit} characters.`;
       promptText += getModifierPromptText();
 
+      // Inject format style override if selected (The Lens)
+      if (selectedFormatId && selectedFormatId !== 'none') {
+        const formatStyle = FORMAT_STYLES.find(f => f.id === selectedFormatId);
+        if (formatStyle) {
+          promptText += `\n\n[CRITICAL PRESENTATION REQUIREMENT — STRUCTURAL FORMAT OVERRIDE]\nIMPORTANT: Regardless of any formatting conventions implied or suggested within the primary directives above, you are strictly required to adhere to the following structural format when composing and delivering your final output. Do not deviate from this presentation architecture under any circumstances.\n\n${formatStyle.content}`;
+        }
+      }
+
       const response = await ai.models.generateContent({
         model,
         contents: promptText,
@@ -286,7 +303,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [userContent, selectedTemplateId, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
+  }, [userContent, selectedTemplateId, selectedFormatId, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
 
   // --- Output Interactions ---
 
@@ -387,10 +404,12 @@ const App: React.FC = () => {
             <PromptForm
               templates={templates}
               selectedTemplateId={selectedTemplateId}
+              selectedFormatId={selectedFormatId}
               userContent={userContent}
               includeExamples={includeExamples}
               charLimit={charLimit}
               onTemplateChange={(e) => setSelectedTemplateId(e.target.value)}
+              onFormatChange={(e) => setSelectedFormatId(e.target.value)}
               onContentChange={(e) => setUserContent(e.target.value)}
               onExamplesChange={(e) => setIncludeExamples(e.target.checked)}
               onCharLimitChange={setCharLimit}

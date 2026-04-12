@@ -1,15 +1,17 @@
 import React from 'react';
 import { PromptTemplate, TemplateCategory } from '../types';
-import { CHAR_LIMIT_OPTIONS } from '../constants';
+import { CHAR_LIMIT_OPTIONS, FORMAT_STYLES } from '../constants';
 import TextStyleToolbar, { SelectedModifiers } from './TextStyleToolbar';
 
 interface PromptFormProps {
   templates: PromptTemplate[];
   selectedTemplateId: string;
+  selectedFormatId: string;
   userContent: string;
   includeExamples: boolean;
   charLimit?: number | null;
   onTemplateChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onFormatChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onContentChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onExamplesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCharLimitChange?: (limit: number | null) => void;
@@ -36,10 +38,12 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 const PromptForm: React.FC<PromptFormProps> = ({
   templates,
   selectedTemplateId,
+  selectedFormatId,
   userContent,
   includeExamples,
   charLimit,
   onTemplateChange,
+  onFormatChange,
   onContentChange,
   onExamplesChange,
   onCharLimitChange,
@@ -65,60 +69,92 @@ const PromptForm: React.FC<PromptFormProps> = ({
       {/* 🌈 Animated rainbow top bar */}
       <div className="rainbow-bar absolute top-0 left-0 w-full"></div>
 
-      {/* Template Selector */}
-      <div className="mb-6 sm:mb-8 relative z-10">
-        <div className="flex justify-between items-center mb-3">
-          <label htmlFor="template" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2">
-            SELECT TEMPLATE <span className="text-xl animate-bounce">⚡</span>
-          </label>
-          <button
-            onClick={onNewTemplate}
-            className="text-[10px] sm:text-xs font-bold text-purple-400 hover:text-white hover:bg-purple-500 flex items-center gap-1 bg-purple-500/15 border border-purple-500/30 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-            NEW
-          </button>
+      {/* Dual Axis Selectors: Template & Formatting */}
+      <div className="mb-6 sm:mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 relative z-10">
+        
+        {/* The Engine: Template Selector */}
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <label htmlFor="template" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2">
+              THE ENGINE <span className="text-xl animate-bounce">⚡</span>
+            </label>
+            <button
+              onClick={onNewTemplate}
+              className="text-[10px] sm:text-xs font-bold text-purple-400 hover:text-white hover:bg-purple-500 flex items-center gap-1 bg-purple-500/15 border border-purple-500/30 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+              NEW
+            </button>
+          </div>
+          <div className="flex gap-2 sm:gap-3">
+            <div className="relative flex-grow group">
+              <select
+                id="template"
+                value={selectedTemplateId}
+                onChange={onTemplateChange}
+                className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-purple-500/50 text-sm sm:text-base"
+              >
+                {templates.map(template => {
+                  const tCat = CATEGORY_COLORS[template.category || 'custom'] || CATEGORY_COLORS.custom;
+                  return (
+                    <option key={template.id} value={template.id}>
+                      {tCat.emoji} {template.isCustom ? `★ ${template.name}` : template.name}
+                    </option>
+                  );
+                })}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-purple-400 group-hover:scale-110 transition-transform">
+                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                </svg>
+              </div>
+            </div>
+            {currentTemplate?.isCustom && onDeleteTemplate && (
+              <button
+                onClick={() => {
+                  if(confirm('Are you sure you want to delete this template?')) {
+                    onDeleteTemplate(currentTemplate.id);
+                  }
+                }}
+                className="px-3 sm:px-4 bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all duration-300 border border-red-500/30 hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:rotate-3"
+                title="Delete Custom Template"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2 sm:gap-3">
+
+        {/* The Lens: Formatting Selector */}
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <label htmlFor="format" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2">
+               THE LENS <span className="text-xl animate-pulse">🎛️</span>
+            </label>
+          </div>
           <div className="relative flex-grow group">
             <select
-              id="template"
-              value={selectedTemplateId}
-              onChange={onTemplateChange}
-              className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-purple-500/50 text-sm sm:text-base"
+              id="format"
+              value={selectedFormatId}
+              onChange={onFormatChange}
+              className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-pink-500/50 text-sm sm:text-base"
             >
-              {templates.map(template => {
-                const tCat = CATEGORY_COLORS[template.category || 'custom'] || CATEGORY_COLORS.custom;
-                return (
-                  <option key={template.id} value={template.id}>
-                    {tCat.emoji} {template.isCustom ? `★ ${template.name}` : template.name}
-                  </option>
-                );
-              })}
+              {FORMAT_STYLES.map(format => (
+                <option key={format.id} value={format.id}>
+                  {format.id === 'none' ? '— ' : '🎨 '} {format.name}
+                </option>
+              ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-purple-400 group-hover:scale-110 transition-transform">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-pink-400 group-hover:scale-110 transition-transform">
               <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
               </svg>
             </div>
           </div>
-          {currentTemplate?.isCustom && onDeleteTemplate && (
-            <button
-              onClick={() => {
-                if(confirm('Are you sure you want to delete this template?')) {
-                  onDeleteTemplate(currentTemplate.id);
-                }
-              }}
-              className="px-3 sm:px-4 bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all duration-300 border border-red-500/30 hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:rotate-3"
-              title="Delete Custom Template"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </button>
-          )}
         </div>
       </div>
 
