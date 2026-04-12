@@ -44,9 +44,9 @@ const RESOURCE_GROUPS: ResourceGroup[] = [
     links: [
       {
         label: 'Google Sites',
-        url: 'https://script.google.com/macros/s/AKfycbz-AgkBYRkoskpfZVV2UV1Is86-kmrHBi8L55CN-gJ9CJ6UGdp0WV3wZp631ft8N909Rg/exec',
+        url: 'https://sites.google.com/view/smartpromptbuilder/home',
         icon: '🔗',
-        description: 'Embedded deployment for Google Sites',
+        description: 'Google Sites page hosting the Smart Prompt Builder',
         ariaLabel: 'Open the Google Sites deployment in a new tab',
       },
       {
