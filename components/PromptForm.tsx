@@ -30,6 +30,7 @@ interface PromptFormProps {
   onEngineSourceChange: (sourceId: string) => void;
   selectedEngineFormats: string[];
   onEngineFormatToggle: (formatId: string) => void;
+  onEngineFormatQuantityChange: (formatId: string, quantity: number) => void;
 }
 
 /** Color config for each category */
@@ -66,7 +67,8 @@ const PromptForm: React.FC<PromptFormProps> = ({
   selectedEngineSource,
   onEngineSourceChange,
   selectedEngineFormats,
-  onEngineFormatToggle
+  onEngineFormatToggle,
+  onEngineFormatQuantityChange
 }) => {
   const currentTemplate = templates.find(t => t.id === selectedTemplateId);
   const cat = CATEGORY_COLORS[currentTemplate?.category || 'custom'] || CATEGORY_COLORS.custom;
@@ -337,6 +339,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
         onSourceChange={onEngineSourceChange}
         selectedFormats={selectedEngineFormats}
         onFormatToggle={onEngineFormatToggle}
+        onFormatQuantityChange={onEngineFormatQuantityChange}
       />
 
       {/* 🌈 Generate Button — vibrant gradient */}

@@ -7,13 +7,15 @@ interface OutputConfiguratorProps {
   onSourceChange: (sourceId: string) => void;
   selectedFormats: string[];
   onFormatToggle: (formatId: string) => void;
+  onFormatQuantityChange: (formatId: string, quantity: number) => void;
 }
 
 export const OutputConfigurator: React.FC<OutputConfiguratorProps> = ({
   selectedSource,
   onSourceChange,
   selectedFormats,
-  onFormatToggle
+  onFormatToggle,
+  onFormatQuantityChange
 }) => {
   // State for which tab is currently active
   const [activeTabId, setActiveTabId] = useState<string>(OUTPUT_CATEGORIES[0].id);
@@ -157,52 +159,80 @@ export const OutputConfigurator: React.FC<OutputConfiguratorProps> = ({
                   <p className="text-xs text-slate-400 mb-4 pb-2 border-b border-white/5">{category.description}</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {category.options.map(option => {
-                      const isSelected = selectedFormats.includes(option.id);
+                      const count = selectedFormats.filter(id => id === option.id).length;
+                      const isSelected = count > 0;
                       return (
                         <div 
                           key={option.id}
-                          onClick={() => onFormatToggle(option.id)}
+                          onClick={() => {
+                            // If it's pure toggle (no quantity selected by user explicitly yet, just on/off)
+                            if (isSelected) {
+                              onFormatQuantityChange(option.id, 0); // turn off completely
+                            } else {
+                              onFormatQuantityChange(option.id, 1); // turn on to 1
+                            }
+                          }}
                           className={`
-                            group cursor-pointer rounded-lg border p-3 transition-all duration-200 flex items-start gap-3
+                            relative group cursor-pointer rounded-lg border p-3 transition-all duration-200 flex flex-col items-start gap-3
                             ${isSelected 
                               ? 'bg-indigo-500/10 border-indigo-500/40 shadow-[0_0_15px_rgba(99,102,241,0.15)]' 
                               : 'bg-slate-800/40 border-white/5 hover:border-white/10 hover:bg-slate-800/60'
                             }
                           `}
                         >
-                          <div className={`mt-0.5 flex items-center justify-center w-5 h-5 rounded flex-shrink-0 border transition-colors ${
-                            isSelected 
-                              ? 'bg-indigo-500 border-indigo-400 text-white' 
-                              : 'border-slate-600 bg-slate-900/50 text-transparent group-hover:border-slate-500'
-                          }`}>
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5 mb-1">
-                              <span>{option.icon}</span>
-                              <span className={`font-semibold text-sm truncate ${isSelected ? 'text-indigo-300' : 'text-slate-200'}`}>
-                                {option.name}
-                              </span>
+                          {/* Quantity Multiplier Quick-Action */}
+                          {isSelected && (!option.subOptions || option.subOptions.length === 0) && (
+                            <div className="absolute top-2 right-2 flex items-center gap-1 bg-slate-900 border border-indigo-500/30 rounded-md p-0.5" onClick={(e) => e.stopPropagation()}>
+                              <button 
+                                onClick={() => onFormatQuantityChange(option.id, count - 1)}
+                                className="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors"
+                              >
+                                −
+                              </button>
+                              <span className="text-xs font-mono font-bold text-indigo-300 w-3 text-center">{count}</span>
+                              <button 
+                                onClick={() => onFormatQuantityChange(option.id, count + 1)}
+                                className="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors"
+                              >
+                                +
+                              </button>
                             </div>
-                            <p className="text-xs text-slate-400 leading-snug">
-                              {option.description}
-                            </p>
-                            
-                            {/* Nested Sub-Options Array */}
-                            {isSelected && option.subOptions && option.subOptions.length > 0 && (
-                              <div className="mt-3 pt-3 border-t border-indigo-500/20 flex flex-wrap gap-2 animate-fade-in">
-                                {option.subOptions.map(sub => {
-                                  const isSubSelected = selectedFormats.includes(sub.id);
-                                  return (
+                          )}
+
+                          <div className="flex items-start gap-3 w-full">
+                            <div className={`mt-0.5 flex items-center justify-center w-5 h-5 rounded flex-shrink-0 border transition-colors ${
+                              isSelected 
+                                ? 'bg-indigo-500 border-indigo-400 text-white' 
+                                : 'border-slate-600 bg-slate-900/50 text-transparent group-hover:border-slate-500'
+                            }`}>
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                            <div className="flex-1 min-w-0 pr-12">
+                              <div className="flex items-center gap-1.5 mb-1">
+                                <span>{option.icon}</span>
+                                <span className={`font-semibold text-sm truncate ${isSelected ? 'text-indigo-300' : 'text-slate-200'}`}>
+                                  {option.name}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-400 leading-snug">
+                                {option.description}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {/* Nested Sub-Options Array */}
+                          {isSelected && option.subOptions && option.subOptions.length > 0 && (
+                            <div className="mt-1 pt-3 border-t border-indigo-500/20 w-full flex flex-col gap-2 animate-fade-in" onClick={(e) => e.stopPropagation()}>
+                              {option.subOptions.map(sub => {
+                                const subCount = selectedFormats.filter(id => id === sub.id).length;
+                                const isSubSelected = subCount > 0;
+                                return (
+                                  <div key={sub.id} className="flex items-center justify-between group/sub">
                                     <button
-                                      key={sub.id}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        onFormatToggle(sub.id);
-                                      }}
-                                      className={`text-[10px] sm:text-xs px-2.5 py-1 rounded-full font-medium transition-colors border ${
+                                      onClick={() => onFormatQuantityChange(sub.id, isSubSelected ? 0 : 1)}
+                                      className={`text-[10px] sm:text-xs px-2.5 py-1 rounded-full font-medium transition-colors border max-w-[70%] truncate ${
                                         isSubSelected
                                           ? 'bg-indigo-500 text-white border-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.4)]'
                                           : 'bg-slate-900/60 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-slate-300'
@@ -210,11 +240,30 @@ export const OutputConfigurator: React.FC<OutputConfiguratorProps> = ({
                                     >
                                       {sub.name}
                                     </button>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
+                                    
+                                    {/* Sub-option specific quantity controls */}
+                                    {isSubSelected && (
+                                      <div className="flex items-center gap-1 bg-slate-900 border border-indigo-500/30 rounded-md p-0.5 animate-fade-in">
+                                        <button 
+                                          onClick={() => onFormatQuantityChange(sub.id, subCount - 1)}
+                                          className="w-4 h-4 text-[10px] flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors"
+                                        >
+                                          −
+                                        </button>
+                                        <span className="text-[10px] font-mono font-bold text-indigo-300 w-3 text-center">{subCount}</span>
+                                        <button 
+                                          onClick={() => onFormatQuantityChange(sub.id, subCount + 1)}
+                                          className="w-4 h-4 text-[10px] flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors"
+                                        >
+                                          +
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
                       );
                     })}

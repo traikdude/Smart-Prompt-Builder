@@ -102,36 +102,57 @@ const App: React.FC = () => {
     );
   }, []);
 
+  const handleEngineFormatQuantityChange = useCallback((formatId: string, quantity: number) => {
+    setSelectedEngineFormats(prev => {
+      const withoutFormat = prev.filter(id => id !== formatId);
+      const newFormatArr = Array(Math.max(0, quantity)).fill(formatId);
+      return [...withoutFormat, ...newFormatArr];
+    });
+  }, []);
+
   /**
    * Resolves currently selected engine format IDs into their display labels and icons.
    * Includes sub-options with their parent label for clarity.
    */
   const resolveActiveEngineLabels = useCallback((): { id: string; label: string; icon: string; instruction: string }[] => {
     const labels: { id: string; label: string; icon: string; instruction: string }[] = [];
+    
+    // Calculate frequency map for exact duplicate limits
+    const optionCounts: Record<string, number> = {};
+    for (const id of selectedEngineFormats) {
+        optionCounts[id] = (optionCounts[id] || 0) + 1;
+    }
+
     for (const cat of OUTPUT_CATEGORIES) {
       for (const opt of cat.options) {
-        if (selectedEngineFormats.includes(opt.id)) {
+        if (optionCounts[opt.id] > 0 || (opt.subOptions && opt.subOptions.some(sub => optionCounts[sub.id] > 0))) {
           // Check if any sub-options are also selected
-          const activeSubs = opt.subOptions?.filter(sub => selectedEngineFormats.includes(sub.id)) || [];
+          const activeSubs = opt.subOptions?.filter(sub => optionCounts[sub.id] > 0) || [];
           
           if (activeSubs.length > 0) {
-            // If sub-options are selected, create a label per sub-option
+            // Iterating by quantity of each sub-option
             for (const sub of activeSubs) {
-              labels.push({
-                id: sub.id,
-                label: `${opt.name} — ${sub.name}`,
-                icon: opt.icon,
-                instruction: `${opt.instruction} ${sub.instructionModifier}`,
-              });
+                const subCount = optionCounts[sub.id];
+                for(let i = 0; i < subCount; i++) {
+                   labels.push({
+                     id: subCount > 1 ? `${sub.id}-${i + 1}` : sub.id,
+                     label: subCount > 1 ? `${opt.name} — ${sub.name} (${i + 1})` : `${opt.name} — ${sub.name}`,
+                     icon: opt.icon,
+                     instruction: `${opt.instruction} ${sub.instructionModifier}`,
+                   });
+                }
             }
-          } else {
+          } else if (optionCounts[opt.id] > 0) {
             // No sub-options selected, use the parent option
-            labels.push({
-              id: opt.id,
-              label: opt.name,
-              icon: opt.icon,
-              instruction: opt.instruction,
-            });
+            const optCount = optionCounts[opt.id];
+            for(let i = 0; i < optCount; i++) {
+                labels.push({
+                  id: optCount > 1 ? `${opt.id}-${i + 1}` : opt.id,
+                  label: optCount > 1 ? `${opt.name} (${i + 1})` : opt.name,
+                  icon: opt.icon,
+                  instruction: opt.instruction,
+                });
+            }
           }
         }
       }
@@ -723,6 +744,7 @@ const App: React.FC = () => {
               onEngineSourceChange={setSelectedEngineSource}
               selectedEngineFormats={selectedEngineFormats}
               onEngineFormatToggle={handleEngineFormatToggle}
+              onEngineFormatQuantityChange={handleEngineFormatQuantityChange}
             />
 
             {/* Multi-Payload Output — renders when multiple engine formats were selected */}
