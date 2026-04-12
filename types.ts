@@ -51,12 +51,19 @@ export interface ContextSource {
   icon: string;
 }
 
+export interface OutputSubOption {
+  id: string;
+  name: string;
+  instructionModifier: string;
+}
+
 export interface OutputFormatOption {
   id: string;
   name: string;
   description: string;
   instruction: string;
   icon: string;
+  subOptions?: OutputSubOption[];
 }
 
 export interface OutputFormatCategory {

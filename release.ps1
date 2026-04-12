@@ -1,5 +1,5 @@
 $PROJECT_ID = "Smart-Prompt-Builder"
-$VERSION = "v2.7.1"
+$VERSION = "v2.8.0"
 $ARTIFACT_NAME = "appscript.zip"
 
 Write-Host "Staging Changes..."
@@ -9,8 +9,9 @@ Write-Host "Committing..."
 $commitMsg = @"
 feat(release): Publish $ARTIFACT_NAME $VERSION
 
-- Add left/right directional arrows for horizontal scrolling in the OutputConfigurator tab bar
-- Implement custom hide-scrollbar CSS class
+- Implement Level 3 Granular Sub-Selection Architecture in Output Engine
+- Add nested option mappings for Data Visualization and Logic Mapping
+- Dynamically parse and compound modifier instructions in API pipeline
 "@
 git commit -m $commitMsg
 

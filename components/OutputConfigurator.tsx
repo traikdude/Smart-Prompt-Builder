@@ -180,9 +180,34 @@ export const OutputConfigurator: React.FC<OutputConfiguratorProps> = ({
                                 {option.name}
                               </span>
                             </div>
-                            <p className="text-xs text-slate-400 leading-snug line-clamp-2">
+                            <p className="text-xs text-slate-400 leading-snug">
                               {option.description}
                             </p>
+                            
+                            {/* Nested Sub-Options Array */}
+                            {isSelected && option.subOptions && option.subOptions.length > 0 && (
+                              <div className="mt-3 pt-3 border-t border-indigo-500/20 flex flex-wrap gap-2 animate-fade-in">
+                                {option.subOptions.map(sub => {
+                                  const isSubSelected = selectedFormats.includes(sub.id);
+                                  return (
+                                    <button
+                                      key={sub.id}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onFormatToggle(sub.id);
+                                      }}
+                                      className={`text-[10px] sm:text-xs px-2.5 py-1 rounded-full font-medium transition-colors border ${
+                                        isSubSelected
+                                          ? 'bg-indigo-500 text-white border-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.4)]'
+                                          : 'bg-slate-900/60 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-slate-300'
+                                      }`}
+                                    >
+                                      {sub.name}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
                         </div>
                       );

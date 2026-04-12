@@ -330,7 +330,18 @@ const App: React.FC = () => {
         for (const cat of OUTPUT_CATEGORIES) {
           for (const opt of cat.options) {
             if (selectedEngineFormats.includes(opt.id)) {
-              engineRules.push(`- ${opt.instruction}`);
+              let instruction = `- ${opt.instruction}`;
+              
+              // Find and append any active sub-options for this option
+              if (opt.subOptions) {
+                const activeSubs = opt.subOptions.filter(sub => selectedEngineFormats.includes(sub.id));
+                if (activeSubs.length > 0) {
+                  const subModifiers = activeSubs.map(s => s.instructionModifier).join(' ');
+                  instruction += ` ${subModifiers}`;
+                }
+              }
+              
+              engineRules.push(instruction);
             }
           }
         }

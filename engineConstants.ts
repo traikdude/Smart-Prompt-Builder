@@ -56,21 +56,42 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
         name: 'Standard Charts',
         icon: '📊',
         description: 'Bar (grouped/stacked) and Line (simple/multi)',
-        instruction: 'FORMATTING REQUIREMENT: Format data into standard chart plotting points structure, specifying X and Y axis values for Bar and Line charts.'
+        instruction: 'FORMATTING REQUIREMENT: Format data into standard chart plotting points structure, specifying X and Y axis values for Bar and Line charts.',
+        subOptions: [
+          { id: 'bar_grouped', name: 'Grouped Bar', instructionModifier: '(Ensure metrics are mapped for a Grouped Bar chart architecture)' },
+          { id: 'bar_stacked', name: 'Stacked Bar', instructionModifier: '(Ensure metrics are nested for a Stacked Bar chart architecture)' },
+          { id: 'bar_horizontal', name: 'Horizontal Bar', instructionModifier: '(Ensure metrics are mapped for a Horizontal Bar chart architecture)' },
+          { id: 'bar_vertical', name: 'Vertical Bar', instructionModifier: '(Ensure metrics are mapped for a Vertical Bar chart architecture)' },
+          { id: 'line_simple', name: 'Simple Line', instructionModifier: '(Ensure metrics are mapped for a single trajectory Simple Line chart)' },
+          { id: 'line_multi', name: 'Multi-Line', instructionModifier: '(Ensure metrics are mapped for a comparative Multi-Line chart architecture)' },
+          { id: 'line_area', name: 'Area Fill', instructionModifier: '(Ensure metrics are mapped for an Area Line chart with fill parameters)' }
+        ]
       },
       {
         id: 'proportion_distribution',
         name: 'Proportion & Distribution',
         icon: '🍩',
         description: 'Donut, Pie, Scatter Plots, and Bubble Charts',
-        instruction: 'FORMATTING REQUIREMENT: Format data explicitly for proportion and distribution visualizations, defining subsets, percentages, and coordinates.'
+        instruction: 'FORMATTING REQUIREMENT: Format data explicitly for proportion and distribution visualizations, defining subsets, percentages, and coordinates.',
+        subOptions: [
+          { id: 'donut', name: 'Donut Chart', instructionModifier: '(Format dataset specifically for a Donut Chart ring rendering)' },
+          { id: 'pie', name: 'Pie Chart', instructionModifier: '(Format dataset specifically for a standard Pie Chart circular representation)' },
+          { id: 'scatter', name: 'Scatter Plot', instructionModifier: '(Format dataset as coordinate points for a Scatter Plot correlation visualization)' },
+          { id: 'bubble', name: 'Bubble Chart', instructionModifier: '(Format dataset with XYZ metrics for three-dimensional Bubble Chart rendering)' }
+        ]
       },
       {
         id: 'advanced_analytics',
         name: 'Advanced Analytics',
         icon: '🕸️',
         description: 'Radar, Heatmaps, Candlestick, and Waterfall',
-        instruction: 'FORMATTING REQUIREMENT: Format data specifically for complex charts, detailing multi-variable axes, density matrices, or financial high/low/close plotting.'
+        instruction: 'FORMATTING REQUIREMENT: Format data specifically for complex charts, detailing multi-variable axes, density matrices, or financial high/low/close plotting.',
+        subOptions: [
+          { id: 'radar', name: 'Radar / Spider', instructionModifier: '(Configure data matrix for multivariate Radar/Spider charting)' },
+          { id: 'heatmap', name: 'Heatmap', instructionModifier: '(Configure data density matrix for Heatmap visualization)' },
+          { id: 'candlestick', name: 'Candlestick', instructionModifier: '(Configure Open, High, Low, Close (OHLC) values for Financial Candlestick rendering)' },
+          { id: 'waterfall', name: 'Waterfall', instructionModifier: '(Configure sequential progression data for Waterfall chart representation)' }
+        ]
       }
     ]
   },
@@ -135,7 +156,12 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
         name: 'Logic Mapping',
         icon: '🖇️',
         description: 'Pseudocode, Flowcharts, and ER Diagrams',
-        instruction: 'FORMATTING REQUIREMENT: Output process mappings, rendering logic graphically using Mermaid.js compliant Flowcharts or ER Diagrams.'
+        instruction: 'FORMATTING REQUIREMENT: Output process mappings, rendering logic graphically using Mermaid.js compliant Flowcharts or ER Diagrams.',
+        subOptions: [
+          { id: 'logic_pseudocode', name: 'Pseudocode', instructionModifier: '(Ensure logic is represented as rigorous Pseudocode algorithms)' },
+          { id: 'logic_flowchart', name: 'Mermaid Flowchart', instructionModifier: '(Ensure logic is structured strictly as a Mermaid.js Flowchart mapping)' },
+          { id: 'logic_erd', name: 'Entity-Relationship (ER) Diagram', instructionModifier: '(Ensure data architecture is rendered as a Mermaid.js Entity-Relationship (ER) Diagram)' }
+        ]
       }
     ]
   },
