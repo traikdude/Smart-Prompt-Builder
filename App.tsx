@@ -61,6 +61,9 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  // Model Generation Selector
+  const [modelFamily, setModelFamily] = useState<'2.5' | '3.1'>('2.5');
+
   // Text Style Modifier States
   const [selectedModifiers, setSelectedModifiers] = useState<SelectedModifiers>({
     font: null, emoji: null, ascii: null, xml: [], infographic: null, slideshow: null
@@ -448,12 +451,19 @@ const App: React.FC = () => {
       const ai = new GoogleGenAI({ apiKey });
       
       const modelMap = {
-        'fast': 'gemini-2.5-flash',
-        'smart': 'gemini-2.5-flash',
-        'thinking': 'gemini-2.5-pro'
+        '2.5': {
+          'fast': 'gemini-2.5-flash',
+          'smart': 'gemini-2.5-flash',
+          'thinking': 'gemini-2.5-pro'
+        },
+        '3.1': {
+          'fast': 'gemini-3.1-flash',
+          'smart': 'gemini-3.1-flash',
+          'thinking': 'gemini-3.1-pro'
+        }
       };
       
-      const model = modelMap[mode];
+      const model = modelMap[modelFamily][mode];
       const config: any = {
         systemInstruction: "You are a highly capable AI execution engine. Your sole objective is to flawlessly execute the user's instructions and strictly adhere to the provided formatting requirements. Do not provide commentary.",
       };
@@ -630,7 +640,7 @@ const App: React.FC = () => {
       };
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: modelFamily === '3.1' ? 'gemini-3.1-flash' : 'gemini-2.5-flash',
         contents: `${promptMap[action]}\n\n[TEXT_TO_${action.toUpperCase()}]\n${userContent}\n[/TEXT_TO_${action.toUpperCase()}]`,
       });
 
@@ -804,6 +814,8 @@ const App: React.FC = () => {
               attachments={attachments}
               onAttachmentsChange={setAttachments}
               onInsertTag={handleInsertTag}
+              modelFamily={modelFamily}
+              onModelFamilyChange={setModelFamily}
             />
 
             {/* Multi-Payload Output — renders when multiple engine formats were selected */}

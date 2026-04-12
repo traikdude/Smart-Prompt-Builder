@@ -35,6 +35,8 @@ interface PromptFormProps {
   attachments: AttachmentInput[];
   onAttachmentsChange: React.Dispatch<React.SetStateAction<AttachmentInput[]>>;
   onInsertTag: (tag: string) => void;
+  modelFamily: '2.5' | '3.1';
+  onModelFamilyChange: (family: '2.5' | '3.1') => void;
 }
 
 /** Color config for each category */
@@ -75,7 +77,9 @@ const PromptForm: React.FC<PromptFormProps> = ({
   onEngineFormatQuantityChange,
   attachments,
   onAttachmentsChange,
-  onInsertTag
+  onInsertTag,
+  modelFamily,
+  onModelFamilyChange
 }) => {
   const currentTemplate = templates.find(t => t.id === selectedTemplateId);
   const cat = CATEGORY_COLORS[currentTemplate?.category || 'custom'] || CATEGORY_COLORS.custom;
@@ -380,8 +384,42 @@ const PromptForm: React.FC<PromptFormProps> = ({
         )}
       </button>
 
-      {/* AI Generation Options — each a unique vibrant color */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 pt-4 border-t border-slate-700/50">
+      {/* AI Generation Options — Model Selector + Mode Buttons */}
+      <div className="mt-4 pt-4 border-t border-slate-700/50">
+
+        {/* Model Generation Selector */}
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <span className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Model</span>
+          <div className="flex items-center bg-slate-800/60 rounded-lg border border-slate-700/50 p-0.5">
+            <button
+              onClick={() => onModelFamilyChange('2.5')}
+              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                modelFamily === '2.5'
+                  ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/30 shadow-[0_0_10px_rgba(34,211,238,0.15)]'
+                  : 'text-slate-500 hover:text-slate-300'
+              }`}
+              title="Gemini 2.5 generation — Stable, well-tested models"
+            >
+              ⚡ 2.5
+            </button>
+            <button
+              onClick={() => onModelFamilyChange('3.1')}
+              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                modelFamily === '3.1'
+                  ? 'bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-pink-300 border border-pink-500/30 shadow-[0_0_10px_rgba(255,107,157,0.15)]'
+                  : 'text-slate-500 hover:text-slate-300'
+              }`}
+              title="Gemini 3.1 generation — Latest models with enhanced capabilities"
+            >
+              🚀 3.1
+            </button>
+          </div>
+          <span className="text-[10px] text-slate-600 hidden sm:inline">
+            {modelFamily === '2.5' ? 'Stable' : 'Latest'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Smart Generate */}
           {/* Smart Generate */}
           <Tooltip content="Standard AI generation. Best balance of speed and reasoning for most tasks." position="bottom">
@@ -410,7 +448,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
 
           {/* Deep Think */}
           {/* Deep Think */}
-          <Tooltip content="Advanced AI reasoning using Gemini 2.0 Flash Thinking model. Best for complex logic, algorithms, and deep analysis." position="bottom">
+          <Tooltip content={`Advanced AI reasoning using Gemini ${modelFamily === '2.5' ? '2.5 Pro' : '3.1 Pro'} with extended thinking. Best for complex logic, algorithms, and deep analysis.`} position="bottom">
             <button
                 onClick={() => onAIGenerate('thinking')}
                 disabled={isLoading || !userContent.trim()}
@@ -420,6 +458,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
                 <span className="text-sm">Deep Think</span>
             </button>
           </Tooltip>
+      </div>
       </div>
 
     </div>
