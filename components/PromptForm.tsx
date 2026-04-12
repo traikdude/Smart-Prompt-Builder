@@ -21,6 +21,7 @@ interface PromptFormProps {
   onAIGenerate: (mode: 'smart' | 'fast' | 'thinking') => void;
   isLoading: boolean;
   onNewTemplate: () => void;
+  onAIRewrite?: (action: 'expand' | 'compress') => void;
   onLoadSyntaxTest: () => void;
   onDeleteTemplate?: (id: string) => void;
   selectedModifiers: SelectedModifiers;
@@ -57,6 +58,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
   onAIGenerate,
   isLoading,
   onNewTemplate,
+  onAIRewrite,
   onLoadSyntaxTest,
   onDeleteTemplate,
   selectedModifiers,
@@ -298,6 +300,33 @@ const PromptForm: React.FC<PromptFormProps> = ({
                   </svg>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* AI Content Rewrite Tools */}
+          {onAIRewrite && (
+            <div className="flex items-center gap-1.5 sm:ml-2">
+              <Tooltip content="Synthesize and truncate your specific input text in-place using AI before generation." position="top">
+                <button 
+                  onClick={() => onAIRewrite('compress')}
+                  disabled={isLoading || !userContent.trim()}
+                  className="p-1 sm:px-2 rounded-md bg-slate-800/80 border border-slate-700 hover:bg-indigo-500/20 hover:border-indigo-500/50 hover:text-indigo-400 text-slate-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 group/tool"
+                >
+                  <span className="text-[10px] sm:text-xs font-bold leading-none">📉</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold uppercase hidden sm:block">Compress</span>
+                </button>
+              </Tooltip>
+
+              <Tooltip content="Flesh out, lengthen, and elaborate your specific input text in-place using AI before generation." position="top">
+                <button 
+                  onClick={() => onAIRewrite('expand')}
+                  disabled={isLoading || !userContent.trim()}
+                  className="p-1 sm:px-2 rounded-md bg-slate-800/80 border border-slate-700 hover:bg-pink-500/20 hover:border-pink-500/50 hover:text-pink-400 text-slate-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 group/tool"
+                >
+                  <span className="text-[10px] sm:text-xs font-bold leading-none">📈</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold uppercase hidden sm:block">Expand</span>
+                </button>
+              </Tooltip>
             </div>
           )}
         </div>

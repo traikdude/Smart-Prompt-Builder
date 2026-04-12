@@ -535,6 +535,55 @@ const App: React.FC = () => {
     }
   }, [userContent, selectedTemplateId, selectedFormatId, selectedEngineFormats, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText, resolveActiveEngineLabels, parsePayloads]);
 
+  /**
+   * Intelligently expands or compresses the raw user content in-place using AI.
+   */
+  const handleAIRewriteContent = useCallback(async (action: 'expand' | 'compress') => {
+    if (!userContent.trim()) {
+      showToastMessage('Please enter some content to rewrite', 'info');
+      return;
+    }
+
+    setIsLoading(true);
+    let apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+
+    try {
+      if (!apiKey && typeof google !== 'undefined' && google.script && google.script.run) {
+        apiKey = await new Promise<string>((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler((key: string) => resolve(key))
+            .withFailureHandler((err: any) => reject(err))
+            .getApiKey();
+        });
+      }
+
+      if (!apiKey) throw new Error("API Key not securely configured in environment properties.");
+
+      const ai = new GoogleGenAI({ apiKey });
+      const promptMap = {
+        'expand': 'You are a master editor. Your sole objective is to take the following text and systematically EXPAND it. Elaborate on the core concepts, add rich descriptive detail, and increase the depth of the content without hallucinating false information or adding conversational filler. Return ONLY the expanded text.',
+        'compress': 'You are a master editor. Your sole objective is to take the following text and systematically COMPRESS it. Summarize the core concepts, remove fluff, and drastically decrease the length while retaining all primary meaning. Do not add conversational filler. Return ONLY the compressed text.'
+      };
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: `${promptMap[action]}\n\n[TEXT_TO_${action.toUpperCase()}]\n${userContent}\n[/TEXT_TO_${action.toUpperCase()}]`,
+      });
+
+      if (response.text) {
+        setUserContent(response.text);
+        showToastMessage(`Content successfully ${action}ed! 🪄`);
+      } else {
+        throw new Error("Received empty response from AI engine.");
+      }
+    } catch (error: any) {
+      console.error("AI Rewrite Error:", error);
+      showToastMessage(`Rewrite Exception: ${error.message || 'Engine failed'}`, 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userContent, showToastMessage]);
+
   // --- Output Interactions ---
 
   const handleCopy = useCallback(async () => {
@@ -647,6 +696,7 @@ const App: React.FC = () => {
               onAIGenerate={handleAIGenerate}
               isLoading={isLoading}
               onNewTemplate={() => setIsModalOpen(true)}
+              onAIRewrite={handleAIRewriteContent}
               onLoadSyntaxTest={() => {
                 if (templates.some(t => t.id === 'direct-message')) setSelectedTemplateId('direct-message');
                 setUserContent(SYNTAX_TEST_DATA);
