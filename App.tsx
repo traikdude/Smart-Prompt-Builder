@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import PromptForm from './components/PromptForm';
 import OutputCard from './components/OutputCard';
+import MultiOutputCard, { OutputPayload } from './components/MultiOutputCard';
 import Toast from './components/Toast';
 import Sidebar from './components/Sidebar';
 import TemplateModal from './components/TemplateModal';
@@ -16,6 +17,7 @@ import { TEMPLATES as DEFAULT_TEMPLATES, FORMAT_STYLES } from './constants';
 import { ToastState, PromptTemplate, RecentPrompt } from './types';
 import { MODIFIER_CATEGORIES } from './textModifiers';
 import { OUTPUT_CATEGORIES } from './engineConstants';
+import { OutputFormatOption } from './types';
 import { SelectedModifiers } from './components/TextStyleToolbar';
 import { OutputConfigurator } from './components/OutputConfigurator';
 
@@ -46,6 +48,7 @@ const App: React.FC = () => {
   // Universal Output Engine States
   const [selectedEngineSource, setSelectedEngineSource] = useState<string>('conversation');
   const [selectedEngineFormats, setSelectedEngineFormats] = useState<string[]>([]);
+  const [outputPayloads, setOutputPayloads] = useState<OutputPayload[]>([]);
   
   // UI States
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -83,6 +86,102 @@ const App: React.FC = () => {
         ? prev.filter(id => id !== formatId)
         : [...prev, formatId]
     );
+  }, []);
+
+  /**
+   * Resolves currently selected engine format IDs into their display labels and icons.
+   * Includes sub-options with their parent label for clarity.
+   */
+  const resolveActiveEngineLabels = useCallback((): { id: string; label: string; icon: string; instruction: string }[] => {
+    const labels: { id: string; label: string; icon: string; instruction: string }[] = [];
+    for (const cat of OUTPUT_CATEGORIES) {
+      for (const opt of cat.options) {
+        if (selectedEngineFormats.includes(opt.id)) {
+          // Check if any sub-options are also selected
+          const activeSubs = opt.subOptions?.filter(sub => selectedEngineFormats.includes(sub.id)) || [];
+          
+          if (activeSubs.length > 0) {
+            // If sub-options are selected, create a label per sub-option
+            for (const sub of activeSubs) {
+              labels.push({
+                id: sub.id,
+                label: `${opt.name} — ${sub.name}`,
+                icon: opt.icon,
+                instruction: `${opt.instruction} ${sub.instructionModifier}`,
+              });
+            }
+          } else {
+            // No sub-options selected, use the parent option
+            labels.push({
+              id: opt.id,
+              label: opt.name,
+              icon: opt.icon,
+              instruction: opt.instruction,
+            });
+          }
+        }
+      }
+    }
+    return labels;
+  }, [selectedEngineFormats]);
+
+  /**
+   * Parses a delimited AI response into separate OutputPayload objects.
+   * Falls back to a single payload if delimiters are not found.
+   */
+  const parsePayloads = useCallback((rawText: string, labels: { id: string; label: string; icon: string }[]): OutputPayload[] => {
+    const payloads: OutputPayload[] = [];
+    
+    for (const label of labels) {
+      const beginMarker = `===BEGIN_PAYLOAD: ${label.label}===`;
+      const endMarker = `===END_PAYLOAD: ${label.label}===`;
+      const beginIdx = rawText.indexOf(beginMarker);
+      const endIdx = rawText.indexOf(endMarker);
+      
+      if (beginIdx !== -1 && endIdx !== -1 && endIdx > beginIdx) {
+        const content = rawText.substring(beginIdx + beginMarker.length, endIdx).trim();
+        if (content) {
+          payloads.push({
+            id: label.id,
+            label: label.label,
+            icon: label.icon,
+            content,
+          });
+        }
+      }
+    }
+    
+    // Fallback: if parsing found nothing, try generic pattern or return as single block
+    if (payloads.length === 0) {
+      // Try generic regex fallback
+      const genericRegex = /===BEGIN_PAYLOAD:\s*(.+?)===([\s\S]*?)===END_PAYLOAD:\s*\1===/g;
+      let match;
+      while ((match = genericRegex.exec(rawText)) !== null) {
+        const matchLabel = match[1].trim();
+        const matchContent = match[2].trim();
+        const matchingLabel = labels.find(l => l.label === matchLabel);
+        if (matchContent) {
+          payloads.push({
+            id: matchingLabel?.id || `payload_${payloads.length}`,
+            label: matchLabel,
+            icon: matchingLabel?.icon || '📄',
+            content: matchContent,
+          });
+        }
+      }
+    }
+    
+    // If still nothing, wrap the entire output as a single payload
+    if (payloads.length === 0 && rawText.trim()) {
+      payloads.push({
+        id: 'combined_output',
+        label: 'Combined Output',
+        icon: '📋',
+        content: rawText.trim(),
+      });
+    }
+    
+    return payloads;
   }, []);
 
   // --- Effects ---
@@ -324,29 +423,28 @@ const App: React.FC = () => {
       // UI-Selected Modifiers
       promptText += getModifierPromptText();
 
-      // Universal Engine Schema/Format Injections
-      if (selectedEngineFormats.length > 0) {
-        const engineRules: string[] = [];
-        for (const cat of OUTPUT_CATEGORIES) {
-          for (const opt of cat.options) {
-            if (selectedEngineFormats.includes(opt.id)) {
-              let instruction = `- ${opt.instruction}`;
-              
-              // Find and append any active sub-options for this option
-              if (opt.subOptions) {
-                const activeSubs = opt.subOptions.filter(sub => selectedEngineFormats.includes(sub.id));
-                if (activeSubs.length > 0) {
-                  const subModifiers = activeSubs.map(s => s.instructionModifier).join(' ');
-                  instruction += ` ${subModifiers}`;
-                }
-              }
-              
-              engineRules.push(instruction);
-            }
-          }
-        }
-        if (engineRules.length > 0) {
-          promptText += `\n\n[UNIVERSAL ENGINE — OUTPUT SCHEMATICS]\nIMPORTANT: You must fulfill the following architectural requirements in your output:\n${engineRules.join('\n')}`;
+      // Universal Engine Schema/Format Injections — Multi-Payload Architecture
+      const activeLabels = resolveActiveEngineLabels();
+      const isMultiPayload = activeLabels.length > 1;
+      
+      if (activeLabels.length > 0) {
+        if (isMultiPayload) {
+          // ═══ MULTI-PAYLOAD MODE ═══
+          // Instruct AI to output each format in clearly delimited sections
+          const payloadInstructions = activeLabels.map((label, i) => 
+            `${i + 1}. **${label.label}**: ${label.instruction}`
+          ).join('\n');
+          
+          const delimiterExamples = activeLabels.map(label => 
+            `===BEGIN_PAYLOAD: ${label.label}===\n[Your ${label.label} output here]\n===END_PAYLOAD: ${label.label}===`
+          ).join('\n\n');
+          
+          promptText += `\n\n[UNIVERSAL ENGINE — MULTI-PAYLOAD OUTPUT SCHEMATICS]\nCRITICAL: You are generating MULTIPLE SEPARATE output payloads. Each payload MUST be wrapped in EXACT delimiter markers as shown below. Do NOT merge payloads together. Each payload is an independent, self-contained output block.\n\nRequired Output Types:\n${payloadInstructions}\n\nMANDATORY OUTPUT STRUCTURE — Use these EXACT delimiters (copy them character-for-character):\n${delimiterExamples}\n\nRULES:\n- Each payload must be complete and self-contained\n- Do NOT include any text outside the delimiter blocks\n- Do NOT add introductions, summaries, or commentary between payloads\n- The delimiter lines must appear EXACTLY as shown above (with the === markers)`;
+        } else {
+          // ═══ SINGLE-PAYLOAD MODE ═══
+          // Standard single-format injection (legacy behavior)
+          const singleLabel = activeLabels[0];
+          promptText += `\n\n[UNIVERSAL ENGINE — OUTPUT SCHEMATICS]\nIMPORTANT: You must fulfill the following architectural requirement in your output:\n- ${singleLabel.instruction}`;
         }
       }
 
@@ -368,7 +466,15 @@ const App: React.FC = () => {
       });
 
       if (response.text) {
-        setGeneratedPrompt(response.text);
+        // Parse multi-payload response if applicable
+        if (isMultiPayload && activeLabels.length > 1) {
+          const parsed = parsePayloads(response.text, activeLabels);
+          setOutputPayloads(parsed);
+          setGeneratedPrompt(null); // Clear single-card output
+        } else {
+          setGeneratedPrompt(response.text);
+          setOutputPayloads([]); // Clear multi-card output
+        }
         saveToHistory(templateForHistory, userContent, response.text);
         triggerCelebration();
         showToastMessage(`Generated with ${mode.toUpperCase()} mode! 🧠`);
@@ -381,7 +487,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [userContent, selectedTemplateId, selectedFormatId, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
+  }, [userContent, selectedTemplateId, selectedFormatId, selectedEngineFormats, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText, resolveActiveEngineLabels, parsePayloads]);
 
   // --- Output Interactions ---
 
@@ -509,12 +615,25 @@ const App: React.FC = () => {
               onEngineFormatToggle={handleEngineFormatToggle}
             />
 
-            <OutputCard
-              content={generatedPrompt}
-              onCopy={handleCopy}
-              onClear={() => { setGeneratedPrompt(null); setUserContent(''); }}
-              onExport={handleExport}
-            />
+            {/* Multi-Payload Output — renders when multiple engine formats were selected */}
+            {outputPayloads.length > 0 && (
+              <MultiOutputCard
+                payloads={outputPayloads}
+                onClear={() => { setOutputPayloads([]); setGeneratedPrompt(null); setUserContent(''); }}
+                onExport={handleExport}
+                showToast={showToastMessage}
+              />
+            )}
+
+            {/* Single Payload Output — legacy card for single or no engine format */}
+            {outputPayloads.length === 0 && (
+              <OutputCard
+                content={generatedPrompt}
+                onCopy={handleCopy}
+                onClear={() => { setGeneratedPrompt(null); setUserContent(''); }}
+                onExport={handleExport}
+              />
+            )}
           </main>
           <Footer />
         </div>
