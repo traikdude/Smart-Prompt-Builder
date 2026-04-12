@@ -90,3 +90,10 @@ function fetchPageContent(url) {
     return { success: false, error: e.toString() };
   }
 }
+
+/**
+ * Retrieves the Gemini API Key from Google Apps Script Properties
+ */
+function getApiKey() {
+  return PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY') || '';
+}

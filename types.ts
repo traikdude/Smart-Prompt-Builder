@@ -39,3 +39,30 @@ export interface ToastState {
   message: string;
   type: ToastType;
 }
+
+// ═══════════════════════════════════════════
+// 🚀 Universal Output Engine Types
+// ═══════════════════════════════════════════
+
+export interface ContextSource {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+}
+
+export interface OutputFormatOption {
+  id: string;
+  name: string;
+  description: string;
+  instruction: string;
+  icon: string;
+}
+
+export interface OutputFormatCategory {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  options: OutputFormatOption[];
+}

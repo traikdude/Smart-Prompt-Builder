@@ -15,7 +15,9 @@ import TemplateModal from './components/TemplateModal';
 import { TEMPLATES as DEFAULT_TEMPLATES, FORMAT_STYLES } from './constants';
 import { ToastState, PromptTemplate, RecentPrompt } from './types';
 import { MODIFIER_CATEGORIES } from './textModifiers';
+import { OUTPUT_CATEGORIES } from './engineConstants';
 import { SelectedModifiers } from './components/TextStyleToolbar';
+import { OutputConfigurator } from './components/OutputConfigurator';
 
 // Global declaration for Google Apps Script environment
 declare const google: any;
@@ -32,7 +34,7 @@ def validate_highlighting():
 const App: React.FC = () => {
   // --- State Management ---
   const [templates, setTemplates] = useState<PromptTemplate[]>(DEFAULT_TEMPLATES);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(DEFAULT_TEMPLATES[0].id);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('none');
   const [selectedFormatId, setSelectedFormatId] = useState<string>('none');
   const [userContent, setUserContent] = useState<string>('');
   const [includeExamples, setIncludeExamples] = useState<boolean>(false);
@@ -40,6 +42,10 @@ const App: React.FC = () => {
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
+  
+  // Universal Output Engine States
+  const [selectedEngineSource, setSelectedEngineSource] = useState<string>('conversation');
+  const [selectedEngineFormats, setSelectedEngineFormats] = useState<string[]>([]);
   
   // UI States
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -58,13 +64,25 @@ const App: React.FC = () => {
       const modId = selectedModifiers[cat.id];
       if (!modId) continue;
       const mod = cat.modifiers.find(m => m.id === modId);
-      if (mod) parts.push(mod.prompt);
+      if (mod) {
+        let cleanPrompt = mod.prompt;
+        cleanPrompt = cleanPrompt.split('\nApply the ')[0].split('\nExtract text from ')[0];
+        parts.push(cleanPrompt.trim());
+      }
     }
-    return parts.length > 0 ? '\n\n### Text Style Modifier Instructions\n' + parts.join('\n\n') : '';
+    return parts.length > 0 ? '\n\n[CRITICAL ADDITIONAL DIRECTIVE — TEXT STYLING RULES]\nPlease rigorously enforce the following formatting rules onto your finalized string:\n' + parts.join('\n\n---\n\n') : '';
   }, [selectedModifiers]);
 
   const handleModifierChange = useCallback((categoryId: 'font' | 'emoji' | 'ascii' | 'xml', modifierId: string | null) => {
     setSelectedModifiers(prev => ({ ...prev, [categoryId]: modifierId }));
+  }, []);
+
+  const handleEngineFormatToggle = useCallback((formatId: string) => {
+    setSelectedEngineFormats(prev => 
+      prev.includes(formatId) 
+        ? prev.filter(id => id !== formatId)
+        : [...prev, formatId]
+    );
   }, []);
 
   // --- Effects ---
@@ -192,16 +210,22 @@ const App: React.FC = () => {
     // Simulate slight delay for perceived compilation
     setTimeout(() => {
       try {
-        const template = templates.find(t => t.id === selectedTemplateId);
-        if (!template) throw new Error("Template mapping failure.");
-
         let finalPrompt = '';
-        const placeholder = template.placeholderTrigger || "{{content}}"; 
+        let templateForHistory = templates[0]; // fallback
 
-        if (template.content.includes(placeholder)) {
-          finalPrompt = template.content.replace(placeholder, userContent);
+        if (selectedTemplateId === 'none') {
+          finalPrompt = userContent;
         } else {
-          finalPrompt = `${template.content}\n\n${userContent}`;
+          const template = templates.find(t => t.id === selectedTemplateId);
+          if (!template) throw new Error("Template mapping failure.");
+          templateForHistory = template;
+
+          const placeholder = template.placeholderTrigger || "{{content}}"; 
+          if (template.content.includes(placeholder)) {
+            finalPrompt = template.content.replace(placeholder, userContent);
+          } else {
+            finalPrompt = `${template.content}\n\n${userContent}`;
+          }
         }
 
         if (includeExamples) {
@@ -224,7 +248,7 @@ const App: React.FC = () => {
         }
 
         setGeneratedPrompt(finalPrompt);
-        saveToHistory(template, userContent, finalPrompt);
+        saveToHistory(templateForHistory, userContent, finalPrompt);
         triggerCelebration(); 
         showToastMessage('✨ Prompt Generated!');
       } catch (error) {
@@ -248,11 +272,37 @@ const App: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const template = templates.find(t => t.id === selectedTemplateId);
-      if (!template) throw new Error("Template not found");
+      let templateForHistory = templates[0];
+      let promptText = '';
+
+      if (selectedTemplateId === 'none') {
+         promptText = `Please process this text:\n\n${userContent}`;
+      } else {
+        const template = templates.find(t => t.id === selectedTemplateId);
+        if (!template) throw new Error("Template not found");
+        templateForHistory = template;
+        
+        const placeholder = template.placeholderTrigger || "{{content}}";
+        if (template.content.includes(placeholder)) {
+          promptText = template.content.replace(placeholder, userContent);
+        } else {
+          promptText = `${template.content}\n\n[USER CONTENT]\n${userContent}\n[/USER CONTENT]`;
+        }
+      }
       
-      const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-      if (!apiKey) throw new Error("API Key not found in environment securely.");
+      let apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+      
+      // If we are deployed on Apps Script, dynamically fetch the secure key from Script Properties
+      if (!apiKey && typeof google !== 'undefined' && google.script && google.script.run) {
+        apiKey = await new Promise<string>((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler((key: string) => resolve(key))
+            .withFailureHandler((err: any) => reject(err))
+            .getApiKey();
+        });
+      }
+
+      if (!apiKey) throw new Error("API Key not securely configured in environment properties.");
       
       const ai = new GoogleGenAI({ apiKey });
       
@@ -264,16 +314,30 @@ const App: React.FC = () => {
       
       const model = modelMap[mode];
       const config: any = {
-        systemInstruction: "You are an expert prompt engineer. Your goal is to generate a high-quality, optimized prompt based on a given template and user input. The output should be ready to use.",
+        systemInstruction: "You are a highly capable AI execution engine. Your sole objective is to flawlessly execute the user's instructions and strictly adhere to the provided formatting requirements. Do not provide commentary.",
       };
 
       if (mode === 'thinking') config.thinkingConfig = { thinkingBudget: 1024 }; // Optimized budget for 2.5 Pro
 
-      let promptText = `TASK: Transform User Content into a structured prompt based on the Template.\nTEMPLATE NAME: ${template.name}\nTEMPLATE STRUCTURE: \n${template.content}\nUSER CONTENT:\n${userContent}\nINSTRUCTIONS:\n1. Apply User Content to Template structure.\n2. Optimize phrasing for clarity.\n3. Ensure semantic flow.`;
-
       if (includeExamples) promptText += "\nRequirement: Provide 4 distinct numbered variations.";
       if (charLimit) promptText += `\nRequirement: Target length is approximately ${charLimit} characters.`;
+      // UI-Selected Modifiers
       promptText += getModifierPromptText();
+
+      // Universal Engine Schema/Format Injections
+      if (selectedEngineFormats.length > 0) {
+        const engineRules: string[] = [];
+        for (const cat of OUTPUT_CATEGORIES) {
+          for (const opt of cat.options) {
+            if (selectedEngineFormats.includes(opt.id)) {
+              engineRules.push(`- ${opt.instruction}`);
+            }
+          }
+        }
+        if (engineRules.length > 0) {
+          promptText += `\n\n[UNIVERSAL ENGINE — OUTPUT SCHEMATICS]\nIMPORTANT: You must fulfill the following architectural requirements in your output:\n${engineRules.join('\n')}`;
+        }
+      }
 
       // Inject format style override if selected (The Lens)
       if (selectedFormatId && selectedFormatId !== 'none') {
@@ -283,6 +347,9 @@ const App: React.FC = () => {
         }
       }
 
+      // CRITICAL DIRECTIVE: Strip diagnostic commentary
+      promptText += `\n\n[CRITICAL SYSTEM DIRECTIVE — FINAL OUTPUT ISOLATION]\nIMPORTANT: You MUST return ONLY the finalized, transformed result. DO NOT include any conversational filler, analytical commentary, reasoning steps, structural scaffolding, "Here is your output" introductions, or debugging logs. Your entire response must consist strictly of the exact text the user will copy and paste, formatted dynamically based on the requested presentation style.`;
+
       const response = await ai.models.generateContent({
         model,
         contents: promptText,
@@ -291,7 +358,7 @@ const App: React.FC = () => {
 
       if (response.text) {
         setGeneratedPrompt(response.text);
-        saveToHistory(template, userContent, response.text);
+        saveToHistory(templateForHistory, userContent, response.text);
         triggerCelebration();
         showToastMessage(`Generated with ${mode.toUpperCase()} mode! 🧠`);
       } else {
@@ -413,7 +480,7 @@ const App: React.FC = () => {
               onContentChange={(e) => setUserContent(e.target.value)}
               onExamplesChange={(e) => setIncludeExamples(e.target.checked)}
               onCharLimitChange={setCharLimit}
-              onGenerate={handleGenerate}
+              onGenerate={() => handleAIGenerate('smart')}
               onAIGenerate={handleAIGenerate}
               isLoading={isLoading}
               onNewTemplate={() => setIsModalOpen(true)}
@@ -425,6 +492,10 @@ const App: React.FC = () => {
               onDeleteTemplate={handleDeleteTemplate}
               selectedModifiers={selectedModifiers}
               onModifierChange={handleModifierChange}
+              selectedEngineSource={selectedEngineSource}
+              onEngineSourceChange={setSelectedEngineSource}
+              selectedEngineFormats={selectedEngineFormats}
+              onEngineFormatToggle={handleEngineFormatToggle}
             />
 
             <OutputCard

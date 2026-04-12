@@ -2,6 +2,7 @@ import React from 'react';
 import { PromptTemplate, TemplateCategory } from '../types';
 import { CHAR_LIMIT_OPTIONS, FORMAT_STYLES } from '../constants';
 import TextStyleToolbar, { SelectedModifiers } from './TextStyleToolbar';
+import { OutputConfigurator } from './OutputConfigurator';
 
 interface PromptFormProps {
   templates: PromptTemplate[];
@@ -22,7 +23,11 @@ interface PromptFormProps {
   onLoadSyntaxTest: () => void;
   onDeleteTemplate?: (id: string) => void;
   selectedModifiers: SelectedModifiers;
-  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii', modifierId: string | null) => void;
+  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii' | 'xml', modifierId: string | null) => void;
+  selectedEngineSource: string;
+  onEngineSourceChange: (sourceId: string) => void;
+  selectedEngineFormats: string[];
+  onEngineFormatToggle: (formatId: string) => void;
 }
 
 /** Color config for each category */
@@ -54,7 +59,11 @@ const PromptForm: React.FC<PromptFormProps> = ({
   onLoadSyntaxTest,
   onDeleteTemplate,
   selectedModifiers,
-  onModifierChange
+  onModifierChange,
+  selectedEngineSource,
+  onEngineSourceChange,
+  selectedEngineFormats,
+  onEngineFormatToggle
 }) => {
   const currentTemplate = templates.find(t => t.id === selectedTemplateId);
   const cat = CATEGORY_COLORS[currentTemplate?.category || 'custom'] || CATEGORY_COLORS.custom;
@@ -96,6 +105,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
                 onChange={onTemplateChange}
                 className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-purple-500/50 text-sm sm:text-base"
               >
+                <option value="none">— Default (No Engine) —</option>
                 {templates.map(template => {
                   const tCat = CATEGORY_COLORS[template.category || 'custom'] || CATEGORY_COLORS.custom;
                   return (
@@ -280,6 +290,13 @@ const PromptForm: React.FC<PromptFormProps> = ({
         </div>
       </div>
 
+      <OutputConfigurator 
+        selectedSource={selectedEngineSource}
+        onSourceChange={onEngineSourceChange}
+        selectedFormats={selectedEngineFormats}
+        onFormatToggle={onEngineFormatToggle}
+      />
+
       {/* 🌈 Generate Button — vibrant gradient */}
       <button
         onClick={onGenerate}
@@ -296,11 +313,11 @@ const PromptForm: React.FC<PromptFormProps> = ({
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            GENERATING...
+            SUBMITTING...
           </>
         ) : (
           <>
-            <span className="relative z-10 group-hover:scale-105 transition-transform">GENERATE PROMPT</span>
+            <span className="relative z-10 group-hover:scale-105 transition-transform">SUBMIT TO GEMINI</span>
             <span className="text-xl sm:text-2xl relative z-10 group-hover:rotate-12 transition-transform">✨</span>
           </>
         )}
