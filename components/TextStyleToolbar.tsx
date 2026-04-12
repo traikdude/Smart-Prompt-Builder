@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MODIFIER_CATEGORIES, ModifierCategory, TextModifier } from '../textModifiers';
+import { Tooltip } from './Tooltip';
 
 export interface SelectedModifiers {
   font: string | null;
@@ -38,34 +39,35 @@ const ModifierDropdown: React.FC<{
 
   return (
     <div ref={dropdownRef} className="relative">
-      <button
-        onClick={() => hasOptions && setIsOpen(!isOpen)}
-        className={`
-          flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
-          border transition-all duration-300 group relative overflow-hidden
-          ${selectedId
-            ? `${category.bgClass} ${category.textClass} ${category.borderClass} ${category.glowClass}`
-            : `bg-slate-800/60 text-slate-400 border-slate-700 ${hasOptions ? 'hover:border-slate-600 hover:text-slate-300 cursor-pointer' : 'opacity-40 cursor-not-allowed'}`
-          }
-        `}
-        disabled={!hasOptions}
-        title={hasOptions ? `${category.label} styles` : `${category.label} — coming soon`}
-      >
-        <span className="text-base group-hover:scale-110 transition-transform">{category.emoji}</span>
-        <span className="hidden sm:inline whitespace-nowrap">
-          {selectedMod ? selectedMod.name : category.label}
-        </span>
-        {/* Caret */}
-        {hasOptions && (
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-3.5 w-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        )}
-        {/* Active indicator dot */}
-        {selectedId && (
-          <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${category.textClass.replace('text-', 'bg-')} animate-pulse ring-2 ring-slate-900`}></span>
-        )}
-      </button>
+      <Tooltip content={hasOptions ? `${category.label} Styles` : `${category.label} — coming soon`} position="top">
+        <button
+          onClick={() => hasOptions && setIsOpen(!isOpen)}
+          className={`
+            flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+            border transition-all duration-300 group relative overflow-hidden
+            ${selectedId
+              ? `${category.bgClass} ${category.textClass} ${category.borderClass} ${category.glowClass}`
+              : `bg-slate-800/60 text-slate-400 border-slate-700 ${hasOptions ? 'hover:border-slate-600 hover:text-slate-300 cursor-pointer' : 'opacity-40 cursor-not-allowed'}`
+            }
+          `}
+          disabled={!hasOptions}
+        >
+          <span className="text-base group-hover:scale-110 transition-transform">{category.emoji}</span>
+          <span className="hidden sm:inline whitespace-nowrap">
+            {selectedMod ? selectedMod.name : category.label}
+          </span>
+          {/* Caret */}
+          {hasOptions && (
+            <svg xmlns="http://www.w3.org/2000/svg" className={`h-3.5 w-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          )}
+          {/* Active indicator dot */}
+          {selectedId && (
+            <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${category.textClass.replace('text-', 'bg-')} animate-pulse ring-2 ring-slate-900`}></span>
+          )}
+        </button>
+      </Tooltip>
 
       {/* Dropdown menu */}
       {isOpen && (
@@ -144,9 +146,11 @@ const TextStyleToolbar: React.FC<TextStyleToolbarProps> = ({ selectedModifiers, 
       {/* Toolbar header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2">
-            TEXT STYLING <span className="text-xl">🎨</span>
-          </span>
+          <Tooltip content="Apply AI-driven stylistic enhancements to your final text output." position="top">
+            <span className="text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2 cursor-help">
+              TEXT STYLING <span className="text-xl">🎨</span>
+            </span>
+          </Tooltip>
           {activeCount > 0 && (
             <span className="text-[10px] font-bold bg-pink-500/15 text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded-full">
               {activeCount} active

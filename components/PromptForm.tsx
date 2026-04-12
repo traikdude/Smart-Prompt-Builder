@@ -3,6 +3,7 @@ import { PromptTemplate, TemplateCategory } from '../types';
 import { CHAR_LIMIT_OPTIONS, FORMAT_STYLES } from '../constants';
 import TextStyleToolbar, { SelectedModifiers } from './TextStyleToolbar';
 import { OutputConfigurator } from './OutputConfigurator';
+import { Tooltip } from './Tooltip';
 
 interface PromptFormProps {
   templates: PromptTemplate[];
@@ -84,9 +85,11 @@ const PromptForm: React.FC<PromptFormProps> = ({
         {/* The Engine: Template Selector */}
         <div>
           <div className="flex justify-between items-center mb-3">
-            <label htmlFor="template" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2">
-              THE ENGINE <span className="text-xl animate-bounce">⚡</span>
-            </label>
+            <Tooltip content="Select a transformation template to process your input through." position="top">
+              <label htmlFor="template" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2 cursor-help">
+                THE ENGINE <span className="text-xl animate-bounce">⚡</span>
+              </label>
+            </Tooltip>
             <button
               onClick={onNewTemplate}
               className="text-[10px] sm:text-xs font-bold text-purple-400 hover:text-white hover:bg-purple-500 flex items-center gap-1 bg-purple-500/15 border border-purple-500/30 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]"
@@ -142,9 +145,11 @@ const PromptForm: React.FC<PromptFormProps> = ({
         {/* The Lens: Formatting Selector */}
         <div>
           <div className="flex justify-between items-center mb-3">
-            <label htmlFor="format" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2">
-               THE LENS <span className="text-xl animate-pulse">🎛️</span>
-            </label>
+            <Tooltip content="Apply a structural format override to your output." position="top">
+              <label htmlFor="format" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2 cursor-help">
+                 THE LENS <span className="text-xl animate-pulse">🎛️</span>
+              </label>
+            </Tooltip>
           </div>
           <div className="relative flex-grow group">
             <select
@@ -201,15 +206,19 @@ const PromptForm: React.FC<PromptFormProps> = ({
       {/* User Content */}
       <div className="mb-4 relative z-10">
         <div className="flex justify-between items-center mb-3">
-          <label htmlFor="content" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2">
-            YOUR CONTENT <span className="text-xl">✍️</span>
-          </label>
-          <button
-             onClick={onLoadSyntaxTest}
-             className="text-[10px] sm:text-xs font-bold text-slate-400 hover:text-white bg-slate-800 border border-slate-700 hover:bg-amber-500 hover:border-amber-500 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all hover:shadow-[0_0_10px_rgba(251,191,36,0.4)]"
-          >
-            Load Example
-          </button>
+          <Tooltip content="Paste the raw text, code, or context you want the AI to analyze and transform." position="top">
+            <label htmlFor="content" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2 cursor-help">
+              YOUR CONTENT <span className="text-xl">✍️</span>
+            </label>
+          </Tooltip>
+          <Tooltip content="Populates the form with a demo payload so you can test how the agent processes inputs." position="top">
+            <button
+               onClick={onLoadSyntaxTest}
+               className="text-[10px] sm:text-xs font-bold text-slate-400 hover:text-white bg-slate-800 border border-slate-700 hover:bg-amber-500 hover:border-amber-500 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all hover:shadow-[0_0_10px_rgba(251,191,36,0.4)]"
+            >
+              Load Example
+            </button>
+          </Tooltip>
         </div>
         <textarea
           id="content"
@@ -242,21 +251,23 @@ const PromptForm: React.FC<PromptFormProps> = ({
           <div className="hidden sm:block flex-grow"></div>
 
           {/* Include Examples Toggle */}
-          <label className="flex items-center gap-2 cursor-pointer group select-none hover:bg-slate-800/80 px-2 py-1 rounded-md transition-all">
-            <div className="relative">
-              <input 
-                type="checkbox" 
-                checked={includeExamples} 
-                onChange={onExamplesChange} 
-                className="sr-only peer"
-              />
-              <div className="block bg-slate-700 w-10 h-6 rounded-full peer-checked:bg-pink-500 transition-colors shadow-inner border border-slate-600 peer-checked:border-pink-400"></div>
-              <div className="dot absolute left-1 top-1 bg-slate-300 peer-checked:bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-4 shadow-lg"></div>
-            </div>
-            <span className="text-xs font-medium text-slate-400 group-hover:text-pink-400 transition-colors whitespace-nowrap">
-              Variations
-            </span>
-          </label>
+          <Tooltip content="Generate 4 distinct numbered variations of the result, varying in tone, style, or approach to help you choose the best one." position="top">
+            <label className="flex items-center gap-2 cursor-pointer group select-none hover:bg-slate-800/80 px-2 py-1 rounded-md transition-all">
+              <div className="relative">
+                <input 
+                  type="checkbox" 
+                  checked={includeExamples} 
+                  onChange={onExamplesChange} 
+                  className="sr-only peer"
+                />
+                <div className="block bg-slate-700 w-10 h-6 rounded-full peer-checked:bg-pink-500 transition-colors shadow-inner border border-slate-600 peer-checked:border-pink-400"></div>
+                <div className="dot absolute left-1 top-1 bg-slate-300 peer-checked:bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-4 shadow-lg"></div>
+              </div>
+              <span className="text-xs font-medium text-slate-400 group-hover:text-pink-400 transition-colors whitespace-nowrap">
+                Variations
+              </span>
+            </label>
+          </Tooltip>
 
           {/* Separator */}
           <div className="h-6 w-px bg-slate-700 hidden sm:block"></div>
@@ -264,9 +275,11 @@ const PromptForm: React.FC<PromptFormProps> = ({
           {/* Character Limiter Dropdown */}
           {onCharLimitChange && (
             <div className="flex items-center gap-2 group">
-              <label htmlFor="charLimit" className="text-xs font-medium text-slate-400 group-hover:text-cyan-400 transition-colors whitespace-nowrap">
-                Length:
-              </label>
+              <Tooltip content="Constrain the AI response to generate text approximately equal to this number of characters." position="top">
+                <label flex-shrink-0 htmlFor="charLimit" className="text-xs font-medium text-slate-400 group-hover:text-cyan-400 transition-colors whitespace-nowrap cursor-help">
+                  Length:
+                </label>
+              </Tooltip>
               <div className="relative">
                 <select
                   id="charLimit"
@@ -326,34 +339,43 @@ const PromptForm: React.FC<PromptFormProps> = ({
       {/* AI Generation Options — each a unique vibrant color */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 pt-4 border-t border-slate-700/50">
           {/* Smart Generate */}
-          <button
-              onClick={() => onAIGenerate('smart')}
-              disabled={isLoading || !userContent.trim()}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(168,85,247,0.2)] border border-purple-500/20 hover:border-purple-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
-          >
-              <span className="group-hover:scale-125 transition-transform">✨</span>
-              <span className="text-sm">Smart Analysis</span>
-          </button>
+          {/* Smart Generate */}
+          <Tooltip content="Standard AI generation. Best balance of speed and reasoning for most tasks." position="bottom">
+            <button
+                onClick={() => onAIGenerate('smart')}
+                disabled={isLoading || !userContent.trim()}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(168,85,247,0.2)] border border-purple-500/20 hover:border-purple-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
+            >
+                <span className="group-hover:scale-125 transition-transform">✨</span>
+                <span className="text-sm">Smart Analysis</span>
+            </button>
+          </Tooltip>
 
           {/* Fast Generate */}
-          <button
-              onClick={() => onAIGenerate('fast')}
-              disabled={isLoading || !userContent.trim()}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(251,191,36,0.2)] border border-amber-500/20 hover:border-amber-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
-          >
-              <span className="group-hover:scale-125 transition-transform">⚡</span>
-              <span className="text-sm">Fast Compile</span>
-          </button>
+          {/* Fast Generate */}
+          <Tooltip content="Rapid AI generation optimized for speed. Use for simple formatting or short text tasks." position="bottom">
+            <button
+                onClick={() => onAIGenerate('fast')}
+                disabled={isLoading || !userContent.trim()}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(251,191,36,0.2)] border border-amber-500/20 hover:border-amber-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
+            >
+                <span className="group-hover:scale-125 transition-transform">⚡</span>
+                <span className="text-sm">Fast Compile</span>
+            </button>
+          </Tooltip>
 
           {/* Deep Think */}
-          <button
-              onClick={() => onAIGenerate('thinking')}
-              disabled={isLoading || !userContent.trim()}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(52,211,153,0.2)] border border-emerald-500/20 hover:border-emerald-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
-          >
-              <span className="group-hover:scale-125 transition-transform">🧠</span>
-              <span className="text-sm">Deep Think</span>
-          </button>
+          {/* Deep Think */}
+          <Tooltip content="Advanced AI reasoning using Gemini 2.0 Flash Thinking model. Best for complex logic, algorithms, and deep analysis." position="bottom">
+            <button
+                onClick={() => onAIGenerate('thinking')}
+                disabled={isLoading || !userContent.trim()}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(52,211,153,0.2)] border border-emerald-500/20 hover:border-emerald-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
+            >
+                <span className="group-hover:scale-125 transition-transform">🧠</span>
+                <span className="text-sm">Deep Think</span>
+            </button>
+          </Tooltip>
       </div>
 
     </div>

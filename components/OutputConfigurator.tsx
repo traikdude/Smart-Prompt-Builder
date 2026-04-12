@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CONTEXT_SOURCES, OUTPUT_CATEGORIES } from '../engineConstants';
+import { Tooltip } from './Tooltip';
 
 interface OutputConfiguratorProps {
   selectedSource: string;
@@ -48,9 +49,11 @@ export const OutputConfigurator: React.FC<OutputConfiguratorProps> = ({
 
       {/* COMPONENT 1: CONTEXT SOURCE DROPDOWN */}
       <div className="relative z-10 space-y-2">
-        <label className="text-sm font-semibold text-slate-300 flex items-center gap-2">
-          Information Source
-        </label>
+        <Tooltip content="Tell the AI where your content came from so it can apply the right parsing rules before transforming it." position="top">
+          <label className="text-sm font-semibold text-slate-300 flex items-center gap-2 cursor-help">
+            Information Source
+          </label>
+        </Tooltip>
         <div className="relative">
           <select
             value={selectedSource}
@@ -79,9 +82,11 @@ export const OutputConfigurator: React.FC<OutputConfiguratorProps> = ({
 
       {/* COMPONENT 2: OUTPUT FORMAT TABS & CHECKBOXES */}
       <div className="relative z-10 pt-2">
-        <label className="text-sm font-semibold text-slate-300 flex items-center gap-2 mb-3">
-          Output Architecture <span className="text-slate-500 text-xs font-normal">(Multi-Select)</span>
-        </label>
+        <Tooltip content="Select one or more content formats. The AI will output each selected format in its own dedicated, copyable payload card." position="top" wrapperClassName="mb-3 block">
+          <label className="text-sm font-semibold text-slate-300 flex items-center gap-2 cursor-help">
+            Output Architecture <span className="text-slate-500 text-xs font-normal">(Multi-Select)</span>
+          </label>
+        </Tooltip>
         
         <div className="border border-white/10 rounded-xl overflow-hidden bg-slate-900/40">
           {/* TABS HEADER ROW */}
@@ -109,23 +114,24 @@ export const OutputConfigurator: React.FC<OutputConfiguratorProps> = ({
                 const selectedCount = category.options.filter(opt => selectedFormats.includes(opt.id)).length;
                 
                 return (
-                  <button
-                    key={category.id}
-                    onClick={() => setActiveTabId(category.id)}
-                    className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
-                      isActive 
-                        ? 'border-b-2 border-indigo-400 text-indigo-300 bg-white/5' 
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border-b-2 border-transparent'
-                    }`}
-                  >
-                    <span>{category.icon}</span>
-                    <span>{category.title}</span>
-                    {selectedCount > 0 && (
-                      <span className="ml-1 bg-indigo-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
-                        {selectedCount}
-                      </span>
-                    )}
-                  </button>
+                  <Tooltip key={category.id} content={category.description} position="top">
+                    <button
+                      onClick={() => setActiveTabId(category.id)}
+                      className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
+                        isActive 
+                          ? 'border-b-2 border-indigo-400 text-indigo-300 bg-white/5' 
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border-b-2 border-transparent'
+                      }`}
+                    >
+                      <span>{category.icon}</span>
+                      <span>{category.title}</span>
+                      {selectedCount > 0 && (
+                        <span className="ml-1 bg-indigo-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                          {selectedCount}
+                        </span>
+                      )}
+                    </button>
+                  </Tooltip>
                 );
               })}
             </div>
