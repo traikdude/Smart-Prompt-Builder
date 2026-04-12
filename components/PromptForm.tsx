@@ -1,9 +1,10 @@
 import React from 'react';
-import { PromptTemplate, TemplateCategory } from '../types';
+import { PromptTemplate, AttachmentInput } from '../types';
 import { CHAR_LIMIT_OPTIONS, FORMAT_STYLES } from '../constants';
 import TextStyleToolbar, { SelectedModifiers } from './TextStyleToolbar';
 import { OutputConfigurator } from './OutputConfigurator';
 import { Tooltip } from './Tooltip';
+import { AttachmentZone } from './AttachmentZone';
 
 interface PromptFormProps {
   templates: PromptTemplate[];
@@ -31,6 +32,8 @@ interface PromptFormProps {
   selectedEngineFormats: string[];
   onEngineFormatToggle: (formatId: string) => void;
   onEngineFormatQuantityChange: (formatId: string, quantity: number) => void;
+  attachments: AttachmentInput[];
+  onAttachmentsChange: React.Dispatch<React.SetStateAction<AttachmentInput[]>>;
 }
 
 /** Color config for each category */
@@ -68,7 +71,9 @@ const PromptForm: React.FC<PromptFormProps> = ({
   onEngineSourceChange,
   selectedEngineFormats,
   onEngineFormatToggle,
-  onEngineFormatQuantityChange
+  onEngineFormatQuantityChange,
+  attachments,
+  onAttachmentsChange
 }) => {
   const currentTemplate = templates.find(t => t.id === selectedTemplateId);
   const cat = CATEGORY_COLORS[currentTemplate?.category || 'custom'] || CATEGORY_COLORS.custom;
@@ -332,6 +337,10 @@ const PromptForm: React.FC<PromptFormProps> = ({
             </div>
           )}
         </div>
+
+        {/* Phase 7: Multimedia Attachment Zone */}
+        <AttachmentZone attachments={attachments} onAttachmentsChange={onAttachmentsChange} />
+        
       </div>
 
       <OutputConfigurator 

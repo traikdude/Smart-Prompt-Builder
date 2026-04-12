@@ -14,7 +14,7 @@ import TemplateModal from './components/TemplateModal';
 
 // Types & Constants
 import { TEMPLATES as DEFAULT_TEMPLATES, FORMAT_STYLES } from './constants';
-import { ToastState, PromptTemplate, RecentPrompt } from './types';
+import { ToastState, PromptTemplate, RecentPrompt, AttachmentInput } from './types';
 import { MODIFIER_CATEGORIES } from './textModifiers';
 import { OUTPUT_CATEGORIES } from './engineConstants';
 import { OutputFormatOption } from './types';
@@ -50,9 +50,14 @@ const App: React.FC = () => {
   const [selectedEngineFormats, setSelectedEngineFormats] = useState<string[]>([]);
   const [outputPayloads, setOutputPayloads] = useState<OutputPayload[]>([]);
   
+  // Phase 7: Multimedia Attachments
+  const [attachments, setAttachments] = useState<AttachmentInput[]>([]);
+
+  // History & Sidebar
+  const [recentPrompts, setRecentPrompts] = useState<RecentPrompt[]>([]);
+  
   // UI States
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [recentPrompts, setRecentPrompts] = useState<RecentPrompt[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   // Text Style Modifier States
@@ -540,9 +545,32 @@ const App: React.FC = () => {
       // CRITICAL DIRECTIVE: Strip diagnostic commentary
       promptText += `\n\n[CRITICAL SYSTEM DIRECTIVE — FINAL OUTPUT ISOLATION]\nIMPORTANT: You MUST return ONLY the finalized, transformed result. DO NOT include any conversational filler, analytical commentary, reasoning steps, structural scaffolding, "Here is your output" introductions, or debugging logs. Your entire response must consist strictly of the exact text the user will copy and paste, formatted dynamically based on the requested presentation style.`;
 
+      // Build the final multipart payload (Phase 7)
+      const contentsParts: any[] = [];
+      
+      for (const att of attachments) {
+        if (att.status !== 'ready') continue;
+        
+        if (att.type === 'file' && att.base64) {
+          const b64Data = att.base64.split(',')[1];
+          if (b64Data) {
+            contentsParts.push({
+              inlineData: {
+                data: b64Data,
+                mimeType: att.mimeType || 'application/octet-stream'
+              }
+            });
+          }
+        } else if (att.type === 'url' && att.urlContent) {
+          contentsParts.push(`\n[BACKGROUND CONTEXT SCRAPED FROM URL: ${att.name}]\n${att.urlContent}\n[END URL CONTEXT]\n`);
+        }
+      }
+
+      contentsParts.push(promptText);
+
       const response = await ai.models.generateContent({
         model,
-        contents: promptText,
+        contents: contentsParts,
         config
       });
 
@@ -568,7 +596,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [userContent, selectedTemplateId, selectedFormatId, selectedEngineFormats, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText, resolveActiveEngineLabels, parsePayloads]);
+  }, [userContent, selectedTemplateId, selectedFormatId, selectedEngineFormats, attachments, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText, resolveActiveEngineLabels, parsePayloads]);
 
   /**
    * Intelligently expands or compresses the raw user content in-place using AI.
@@ -745,6 +773,8 @@ const App: React.FC = () => {
               selectedEngineFormats={selectedEngineFormats}
               onEngineFormatToggle={handleEngineFormatToggle}
               onEngineFormatQuantityChange={handleEngineFormatQuantityChange}
+              attachments={attachments}
+              onAttachmentsChange={setAttachments}
             />
 
             {/* Multi-Payload Output — renders when multiple engine formats were selected */}

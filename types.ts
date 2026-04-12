@@ -73,3 +73,20 @@ export interface OutputFormatCategory {
   icon: string;
   options: OutputFormatOption[];
 }
+
+// ═══════════════════════════════════════════
+// 📎 Multi-Modal Attachment Types (Phase 7)
+// ═══════════════════════════════════════════
+
+export interface AttachmentInput {
+  id: string;
+  type: 'file' | 'url';
+  name: string; // Filename or URL string
+  size?: number; // File size in bytes (for files)
+  mimeType?: string; // e.g., image/png, application/pdf
+  file?: File; // The raw File object reference
+  base64?: string; // The base64 data string (extracted via FileReader)
+  urlContent?: string; // The raw text scraped from the URL
+  status: 'loading' | 'ready' | 'error';
+  errorMessage?: string;
+}
