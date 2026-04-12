@@ -1,5 +1,5 @@
 $PROJECT_ID = "Smart-Prompt-Builder"
-$VERSION = "v2.6.1"
+$VERSION = "v2.7.0"
 $ARTIFACT_NAME = "appscript.zip"
 
 Write-Host "Staging Changes..."
@@ -9,9 +9,9 @@ Write-Host "Committing..."
 $commitMsg = @"
 feat(release): Publish $ARTIFACT_NAME $VERSION
 
-- Transition to Universal Output Formatting Engine
-- Add Dynamic Multi-Select Format Tab Configurations
-- Integrate Engine Rules dynamically into API Payload
+- Expand Universal Output Format Matrix to match full scope
+- Integrate Multimedia, Data Visualization, and Immersive Tech categories
+- Inject comprehensive API parameters for advanced data rendering
 "@
 git commit -m $commitMsg
 
