@@ -149,7 +149,12 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
         name: 'Structured Data',
         icon: '{}',
         description: 'JSON, XML, or YAML formatted logic',
-        instruction: 'FORMATTING REQUIREMENT: Serialize the data directly into an un-schematized JSON, XML, or YAML standard format block.'
+        instruction: 'FORMATTING REQUIREMENT: Serialize the data directly into an un-schematized JSON, XML, or YAML standard format block.',
+        subOptions: [
+          { id: 'data_json', name: 'JSON', instructionModifier: '(Serialize strictly as un-schematized JSON format)' },
+          { id: 'data_xml', name: 'XML', instructionModifier: '(Serialize strictly as XML format)' },
+          { id: 'data_yaml', name: 'YAML', instructionModifier: '(Serialize strictly as YAML format)' }
+        ]
       },
       {
         id: 'logic_mapping',
@@ -176,21 +181,34 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
         name: 'Dashboards',
         icon: '🎛️',
         description: 'Interactive React interfaces and task boards',
-        instruction: 'FORMATTING REQUIREMENT: Write the complete React component code to build an interactive dashboard UI based on the prompt context.'
+        instruction: 'FORMATTING REQUIREMENT: Write the complete React component code to build an interactive dashboard UI based on the prompt context.',
+        subOptions: [
+          { id: 'dashboard_react', name: 'React Interfaces', instructionModifier: '(Write complete React component code for dashboard UI)' },
+          { id: 'dashboard_task', name: 'Task Boards', instructionModifier: '(Output structured logic for an interactive task board)' }
+        ]
       },
       {
         id: 'logic_time',
         name: 'Logic & Time',
         icon: '⏱️',
         description: 'Decision trees and interactive timelines',
-        instruction: 'FORMATTING REQUIREMENT: Structure chronological data formats for timeline visualization and binary decision branches.'
+        instruction: 'FORMATTING REQUIREMENT: Structure chronological data formats for timeline visualization and binary decision branches.',
+        subOptions: [
+          { id: 'logic_decision', name: 'Decision Trees', instructionModifier: '(Structure format for binary decision branch visualization)' },
+          { id: 'logic_timeline', name: 'Interactive Timelines', instructionModifier: '(Structure chronological data format for timeline visualization)' }
+        ]
       },
       {
         id: 'tools_assessments',
         name: 'Tools & Assessments',
         icon: '🛠️',
         description: 'Maps, calculators, and dynamic quizzes',
-        instruction: 'FORMATTING REQUIREMENT: Formulate logic configurations for calculators, geospatial maps, or a structured multiple-choice quiz assessment.'
+        instruction: 'FORMATTING REQUIREMENT: Formulate logic configurations for calculators, geospatial maps, or a structured multiple-choice quiz assessment.',
+        subOptions: [
+          { id: 'tool_maps', name: 'Maps', instructionModifier: '(Formulate configuration for geospatial map rendering)' },
+          { id: 'tool_calculators', name: 'Calculators', instructionModifier: '(Formulate logic configuration for interactive calculators)' },
+          { id: 'tool_quizzes', name: 'Dynamic Quizzes', instructionModifier: '(Formulate structured multiple-choice quiz assessment)' }
+        ]
       }
     ]
   },
@@ -212,14 +230,23 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
         name: 'Audio Creation',
         icon: '🎵',
         description: 'Custom generated music, voiceovers, or sound effects',
-        instruction: 'FORMATTING REQUIREMENT: Design a precise sonic blueprint including BPM, genre tags, and temporal events for AI audio engines, or script text-to-speech voiceovers.'
+        instruction: 'FORMATTING REQUIREMENT: Design a precise sonic blueprint including BPM, genre tags, and temporal events for AI audio engines, or script text-to-speech voiceovers.',
+        subOptions: [
+          { id: 'audio_music', name: 'Music Generation', instructionModifier: '(Design blueprint including BPM, tags, and temporal events)' },
+          { id: 'audio_voiceover', name: 'Voiceovers', instructionModifier: '(Script text-to-speech voiceover timing and emphasis)' },
+          { id: 'audio_effects', name: 'Sound Effects', instructionModifier: '(Design blueprint for sound effect generation)' }
+        ]
       },
       {
         id: 'immersive_tech',
         name: 'Immersive Tech',
         icon: '🥽',
         description: 'VR/AR content development and 3D modeling',
-        instruction: 'FORMATTING REQUIREMENT: Output Spatial OS architecture or a declarative 3D modeling file format (like Three.js scenes or glTF object structures).'
+        instruction: 'FORMATTING REQUIREMENT: Output Spatial OS architecture or a declarative 3D modeling file format (like Three.js scenes or glTF object structures).',
+        subOptions: [
+          { id: 'immerse_vrar', name: 'VR/AR Content', instructionModifier: '(Output Spatial OS architecture parameters)' },
+          { id: 'immerse_3d', name: '3D Modeling', instructionModifier: '(Output declarative 3D modeling format like Three.js or glTF)' }
+        ]
       }
     ]
   },
@@ -234,14 +261,22 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
         name: 'Prototyping',
         icon: '📱',
         description: 'Game dev and Web/Mobile App interface design',
-        instruction: 'FORMATTING REQUIREMENT: Deliver comprehensive software UI/UX blueprints, wireframe logic documentation, or functional game loop logic.'
+        instruction: 'FORMATTING REQUIREMENT: Deliver comprehensive software UI/UX blueprints, wireframe logic documentation, or functional game loop logic.',
+        subOptions: [
+          { id: 'proto_gamedev', name: 'Game Dev', instructionModifier: '(Deliver functional game loop logic documentation)' },
+          { id: 'proto_uiux', name: 'Web/Mobile UI/UX', instructionModifier: '(Deliver comprehensive UI/UX blueprints and wireframes)' }
+        ]
       },
       {
         id: 'simulations_bots',
         name: 'Simulations & Bots',
         icon: '🤖',
         description: 'Interactive systems and Chatbot frameworks',
-        instruction: 'FORMATTING REQUIREMENT: Output a definitive Conversational Flowchart matrix or simulation state-machine architecture for the AI entity.'
+        instruction: 'FORMATTING REQUIREMENT: Output a definitive Conversational Flowchart matrix or simulation state-machine architecture for the AI entity.',
+        subOptions: [
+          { id: 'sim_systems', name: 'Interactive Systems', instructionModifier: '(Output simulation state-machine architecture)' },
+          { id: 'sim_chatbots', name: 'Chatbot Frameworks', instructionModifier: '(Output a Conversational Flowchart matrix)' }
+        ]
       }
     ]
   },
