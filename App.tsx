@@ -5,6 +5,7 @@ import { GoogleGenAI } from "@google/genai";
 // Components
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ResourceFooter from './components/ResourceFooter';
 import PromptForm from './components/PromptForm';
 import OutputCard from './components/OutputCard';
 import MultiOutputCard, { OutputPayload } from './components/MultiOutputCard';
@@ -826,6 +827,7 @@ const App: React.FC = () => {
             )}
           </main>
           <Footer />
+          <ResourceFooter />
         </div>
       </div>
 
