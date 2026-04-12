@@ -16,6 +16,13 @@ export interface PromptTemplate {
   category?: TemplateCategory; // Color-coded category badge
 }
 
+export interface FormatTemplate {
+  id: string;
+  name: string;
+  description: string;
+  content: string;
+}
+
 export interface RecentPrompt {
   id: string;
   templateId: string;
