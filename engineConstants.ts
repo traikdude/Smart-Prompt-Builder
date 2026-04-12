@@ -13,35 +13,35 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
     id: 'visual_representations',
     title: 'Visual Representations',
     icon: '🖼️',
-    description: 'Custom visuals, infographics, and annotations',
+    description: 'Custom visuals, infographics, and annotations — 💰 outputs text prompts only, no actual media generation',
     options: [
       {
         id: 'generative_images',
         name: 'Generative Images',
         icon: '🎨',
         description: 'Custom visuals generated from text descriptions',
-        instruction: 'FORMATTING REQUIREMENT: Generate precise, highly descriptive image generation prompts designed for advanced text-to-image models.'
+        instruction: 'FORMATTING REQUIREMENT [TEXT ONLY — DO NOT GENERATE ACTUAL IMAGES]: Generate precise, highly descriptive image generation prompts designed for advanced text-to-image models (e.g. Midjourney, DALL-E, Stable Diffusion). Output ONLY the text prompts — do not attempt to create, render, or embed any actual images.'
       },
       {
         id: 'curated_images',
         name: 'Curated Images',
         icon: '🖼️',
         description: 'Relevant, high-quality sourced images',
-        instruction: 'FORMATTING REQUIREMENT: Identify optimal locations for curated imagery and provide exact search queries or Markdown image placeholders.'
+        instruction: 'FORMATTING REQUIREMENT [TEXT ONLY]: Identify optimal locations for curated imagery and provide exact search queries, alt-text descriptions, or Markdown image placeholders. Output descriptive text only — do not embed or fetch actual images.'
       },
       {
         id: 'infographics',
         name: 'Infographics',
         icon: '📊',
         description: 'Visual storytelling combining text, graphics, and data',
-        instruction: 'FORMATTING REQUIREMENT: Architect a sequential infographic structure, dictating the layout, text blurbs, icons, and data points for each frame.'
+        instruction: 'FORMATTING REQUIREMENT [TEXT ONLY — SLIDE-BY-SLIDE BLUEPRINT]: Architect a sequential infographic structure as a text-only blueprint. For each frame/slide, clearly number it and dictate the layout, text blurbs, icons, color suggestions, and data points. Do not generate actual graphics.'
       },
       {
         id: 'annotated_screenshots',
         name: 'Annotated Screenshots',
         icon: '🎯',
         description: 'Images featuring text overlays and highlights',
-        instruction: 'FORMATTING REQUIREMENT: Provide layout specifications for an annotated screenshot, including coordinates/targets for callouts and explanatory text overlays.'
+        instruction: 'FORMATTING REQUIREMENT [TEXT ONLY]: Provide detailed layout specifications for an annotated screenshot as text, including coordinates/targets for callouts and explanatory text overlays. Do not generate or embed actual images.'
       }
     ]
   },
@@ -181,7 +181,7 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
         name: 'Dashboards',
         icon: '🎛️',
         description: 'Interactive React interfaces and task boards',
-        instruction: 'FORMATTING REQUIREMENT: Write the complete React component code to build an interactive dashboard UI based on the prompt context.',
+        instruction: 'FORMATTING REQUIREMENT [TEXT ONLY — CODE OUTPUT]: Write the complete React component code (JSX/TSX) to build an interactive dashboard UI based on the prompt context. Output the source code as a text code block — do not attempt to render or execute the component.',
         subOptions: [
           { id: 'dashboard_react', name: 'React Interfaces', instructionModifier: '(Write complete React component code for dashboard UI)' },
           { id: 'dashboard_task', name: 'Task Boards', instructionModifier: '(Output structured logic for an interactive task board)' }
@@ -216,21 +216,21 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
     id: 'multimedia_generation',
     title: 'Multimedia Generation',
     icon: '🎬',
-    description: 'Video, audio, and immersive technological synthesis',
+    description: 'Video, audio, and immersive technological synthesis — 💰 outputs text prompts only, no actual media generation',
     options: [
       {
         id: 'video_synthesis',
         name: 'Video Synthesis',
         icon: '🎞️',
         description: 'Video generation derived from prompts',
-        instruction: 'FORMATTING REQUIREMENT: Write comprehensive prompt engineering guidelines and scene-by-scene blueprints for AI video generation engines (e.g. Sora, Runway).'
+        instruction: 'FORMATTING REQUIREMENT [TEXT ONLY — DO NOT GENERATE ACTUAL VIDEO]: Write comprehensive, copy-ready prompt engineering guidelines and scene-by-scene blueprints for AI video generation engines (e.g. Sora, Runway, Pika). Include scene descriptions, camera angles, transitions, and timing. Output ONLY the text prompt — do not attempt to create or embed any actual video content.'
       },
       {
         id: 'audio_creation',
         name: 'Audio Creation',
         icon: '🎵',
         description: 'Custom generated music, voiceovers, or sound effects',
-        instruction: 'FORMATTING REQUIREMENT: Design a precise sonic blueprint including BPM, genre tags, and temporal events for AI audio engines, or script text-to-speech voiceovers.',
+        instruction: 'FORMATTING REQUIREMENT [TEXT ONLY — DO NOT GENERATE ACTUAL AUDIO]: Design a precise, copy-ready sonic blueprint including BPM, genre tags, mood descriptors, and temporal events for AI audio engines, or script text-to-speech voiceovers with timing and emphasis notation. Output ONLY the text blueprint — do not attempt to create or embed any actual audio content.',
         subOptions: [
           { id: 'audio_music', name: 'Music Generation', instructionModifier: '(Design blueprint including BPM, tags, and temporal events)' },
           { id: 'audio_voiceover', name: 'Voiceovers', instructionModifier: '(Script text-to-speech voiceover timing and emphasis)' },
