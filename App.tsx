@@ -57,26 +57,40 @@ const App: React.FC = () => {
 
   // Text Style Modifier States
   const [selectedModifiers, setSelectedModifiers] = useState<SelectedModifiers>({
-    font: null, emoji: null, ascii: null, xml: null
+    font: null, emoji: null, ascii: null, xml: []
   });
 
   /** Resolves all active modifier prompts into a single appended instruction block */
   const getModifierPromptText = useCallback((): string => {
     const parts: string[] = [];
     for (const cat of MODIFIER_CATEGORIES) {
-      const modId = selectedModifiers[cat.id];
-      if (!modId) continue;
-      const mod = cat.modifiers.find(m => m.id === modId);
-      if (mod) {
-        let cleanPrompt = mod.prompt;
-        cleanPrompt = cleanPrompt.split('\nApply the ')[0].split('\nExtract text from ')[0];
-        parts.push(cleanPrompt.trim());
+      if (cat.id === 'xml') {
+        const modIds = selectedModifiers.xml;
+        if (modIds && modIds.length > 0) {
+          modIds.forEach(id => {
+            const mod = cat.modifiers.find(m => m.id === id);
+            if (mod) {
+              let cleanPrompt = mod.prompt;
+              cleanPrompt = cleanPrompt.split('\nApply the ')[0].split('\nExtract text from ')[0];
+              parts.push(cleanPrompt.trim());
+            }
+          });
+        }
+      } else {
+        const modId = selectedModifiers[cat.id];
+        if (!modId) continue;
+        const mod = cat.modifiers.find(m => m.id === modId);
+        if (mod) {
+          let cleanPrompt = mod.prompt;
+          cleanPrompt = cleanPrompt.split('\nApply the ')[0].split('\nExtract text from ')[0];
+          parts.push(cleanPrompt.trim());
+        }
       }
     }
     return parts.length > 0 ? '\n\n[CRITICAL ADDITIONAL DIRECTIVE — TEXT STYLING RULES]\nPlease rigorously enforce the following formatting rules onto your finalized string:\n' + parts.join('\n\n---\n\n') : '';
   }, [selectedModifiers]);
 
-  const handleModifierChange = useCallback((categoryId: 'font' | 'emoji' | 'ascii' | 'xml', modifierId: string | null) => {
+  const handleModifierChange = useCallback((categoryId: 'font' | 'emoji' | 'ascii' | 'xml', modifierId: string | string[] | null) => {
     setSelectedModifiers(prev => ({ ...prev, [categoryId]: modifierId }));
   }, []);
 
