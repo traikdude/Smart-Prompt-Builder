@@ -34,6 +34,7 @@ interface PromptFormProps {
   onEngineFormatQuantityChange: (formatId: string, quantity: number) => void;
   attachments: AttachmentInput[];
   onAttachmentsChange: React.Dispatch<React.SetStateAction<AttachmentInput[]>>;
+  onInsertTag: (tag: string) => void;
 }
 
 /** Color config for each category */
@@ -73,7 +74,8 @@ const PromptForm: React.FC<PromptFormProps> = ({
   onEngineFormatToggle,
   onEngineFormatQuantityChange,
   attachments,
-  onAttachmentsChange
+  onAttachmentsChange,
+  onInsertTag
 }) => {
   const currentTemplate = templates.find(t => t.id === selectedTemplateId);
   const cat = CATEGORY_COLORS[currentTemplate?.category || 'custom'] || CATEGORY_COLORS.custom;
@@ -209,6 +211,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
         <TextStyleToolbar
           selectedModifiers={selectedModifiers}
           onModifierChange={onModifierChange}
+          onInsertTag={onInsertTag}
         />
       </div>
 

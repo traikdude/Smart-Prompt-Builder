@@ -13,7 +13,7 @@ export interface TextModifier {
 }
 
 export interface ModifierCategory {
-  id: 'font' | 'emoji' | 'ascii' | 'xml';
+  id: 'font' | 'emoji' | 'ascii' | 'xml' | 'infographic';
   label: string;
   emoji: string;
   color: string;        // Tailwind color prefix (e.g., 'pink', 'amber')
@@ -23,6 +23,7 @@ export interface ModifierCategory {
   glowClass: string;
   modifiers: TextModifier[];
 }
+
 
 // ═══════════════════════════════════════════
 // 🔤 FONT STYLE MODIFIERS
@@ -1353,6 +1354,155 @@ Extract text from <revised_prompt> tags in the following content:`
 ];
 
 // ═══════════════════════════════════════════
+// 🎨 INFOGRAPHIC STYLES
+// ═══════════════════════════════════════════
+
+const INFOGRAPHIC_MODIFIERS: TextModifier[] = [
+  {
+    id: 'info-deep-dive',
+    name: 'Task Deep-Dive',
+    description: 'Vertical infographic for a single task and sequential subtasks.',
+    emoji: '🎯',
+    prompt: `[INFOGRAPHIC BLUEPRINT DIRECTIVE: TASK DEEP-DIVE]
+Your goal is to output a text-only blueprint for a detailed vertical infographic.
+Formatting rules:
+- Show the main title as a bold header.
+- Display each sub-element or subtask as a numbered step in a flowing visual sequence.
+- Include status icons, estimated completion, and dependencies where applicable.
+- Use a professional style with a clear visual hierarchy.
+- Specify portrait orientation and a detailed level of visual instruction.
+Return the layout plan step-by-step. Do not generate actual graphics.`
+  },
+  {
+    id: 'info-dashboard',
+    name: 'Progress Dashboard',
+    description: 'Dashboard showing completion and progress metrics.',
+    emoji: '📊',
+    prompt: `[INFOGRAPHIC BLUEPRINT DIRECTIVE: PROGRESS DASHBOARD]
+Your goal is to output a text-only blueprint for a progress dashboard.
+Formatting rules:
+- Show various elements with estimated completion percentages or progress metrics.
+- Utilize visual progress bars, color-coded by status or urgency.
+- Group related items by category or logical sections.
+- Include a summary section showing overall completion rate.
+- Specify landscape orientation and standard design detail.
+Return the layout plan step-by-step. Do not generate actual graphics.`
+  },
+  {
+    id: 'info-timeline',
+    name: 'Timeline Map',
+    description: 'Horizontal chronological timeline showing events or steps.',
+    emoji: '⏳',
+    prompt: `[INFOGRAPHIC BLUEPRINT DIRECTIVE: TIMELINE MAP]
+Your goal is to output a text-only blueprint for a timeline infographic.
+Formatting rules:
+- Arrange elements chronologically by date or order.
+- Use a horizontal timeline with item cards branching above and below the main axis.
+- Mark completed/past items with distinct icons (e.g., checkmarks) and pending/future items with clocks.
+- Use a professional style and landscape orientation.
+Return the layout plan step-by-step. Do not generate actual graphics.`
+  },
+  {
+    id: 'info-matrix',
+    name: 'Priority Matrix',
+    description: 'Eisenhower-style 2x2 grid matrix for prioritizing elements.',
+    emoji: '⚖️',
+    prompt: `[INFOGRAPHIC BLUEPRINT DIRECTIVE: PRIORITY MATRIX]
+Your goal is to output a text-only blueprint for an Eisenhower-style priority matrix.
+Formatting rules:
+- Place elements into four clear quadrants (e.g., Urgent+Important, Important+Not Urgent, etc.).
+- Include concise descriptions within each element card.
+- Suggest bold colors for highly urgent items and muted colors for lower priority.
+- Specify a square format layout.
+Return the layout plan step-by-step. Do not generate actual graphics.`
+  },
+  {
+    id: 'info-tree',
+    name: 'Breakdown Tree',
+    description: 'Hierarchical tree diagram flowing top-to-bottom.',
+    emoji: '🌳',
+    prompt: `[INFOGRAPHIC BLUEPRINT DIRECTIVE: HIERARCHICAL TREE]
+Your goal is to output a text-only blueprint for a work breakdown structure.
+Formatting rules:
+- Show the hierarchical relationship between primary elements and sub-elements.
+- Use a tree diagram flowing from top to bottom.
+- Each node should show the item name and key details (status, owner, etc.).
+- Describe connectors showing dependencies between nodes.
+- Specify portrait orientation and professional design.
+Return the layout plan step-by-step. Do not generate actual graphics.`
+  },
+  {
+    id: 'info-checklist',
+    name: 'Checklist Poster',
+    description: 'Clean, minimalist vertical checklist poster.',
+    emoji: '✅',
+    prompt: `[INFOGRAPHIC BLUEPRINT DIRECTIVE: CHECKLIST POSTER]
+Your goal is to output a text-only blueprint for a checklist-style poster.
+Formatting rules:
+- List each main point with checkbox icons (filled or empty).
+- Indent nested sub-points beneath their parent.
+- Include a progress summary bar at the top if applicable.
+- Specify minimalist design with high-contrast text.
+- Use portrait orientation.
+Return the layout plan step-by-step. Do not generate actual graphics.`
+  },
+  {
+    id: 'info-pro',
+    name: 'Professional Image Prompt',
+    description: 'Generates a Midjourney Image Prompt (Professional Palette).',
+    emoji: '👔',
+    prompt: `[ADVANCED AI INFOGRAPHIC GENERATION: PROFESSIONAL PALETTE]
+Your goal is to process the user's content and output an EXECUTABLE IMAGE GENERATION PROMPT meant to be pasted into an AI image generator (like Midjourney).
+Use the following EXACT structural template, dynamically filling in the bracketed variables based on the user's content.
+
+TEMPLATE:
+"Create a professional, high-resolution infographic slide — this is Slide 1 of a [X]-slide series titled "[Series Title]". Portrait format, 1080x1920 pixels, 300 DPI. Professionally designed, zero visual clutter, white space, clear visual hierarchy moving top to bottom in a Z-pattern.
+CANVAS: 1080x1920px. Background is flat Light Gray (#ECF0F1). 12-column grid.
+HEADER: Centered, Deep Blue-Gray (#2C3E50). Accent line is Coral Red (#E74C3C).
+CONTENT: [Dynamically generate the visual layout describing the user's specific steps, icons to use, text blurbs, etc. Use Sky Blue (#3498DB) as a secondary color].
+FOOTER: Bottom 10% containing ACCESSIBILITY ALT TEXT LABEL: [Generate a 1-sentence alt text summarizing the infographic]."
+
+Output ONLY the final injected image generation prompt text.`
+  },
+  {
+    id: 'info-vibrant',
+    name: 'Vibrant Image Prompt',
+    description: 'Generates a Midjourney Image Prompt (Vibrant Palette).',
+    emoji: '🌈',
+    prompt: `[ADVANCED AI INFOGRAPHIC GENERATION: VIBRANT PALETTE]
+Your goal is to process the user's content and output an EXECUTABLE IMAGE GENERATION PROMPT meant to be pasted into an AI image generator (like Midjourney).
+Use the following EXACT structural template, dynamically filling in the bracketed variables based on the user's content.
+
+TEMPLATE:
+"Create a professional, high-resolution infographic slide — this is Slide 1 of a [X]-slide series titled "[Series Title]". Portrait format, 1080x1920 pixels, 300 DPI. Professionally designed, zero visual clutter, white space, clear visual hierarchy moving top to bottom in a Z-pattern.
+CANVAS: 1080x1920px. Background is flat Pure White (#FFFFFF). 12-column grid.
+HEADER: Centered, Deep Purple (#8E44AD). Accent line is Teal (#16A085).
+CONTENT: [Dynamically generate the visual layout describing the user's specific steps, icons to use, text blurbs, etc. Use Golden Orange (#F39C12) as a secondary color].
+FOOTER: Bottom 10% containing ACCESSIBILITY ALT TEXT LABEL: [Generate a 1-sentence alt text summarizing the infographic]."
+
+Output ONLY the final injected image generation prompt text.`
+  },
+  {
+    id: 'info-minimal',
+    name: 'Minimal Image Prompt',
+    description: 'Generates a Midjourney Image Prompt (Minimal Palette).',
+    emoji: '🖤',
+    prompt: `[ADVANCED AI INFOGRAPHIC GENERATION: MINIMAL PALETTE]
+Your goal is to process the user's content and output an EXECUTABLE IMAGE GENERATION PROMPT meant to be pasted into an AI image generator (like Midjourney).
+Use the following EXACT structural template, dynamically filling in the bracketed variables based on the user's content.
+
+TEMPLATE:
+"Create a professional, high-resolution infographic slide — this is Slide 1 of a [X]-slide series titled "[Series Title]". Portrait format, 1080x1920 pixels, 300 DPI. Professionally designed, zero visual clutter, white space, clear visual hierarchy moving top to bottom in a Z-pattern.
+CANVAS: 1080x1920px. Background is flat Pure White (#FFFFFF). 12-column grid.
+HEADER: Centered, Dark Charcoal (#333333). Accent line is Electric Blue (#0066CC).
+CONTENT: [Dynamically generate the visual layout describing the user's specific steps, icons to use, text blurbs, etc. Use Medium Gray (#666666) as a secondary color].
+FOOTER: Bottom 10% containing ACCESSIBILITY ALT TEXT LABEL: [Generate a 1-sentence alt text summarizing the infographic]."
+
+Output ONLY the final injected image generation prompt text.`
+  }
+];
+
+// ═══════════════════════════════════════════
 // CATEGORY DEFINITIONS
 // ═══════════════════════════════════════════
 
@@ -1400,5 +1550,16 @@ export const MODIFIER_CATEGORIES: ModifierCategory[] = [
     borderClass: 'border-emerald-500/30',
     glowClass: 'shadow-[0_0_12px_rgba(52,211,153,0.25)]',
     modifiers: XML_MODIFIERS,
+  },
+  {
+    id: 'infographic',
+    label: 'Infographics',
+    emoji: '🎨',
+    color: 'indigo',
+    bgClass: 'bg-indigo-500/15',
+    textClass: 'text-indigo-400',
+    borderClass: 'border-indigo-500/30',
+    glowClass: 'shadow-[0_0_12px_rgba(99,102,241,0.25)]',
+    modifiers: INFOGRAPHIC_MODIFIERS,
   },
 ];

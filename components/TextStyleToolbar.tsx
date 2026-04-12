@@ -7,11 +7,13 @@ export interface SelectedModifiers {
   emoji: string | null;
   ascii: string | null;
   xml: string[];
+  infographic?: string | null;
 }
 
 interface TextStyleToolbarProps {
   selectedModifiers: SelectedModifiers;
-  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii' | 'xml', modifierId: string | string[] | null) => void;
+  onModifierChange: (categoryId: 'font' | 'emoji' | 'ascii' | 'xml' | 'infographic', modifierId: string | string[] | null) => void;
+  onInsertTag?: (tag: string) => void;
 }
 
 /** Single dropdown for a modifier category */
@@ -139,9 +141,11 @@ const XMLMultiSelectDropdown: React.FC<{
   category: ModifierCategory;
   selectedIds: string[];
   onSelect: (modIds: string[]) => void;
-}> = ({ category, selectedIds, onSelect }) => {
+  onInsertTag?: (tag: string) => void;
+}> = ({ category, selectedIds, onSelect, onInsertTag }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [customTags, setCustomTags] = useState<string[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   const hasOptions = category.modifiers.length > 0;
@@ -156,6 +160,15 @@ const XMLMultiSelectDropdown: React.FC<{
     return () => document.removeEventListener('mousedown', handleClick);
   }, [isOpen]);
 
+  useEffect(() => {
+    const saved = localStorage.getItem('custom_xml_tags');
+    if (saved) {
+      try {
+        setCustomTags(JSON.parse(saved));
+      } catch (e) {}
+    }
+  }, []);
+
   // Fuzzy match filter
   const filteredModifiers = category.modifiers.filter(mod => 
     mod.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -167,6 +180,32 @@ const XMLMultiSelectDropdown: React.FC<{
       onSelect(selectedIds.filter(id => id !== modId));
     } else {
       onSelect([...selectedIds, modId]);
+    }
+  };
+
+  const addCustomTag = (e?: React.KeyboardEvent) => {
+    if (e && e.key !== 'Enter') return;
+    if (!searchQuery.trim()) return;
+    const cleanTag = searchQuery.trim().replace(/[<>\s]/g, '-').toLowerCase();
+    if (!customTags.includes(cleanTag)) {
+      const updated = [...customTags, cleanTag];
+      setCustomTags(updated);
+      localStorage.setItem('custom_xml_tags', JSON.stringify(updated));
+    }
+    setSearchQuery('');
+  };
+
+  const removeCustomTag = (tag: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = customTags.filter(t => t !== tag);
+    setCustomTags(updated);
+    localStorage.setItem('custom_xml_tags', JSON.stringify(updated));
+  };
+
+  const handleCustomTagClick = (tag: string) => {
+    if (onInsertTag) {
+      onInsertTag(tag);
+      setIsOpen(false);
     }
   };
 
@@ -230,22 +269,67 @@ const XMLMultiSelectDropdown: React.FC<{
             )}
           </div>
 
-          {/* Search Input */}
-          <div className="px-3 py-2 border-b border-slate-800 bg-slate-900/50">
+          {/* Search Input and Custom Tag Creator */}
+          <div className="px-3 py-3 border-b border-slate-800 bg-slate-900/50 flex flex-col gap-2">
             <div className="relative">
               <input 
                 type="text" 
                 autoFocus
-                placeholder="Search tags..."
+                placeholder="Search or type a specific custom tag..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500/50"
+                onKeyDown={addCustomTag}
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-8 pr-12 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500/50"
               />
               <span className="absolute left-2.5 top-1/2 -translate-y-1/2 opacity-50 text-[10px]">🔍</span>
+              {searchQuery.trim() && !filteredModifiers.length && (
+                <button
+                  onClick={() => addCustomTag()}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/40 px-2 py-0.5 rounded text-[10px] font-bold"
+                >
+                  ADD
+                </button>
+              )}
             </div>
           </div>
 
           <div className="overflow-y-auto overscroll-contain flex-grow">
+            {/* Custom tags section */}
+            {customTags.length > 0 && (
+              <div className="border-b border-indigo-500/20 bg-indigo-500/5 pb-2">
+                <div className="px-4 py-2 text-[9px] font-bold text-indigo-400 uppercase tracking-widest flex items-center justify-between">
+                  <span>Custom Tags</span>
+                  <span className="opacity-60 font-mono text-[8px]">Auto-Format Insert</span>
+                </div>
+                {customTags.filter(t => t.includes(searchQuery.toLowerCase())).map(tag => (
+                  <div
+                    key={`custom-${tag}`}
+                    className="flex items-center justify-between px-4 py-2 hover:bg-slate-800/80 cursor-pointer group/custom"
+                    onClick={() => handleCustomTagClick(tag)}
+                  >
+                    <div className="flex items-center gap-2 text-indigo-300">
+                      <span className="opacity-50 text-xs">{"</>"}</span>
+                      <span className="font-mono text-sm font-semibold">{tag}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-[9px] text-emerald-400 opacity-0 group-hover/custom:opacity-100 transition-opacity mr-3 font-semibold tracking-wide">
+                        INSERT
+                      </span>
+                      <button
+                        onClick={(e) => removeCustomTag(tag, e)}
+                        className="text-slate-500 hover:text-red-400 p-1 opacity-0 group-hover/custom:opacity-100 transition-all rounded hover:bg-red-500/20"
+                        title="Delete custom tag"
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {filteredModifiers.map(mod => {
               const isSelected = selectedIds.includes(mod.id);
               return (
@@ -287,11 +371,12 @@ const XMLMultiSelectDropdown: React.FC<{
 // MAIN TOOLBAR COMPONENT
 // ═══════════════════════════════════════════
 
-const TextStyleToolbar: React.FC<TextStyleToolbarProps> = ({ selectedModifiers, onModifierChange }) => {
+const TextStyleToolbar: React.FC<TextStyleToolbarProps> = ({ selectedModifiers, onModifierChange, onInsertTag }) => {
   const activeCount = [
     selectedModifiers.font, 
     selectedModifiers.emoji, 
-    selectedModifiers.ascii
+    selectedModifiers.ascii,
+    selectedModifiers.infographic
   ].filter(Boolean).length + (selectedModifiers.xml?.length || 0);
 
   return (
@@ -322,6 +407,7 @@ const TextStyleToolbar: React.FC<TextStyleToolbarProps> = ({ selectedModifiers, 
                 category={cat}
                 selectedIds={selectedModifiers.xml || []}
                 onSelect={(modIds) => onModifierChange('xml', modIds)}
+                onInsertTag={onInsertTag}
               />
             );
           }

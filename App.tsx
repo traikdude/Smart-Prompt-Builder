@@ -62,7 +62,7 @@ const App: React.FC = () => {
 
   // Text Style Modifier States
   const [selectedModifiers, setSelectedModifiers] = useState<SelectedModifiers>({
-    font: null, emoji: null, ascii: null, xml: []
+    font: null, emoji: null, ascii: null, xml: [], infographic: null
   });
 
   /** Resolves all active modifier prompts into a single appended instruction block */
@@ -95,7 +95,7 @@ const App: React.FC = () => {
     return parts.length > 0 ? '\n\n[CRITICAL ADDITIONAL DIRECTIVE — TEXT STYLING RULES]\nPlease rigorously enforce the following formatting rules onto your finalized string:\n' + parts.join('\n\n---\n\n') : '';
   }, [selectedModifiers]);
 
-  const handleModifierChange = useCallback((categoryId: 'font' | 'emoji' | 'ascii' | 'xml', modifierId: string | string[] | null) => {
+  const handleModifierChange = useCallback((categoryId: 'font' | 'emoji' | 'ascii' | 'xml' | 'infographic', modifierId: string | string[] | null) => {
     setSelectedModifiers(prev => ({ ...prev, [categoryId]: modifierId }));
   }, []);
 
@@ -649,6 +649,33 @@ const App: React.FC = () => {
 
   // --- Output Interactions ---
 
+  const handleInsertTag = useCallback((tagName: string) => {
+    const textarea = document.getElementById('content') as HTMLTextAreaElement;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = userContent.substring(start, end);
+
+    let newText = '';
+    if (selectedText) {
+      newText = `${userContent.substring(0, start)}<${tagName}>\n${selectedText}\n</${tagName}>${userContent.substring(end)}`;
+    } else {
+      newText = `${userContent.substring(0, start)}<${tagName}>\n\n</${tagName}>${userContent.substring(end)}`;
+    }
+    
+    setUserContent(newText);
+    
+    setTimeout(() => {
+      textarea.focus();
+      if (selectedText) {
+         textarea.setSelectionRange(start + tagName.length + 3, start + tagName.length + 3 + selectedText.length + 1);
+      } else {
+         const newPos = start + tagName.length + 3;
+         textarea.setSelectionRange(newPos, newPos);
+      }
+    }, 10);
+  }, [userContent]);
+
   const handleCopy = useCallback(async () => {
     if (!generatedPrompt) return;
     try {
@@ -775,6 +802,7 @@ const App: React.FC = () => {
               onEngineFormatQuantityChange={handleEngineFormatQuantityChange}
               attachments={attachments}
               onAttachmentsChange={setAttachments}
+              onInsertTag={handleInsertTag}
             />
 
             {/* Multi-Payload Output — renders when multiple engine formats were selected */}
