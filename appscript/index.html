@@ -463,7 +463,68 @@ ${S}`)}return u}),Qs=LL(gC);/**
  * @license
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
- */const _M="gl-node/";class IA{get interactions(){var t;if(this._interactions!==void 0)return this._interactions;console.warn("GoogleGenAI.interactions: Interactions usage is experimental and may change in future versions.");const n=this.httpOptions;n!=null&&n.extraBody&&console.warn("GoogleGenAI.interactions: Client level httpOptions.extraBody is not supported by the interactions client and will be ignored.");const a=new Rt({baseURL:this.apiClient.getBaseUrl(),apiKey:this.apiKey,apiVersion:this.apiClient.getApiVersion(),clientAdapter:this.apiClient,defaultHeaders:this.apiClient.getDefaultHeaders(),timeout:n==null?void 0:n.timeout,maxRetries:(t=n==null?void 0:n.retryOptions)===null||t===void 0?void 0:t.attempts});return this._interactions=a.interactions,this._interactions}constructor(t){var n;if(t.apiKey==null)throw new Error("An API Key must be set when running in a browser");if(t.project||t.location)throw new Error("Vertex AI project based authentication is not supported on browser runtimes. Please do not provide a project or location.");this.vertexai=(n=t.vertexai)!==null&&n!==void 0?n:!1,this.apiKey=t.apiKey;const a=QI(t.httpOptions,t.vertexai,void 0,void 0);a&&(t.httpOptions?t.httpOptions.baseUrl=a:t.httpOptions={baseUrl:a}),this.apiVersion=t.apiVersion,this.httpOptions=t.httpOptions;const o=new AM(this.apiKey);this.apiClient=new vO({auth:o,apiVersion:this.apiVersion,apiKey:this.apiKey,vertexai:this.vertexai,httpOptions:this.httpOptions,userAgentExtra:_M+"web",uploader:new SM,downloader:new dM}),this.models=new GO(this.apiClient),this.live=new LO(this.apiClient,o,new vM),this.batches=new k0(this.apiClient),this.chats=new gN(this.models,this.apiClient),this.caches=new pN(this.apiClient),this.files=new xN(this.apiClient),this.operations=new zO(this.apiClient),this.authTokens=new aL(this.apiClient),this.tunings=new cM(this.apiClient),this.fileSearchStores=new pL(this.apiClient)}}const CM=()=>A.jsxs("div",{className:"text-center mb-10 animate-fade-in-up",children:[A.jsxs("div",{className:"flex items-center justify-center gap-3 mb-3",children:[A.jsx("span",{className:"text-2xl animate-bounce",style:{animationDelay:"0ms"},children:"🗣️"}),A.jsx("span",{className:"text-lg animate-bounce",style:{animationDelay:"150ms"},children:"✨"}),A.jsx("span",{className:"text-2xl animate-bounce",style:{animationDelay:"300ms"},children:"🎨"})]}),A.jsx("h1",{className:"text-3xl sm:text-4xl font-extrabold pb-2 tracking-tight",children:A.jsx("span",{className:"bg-clip-text text-transparent",style:{backgroundImage:"linear-gradient(135deg, #FF6B9D, #FF8E53, #FBBF24, #34D399, #22D3EE, #6366F1, #A855F7)",backgroundSize:"300% 300%",animation:"gradientShift 5s ease infinite"},children:"Elite Multi-Channel Architect"})}),A.jsxs("p",{className:"text-slate-400 mt-3 text-xs sm:text-sm font-medium tracking-widest uppercase flex items-center justify-center gap-3",children:[A.jsx("span",{className:"w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"}),A.jsx("span",{className:"w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse",style:{animationDelay:"300ms"}}),A.jsx("span",{children:"Unified Analysis & Implementation System"}),A.jsx("span",{className:"w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse",style:{animationDelay:"600ms"}}),A.jsx("span",{className:"w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse",style:{animationDelay:"900ms"}})]})]}),wM=()=>A.jsxs("div",{className:"mt-12 text-center text-xs text-slate-500 tracking-wider flex items-center justify-center gap-3",children:[A.jsx("span",{className:"w-8 h-px bg-gradient-to-r from-transparent via-pink-500/50 to-transparent"}),A.jsx("span",{children:"Engineered with"}),A.jsxs("span",{className:"inline-flex gap-1 text-base",children:[A.jsx("span",{className:"animate-bounce",style:{animationDelay:"0ms"},children:"💖"}),A.jsx("span",{className:"animate-bounce",style:{animationDelay:"100ms"},children:"✨"}),A.jsx("span",{className:"animate-bounce",style:{animationDelay:"200ms"},children:"🚀"})]}),A.jsxs("span",{children:["by ",A.jsx("span",{className:"font-semibold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400",children:"Elite Architect"})]}),A.jsx("span",{className:"w-8 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"})]}),xM=[50,100,200,300,400,500,600,700,800,900,1e3,1100,1200,1300,1400,1500,2e3,4e3,6e3,8e3,9e3,1e4,11e3,12e3,13e3,14e3,15e3,16e3,17e3,18e3,19e3,2e4],fd=[{id:"google-apps-script-architect",name:"Elite Google Apps Script Architect",description:"Advanced developer, automation engineer, and instructional guide specializing in Google Apps Script.",category:"development",placeholderTrigger:`
+ */const _M="gl-node/";class IA{get interactions(){var t;if(this._interactions!==void 0)return this._interactions;console.warn("GoogleGenAI.interactions: Interactions usage is experimental and may change in future versions.");const n=this.httpOptions;n!=null&&n.extraBody&&console.warn("GoogleGenAI.interactions: Client level httpOptions.extraBody is not supported by the interactions client and will be ignored.");const a=new Rt({baseURL:this.apiClient.getBaseUrl(),apiKey:this.apiKey,apiVersion:this.apiClient.getApiVersion(),clientAdapter:this.apiClient,defaultHeaders:this.apiClient.getDefaultHeaders(),timeout:n==null?void 0:n.timeout,maxRetries:(t=n==null?void 0:n.retryOptions)===null||t===void 0?void 0:t.attempts});return this._interactions=a.interactions,this._interactions}constructor(t){var n;if(t.apiKey==null)throw new Error("An API Key must be set when running in a browser");if(t.project||t.location)throw new Error("Vertex AI project based authentication is not supported on browser runtimes. Please do not provide a project or location.");this.vertexai=(n=t.vertexai)!==null&&n!==void 0?n:!1,this.apiKey=t.apiKey;const a=QI(t.httpOptions,t.vertexai,void 0,void 0);a&&(t.httpOptions?t.httpOptions.baseUrl=a:t.httpOptions={baseUrl:a}),this.apiVersion=t.apiVersion,this.httpOptions=t.httpOptions;const o=new AM(this.apiKey);this.apiClient=new vO({auth:o,apiVersion:this.apiVersion,apiKey:this.apiKey,vertexai:this.vertexai,httpOptions:this.httpOptions,userAgentExtra:_M+"web",uploader:new SM,downloader:new dM}),this.models=new GO(this.apiClient),this.live=new LO(this.apiClient,o,new vM),this.batches=new k0(this.apiClient),this.chats=new gN(this.models,this.apiClient),this.caches=new pN(this.apiClient),this.files=new xN(this.apiClient),this.operations=new zO(this.apiClient),this.authTokens=new aL(this.apiClient),this.tunings=new cM(this.apiClient),this.fileSearchStores=new pL(this.apiClient)}}const CM=()=>A.jsxs("div",{className:"text-center mb-10 animate-fade-in-up",children:[A.jsxs("div",{className:"flex items-center justify-center gap-3 mb-3",children:[A.jsx("span",{className:"text-2xl animate-bounce",style:{animationDelay:"0ms"},children:"🗣️"}),A.jsx("span",{className:"text-lg animate-bounce",style:{animationDelay:"150ms"},children:"✨"}),A.jsx("span",{className:"text-2xl animate-bounce",style:{animationDelay:"300ms"},children:"🎨"})]}),A.jsx("h1",{className:"text-3xl sm:text-4xl font-extrabold pb-2 tracking-tight",children:A.jsx("span",{className:"bg-clip-text text-transparent",style:{backgroundImage:"linear-gradient(135deg, #FF6B9D, #FF8E53, #FBBF24, #34D399, #22D3EE, #6366F1, #A855F7)",backgroundSize:"300% 300%",animation:"gradientShift 5s ease infinite"},children:"Elite Multi-Channel Architect"})}),A.jsxs("p",{className:"text-slate-400 mt-3 text-xs sm:text-sm font-medium tracking-widest uppercase flex items-center justify-center gap-3",children:[A.jsx("span",{className:"w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"}),A.jsx("span",{className:"w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse",style:{animationDelay:"300ms"}}),A.jsx("span",{children:"Unified Analysis & Implementation System"}),A.jsx("span",{className:"w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse",style:{animationDelay:"600ms"}}),A.jsx("span",{className:"w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse",style:{animationDelay:"900ms"}})]})]}),wM=()=>A.jsxs("div",{className:"mt-12 text-center text-xs text-slate-500 tracking-wider flex items-center justify-center gap-3",children:[A.jsx("span",{className:"w-8 h-px bg-gradient-to-r from-transparent via-pink-500/50 to-transparent"}),A.jsx("span",{children:"Engineered with"}),A.jsxs("span",{className:"inline-flex gap-1 text-base",children:[A.jsx("span",{className:"animate-bounce",style:{animationDelay:"0ms"},children:"💖"}),A.jsx("span",{className:"animate-bounce",style:{animationDelay:"100ms"},children:"✨"}),A.jsx("span",{className:"animate-bounce",style:{animationDelay:"200ms"},children:"🚀"})]}),A.jsxs("span",{children:["by ",A.jsx("span",{className:"font-semibold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400",children:"Elite Architect"})]}),A.jsx("span",{className:"w-8 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"})]}),xM=[50,100,200,300,400,500,600,700,800,900,1e3,1100,1200,1300,1400,1500,2e3,4e3,6e3,8e3,9e3,1e4,11e3,12e3,13e3,14e3,15e3,16e3,17e3,18e3,19e3,2e4],fd=[{id:"google-maps-architect",name:"Elite Google Maps Architect",description:"Executive Trip Planner, Routing Optimizer, and Travel Briefing Generator.",category:"custom",placeholderTrigger:`
+
+[Paste travel details or itinerary requests here]
+
+`,content:`# Elite Google Maps Architect & Trip Planner
+
+You are the Elite Google Maps Architect. Your mission is to generate comprehensive executive travel briefings, optimize complex multi-stop routes, and create detailed departure checklists.
+
+### 🧭 Core Hotkey Navigation Framework
+- **N: Navigation & Routing** - Sequence multi-stop locations, prioritize routes, and identify transit modes.
+- **P: Parking & Accessibility** - Identify parking options, costs, constraints, and accessibility requirements.
+- **T: Real-Time Traffic & Duration Estimates** - Calculate exact durations, buffer times, and adjust for historical congestion.
+- **W: Weather Integration** - Provide detailed forecasted elements to adapt clothing and travel speed.
+
+### 📋 Executive Travel Briefings
+Consolidate all routing intelligence into a beautifully formatted pre-trip executive summary:
+1. Executive Summary & Timeline
+2. Step-by-Step Waypoint Guidance
+3. Weather Adaptation Protocols
+4. Critical Alerts & Contingencies
+
+### 🎒 Departure Checklists
+Provide an exhaustive verification list:
+- Vehicle Readiness (fuel, charge, documents)
+- Personal Gear & Identification
+- Weather-Appropriate Equipment
+- Destination Access Verification (confirmation numbers, tickets)
+
+Format the output meticulously as a top-tier Professional Travel Itinerary.`},{id:"google-contacts-system",name:"Universal Google Contacts Organizer",description:"Extract, clean, and organize unstructured data into CRM-ready contacts.",category:"analysis",placeholderTrigger:`
+
+[Paste raw contact data or directory dumps here]
+
+`,content:`# Universal Google Contacts System
+
+You are an elite data extraction and organization specialist focused on converting messy text, OCR data, and raw directories into perfectly structured CRM-ready contact records.
+
+### 🧩 Core Framework (M.E.C.V.)
+- **M: Multi-Format Input Parsing** - Ingest unstructured text, bios, or raw contact dumps.
+- **E: Extraction Engine** - Identify entities distinctly (CEO vs CTO, personal vs company).
+- **C: Cleaning & Standardization** - Ensure casing, formatting, and standard nomenclature.
+- **V: Visual Organization** - Output into CRM-ready formats with clear dividers.
+
+### 🔐 Strict Data Routing Guardrails
+- **Security & Account Information**: Secure credentials, access codes, and pins explicitly. DO NOT put these in "Other".
+- **Financial Information**: Separate payment details entirely.
+- **General Details**: Only safe, non-sensitive context goes here.
+
+### ✅ Universal Output Template
+For each distinct entity found, use this strict emoji-rich format:
+
+[Divider: ━━━━━━━━━━━━━━━━━━━━━━]
+👤 **Name:** [First Name] [Last Name]
+👔 **Job Title:** [Title] | **Company:** [Company Name]
+📞 **Phone:** [Standardized Number]
+📬 **Email:** [Clean Email]
+📍 **Address:** [Full Address]
+⏰ **Operating Hours:** [Hours]
+🌐 **Website:** [URL]
+📌 **Tags/Labels:** [Comma-separated]
+[End Divider]
+
+Process the provided raw input and extract all identifiable entities perfectly.`},{id:"google-apps-script-architect",name:"Elite Google Apps Script Architect",description:"Advanced developer, automation engineer, and instructional guide specializing in Google Apps Script.",category:"development",placeholderTrigger:`
 
 [Describe the automation or script you want to build]
 
