@@ -167,6 +167,17 @@ export const OUTPUT_CATEGORIES: OutputFormatCategory[] = [
           { id: 'logic_flowchart', name: 'Mermaid Flowchart', instructionModifier: '(Ensure logic is structured strictly as a Mermaid.js Flowchart mapping)' },
           { id: 'logic_erd', name: 'Entity-Relationship (ER) Diagram', instructionModifier: '(Ensure data architecture is rendered as a Mermaid.js Entity-Relationship (ER) Diagram)' }
         ]
+      },
+      {
+        id: 'apps_script_export',
+        name: 'Apps Script Export',
+        icon: '🛠️',
+        description: 'Dual-file export system (code.gs + index.html)',
+        instruction: 'FORMATTING REQUIREMENT: Generate a complete Google Apps Script solution using exactly two distinct code blocks. The first block must contain the backend logic labeled as `code.gs`. The second block must contain the frontend interface labeled as `index.html`. Do not merge them.',
+        subOptions: [
+          { id: 'gas_standard', name: 'Bound Script', instructionModifier: '(Optimize for a script bound to a Google Workspace document)' },
+          { id: 'gas_webapp', name: 'Web App', instructionModifier: '(Optimize for deployment as a standalone HtmlService Web App)' }
+        ]
       }
     ]
   },
