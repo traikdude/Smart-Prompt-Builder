@@ -1,5 +1,5 @@
 $PROJECT_ID = "Smart-Prompt-Builder"
-$VERSION = "v2.7.0"
+$VERSION = "v2.7.1"
 $ARTIFACT_NAME = "appscript.zip"
 
 Write-Host "Staging Changes..."
@@ -9,9 +9,8 @@ Write-Host "Committing..."
 $commitMsg = @"
 feat(release): Publish $ARTIFACT_NAME $VERSION
 
-- Expand Universal Output Format Matrix to match full scope
-- Integrate Multimedia, Data Visualization, and Immersive Tech categories
-- Inject comprehensive API parameters for advanced data rendering
+- Add left/right directional arrows for horizontal scrolling in the OutputConfigurator tab bar
+- Implement custom hide-scrollbar CSS class
 "@
 git commit -m $commitMsg
 

@@ -16,6 +16,19 @@ export const OutputConfigurator: React.FC<OutputConfiguratorProps> = ({
 }) => {
   // State for which tab is currently active
   const [activeTabId, setActiveTabId] = useState<string>(OUTPUT_CATEGORIES[0].id);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="card p-5 sm:p-6 mb-6 space-y-6 relative overflow-hidden">
@@ -72,32 +85,61 @@ export const OutputConfigurator: React.FC<OutputConfiguratorProps> = ({
         
         <div className="border border-white/10 rounded-xl overflow-hidden bg-slate-900/40">
           {/* TABS HEADER ROW */}
-          <div className="flex overflow-x-auto custom-scrollbar border-b border-white/5 bg-slate-800/40">
-            {OUTPUT_CATEGORIES.map(category => {
-              const isActive = activeTabId === category.id;
-              // Count how many options are selected in this category
-              const selectedCount = category.options.filter(opt => selectedFormats.includes(opt.id)).length;
-              
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveTabId(category.id)}
-                  className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
-                    isActive 
-                      ? 'border-b-2 border-indigo-400 text-indigo-300 bg-white/5' 
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border-b-2 border-transparent'
-                  }`}
-                >
-                  <span>{category.icon}</span>
-                  <span>{category.title}</span>
-                  {selectedCount > 0 && (
-                    <span className="ml-1 bg-indigo-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
-                      {selectedCount}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+          <div className="relative group/scroll">
+            
+            {/* Left Scroll Gradient & Button */}
+            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent flex items-center justify-start z-10 opacity-0 group-hover/scroll:opacity-100 transition-opacity pointer-events-none">
+              <button 
+                onClick={scrollLeft}
+                className="ml-1 p-1 bg-slate-800 hover:bg-indigo-500 rounded-full text-slate-300 hover:text-white pointer-events-auto shadow-lg border border-white/10 transition-colors"
+                title="Scroll Left"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+              </button>
+            </div>
+
+            <div 
+              ref={scrollContainerRef}
+              className="flex overflow-x-auto custom-scrollbar border-b border-white/5 bg-slate-800/40 hide-scrollbar"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {OUTPUT_CATEGORIES.map(category => {
+                const isActive = activeTabId === category.id;
+                // Count how many options are selected in this category
+                const selectedCount = category.options.filter(opt => selectedFormats.includes(opt.id)).length;
+                
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveTabId(category.id)}
+                    className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
+                      isActive 
+                        ? 'border-b-2 border-indigo-400 text-indigo-300 bg-white/5' 
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border-b-2 border-transparent'
+                    }`}
+                  >
+                    <span>{category.icon}</span>
+                    <span>{category.title}</span>
+                    {selectedCount > 0 && (
+                      <span className="ml-1 bg-indigo-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                        {selectedCount}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Right Scroll Gradient & Button */}
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-slate-900 via-slate-900/80 to-transparent flex items-center justify-end z-10 opacity-0 group-hover/scroll:opacity-100 transition-opacity pointer-events-none">
+              <button 
+                onClick={scrollRight}
+                className="mr-1 p-1 bg-slate-800 hover:bg-indigo-500 rounded-full text-slate-300 hover:text-white pointer-events-auto shadow-lg border border-white/10 transition-colors"
+                title="Scroll Right"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+              </button>
+            </div>
           </div>
 
           {/* TAB CONTENT PANEL */}
