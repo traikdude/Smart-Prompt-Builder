@@ -346,6 +346,7 @@ const App: React.FC = () => {
           }
         }
 
+        setOutputPayloads([]); // Clear any previous multi-payload state
         setGeneratedPrompt(finalPrompt);
         saveToHistory(templateForHistory, userContent, finalPrompt);
         triggerCelebration(); 
@@ -423,36 +424,81 @@ const App: React.FC = () => {
       // UI-Selected Modifiers
       promptText += getModifierPromptText();
 
-      // Universal Engine Schema/Format Injections — Multi-Payload Architecture
-      const activeLabels = resolveActiveEngineLabels();
-      const isMultiPayload = activeLabels.length > 1;
-      
-      if (activeLabels.length > 0) {
-        if (isMultiPayload) {
-          // ═══ MULTI-PAYLOAD MODE ═══
-          // Instruct AI to output each format in clearly delimited sections
-          const payloadInstructions = activeLabels.map((label, i) => 
-            `${i + 1}. **${label.label}**: ${label.instruction}`
-          ).join('\n');
-          
-          const delimiterExamples = activeLabels.map(label => 
-            `===BEGIN_PAYLOAD: ${label.label}===\n[Your ${label.label} output here]\n===END_PAYLOAD: ${label.label}===`
-          ).join('\n\n');
-          
-          promptText += `\n\n[UNIVERSAL ENGINE — MULTI-PAYLOAD OUTPUT SCHEMATICS]\nCRITICAL: You are generating MULTIPLE SEPARATE output payloads. Each payload MUST be wrapped in EXACT delimiter markers as shown below. Do NOT merge payloads together. Each payload is an independent, self-contained output block.\n\nRequired Output Types:\n${payloadInstructions}\n\nMANDATORY OUTPUT STRUCTURE — Use these EXACT delimiters (copy them character-for-character):\n${delimiterExamples}\n\nRULES:\n- Each payload must be complete and self-contained\n- Do NOT include any text outside the delimiter blocks\n- Do NOT add introductions, summaries, or commentary between payloads\n- The delimiter lines must appear EXACTLY as shown above (with the === markers)`;
-        } else {
-          // ═══ SINGLE-PAYLOAD MODE ═══
-          // Standard single-format injection (legacy behavior)
-          const singleLabel = activeLabels[0];
-          promptText += `\n\n[UNIVERSAL ENGINE — OUTPUT SCHEMATICS]\nIMPORTANT: You must fulfill the following architectural requirement in your output:\n- ${singleLabel.instruction}`;
+      // ═══════════════════════════════════════════
+      // 🎯 COMPREHENSIVE MULTI-PAYLOAD ARCHITECTURE
+      // Collects labels from ALL three input axes:
+      //   1. Engine (Template)
+      //   2. Output Architecture (Format Configurations)
+      //   3. Lens (Format Style Override)
+      // ═══════════════════════════════════════════
+
+      // Resolve Output Architecture labels (existing helper)
+      const outputArchLabels = resolveActiveEngineLabels();
+
+      // Build the FULL payload label set from all axes
+      const allPayloadLabels: { id: string; label: string; icon: string; instruction: string }[] = [];
+
+      // Axis 1: Engine (Template) — if a template is selected, it becomes its own payload
+      if (selectedTemplateId !== 'none') {
+        const template = templates.find(t => t.id === selectedTemplateId);
+        if (template) {
+          const categoryEmojis: Record<string, string> = {
+            communication: '💬', technical: '⚙️', creative: '🎨',
+            analysis: '🔍', development: '💻', custom: '★',
+          };
+          allPayloadLabels.push({
+            id: `engine_${template.id}`,
+            label: template.name,
+            icon: categoryEmojis[template.category || 'custom'] || '⚡',
+            instruction: 'Execute the primary transformation directives specified in the system prompt above. Output the fully transformed, enhanced version of the user\'s content as rich, professionally formatted text. This is the core processed result.',
+          });
         }
       }
 
-      // Inject format style override if selected (The Lens)
+      // Axis 2: Output Architecture formats
+      allPayloadLabels.push(...outputArchLabels);
+
+      // Axis 3: Lens (Format Style) — if a lens is selected, it becomes its own payload
       if (selectedFormatId && selectedFormatId !== 'none') {
         const formatStyle = FORMAT_STYLES.find(f => f.id === selectedFormatId);
         if (formatStyle) {
-          promptText += `\n\n[CRITICAL PRESENTATION REQUIREMENT — STRUCTURAL FORMAT OVERRIDE]\nIMPORTANT: Regardless of any formatting conventions implied or suggested within the primary directives above, you are strictly required to adhere to the following structural format when composing and delivering your final output. Do not deviate from this presentation architecture under any circumstances.\n\n${formatStyle.content}`;
+          allPayloadLabels.push({
+            id: `lens_${formatStyle.id}`,
+            label: `${formatStyle.name} (Lens)`,
+            icon: '🎛️',
+            instruction: formatStyle.content,
+          });
+        }
+      }
+
+      // Determine rendering mode based on TOTAL payload count across all axes
+      const isMultiPayload = allPayloadLabels.length > 1;
+
+      if (isMultiPayload) {
+        // ═══ MULTI-PAYLOAD MODE ═══
+        // ALL selected types get their own delimited output section
+        const payloadInstructions = allPayloadLabels.map((label, i) => 
+          `${i + 1}. **${label.label}**: ${label.instruction}`
+        ).join('\n');
+        
+        const delimiterExamples = allPayloadLabels.map(label => 
+          `===BEGIN_PAYLOAD: ${label.label}===\n[Your ${label.label} output here]\n===END_PAYLOAD: ${label.label}===`
+        ).join('\n\n');
+        
+        promptText += `\n\n[UNIVERSAL ENGINE — MULTI-PAYLOAD OUTPUT SCHEMATICS]\nCRITICAL: You are generating MULTIPLE SEPARATE output payloads. Each payload MUST be wrapped in EXACT delimiter markers as shown below. Do NOT merge payloads together. Each payload is an independent, self-contained output block.\n\nRequired Output Types:\n${payloadInstructions}\n\nMANDATORY OUTPUT STRUCTURE — Use these EXACT delimiters (copy them character-for-character):\n${delimiterExamples}\n\nRULES:\n- Each payload must be complete and self-contained\n- Do NOT include any text outside the delimiter blocks\n- Do NOT add introductions, summaries, or commentary between payloads\n- The delimiter lines must appear EXACTLY as shown above (with the === markers)`;
+      } else {
+        // ═══ SINGLE-PAYLOAD / LEGACY MODE ═══
+        // Only inject Output Architecture instruction if present (Engine is handled by template wrapping)
+        if (outputArchLabels.length === 1) {
+          promptText += `\n\n[UNIVERSAL ENGINE — OUTPUT SCHEMATICS]\nIMPORTANT: You must fulfill the following architectural requirement in your output:\n- ${outputArchLabels[0].instruction}`;
+        }
+
+        // Inject Lens format override (legacy global injection — only in single-payload mode)
+        if (selectedFormatId && selectedFormatId !== 'none') {
+          const formatStyle = FORMAT_STYLES.find(f => f.id === selectedFormatId);
+          if (formatStyle) {
+            promptText += `\n\n[CRITICAL PRESENTATION REQUIREMENT — STRUCTURAL FORMAT OVERRIDE]\nIMPORTANT: Regardless of any formatting conventions implied or suggested within the primary directives above, you are strictly required to adhere to the following structural format when composing and delivering your final output. Do not deviate from this presentation architecture under any circumstances.\n\n${formatStyle.content}`;
+          }
         }
       }
 
@@ -467,8 +513,8 @@ const App: React.FC = () => {
 
       if (response.text) {
         // Parse multi-payload response if applicable
-        if (isMultiPayload && activeLabels.length > 1) {
-          const parsed = parsePayloads(response.text, activeLabels);
+        if (isMultiPayload) {
+          const parsed = parsePayloads(response.text, allPayloadLabels);
           setOutputPayloads(parsed);
           setGeneratedPrompt(null); // Clear single-card output
         } else {
