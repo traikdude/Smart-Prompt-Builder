@@ -6,9 +6,10 @@ import asyncio
 import logging
 import os
 import traceback
+from contextlib import asynccontextmanager
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from google import genai
@@ -18,14 +19,41 @@ from pydantic import BaseModel
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize the Gemini GenAI Client
-# Automatically picks up GEMINI_API_KEY from the environment
-client = genai.Client()
+# Module-level GenAI client — intentionally unset until lifespan validates the secret.
+# UPPER_CASE signals this is a module-level constant (Pylint C0103).
+# Initialized inside lifespan() to ensure GEMINI_API_KEY is present first.
+CLIENT: Optional[genai.Client] = None
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):  # pylint: disable=redefined-outer-name,unused-argument
+    """
+    Application lifespan manager.
+    Validates GEMINI_API_KEY and initializes the GenAI client before the
+    server begins accepting requests. Raises RuntimeError on missing secret
+    so Cloud Run's readiness probe fails fast with a visible error instead
+    of silently routing traffic to a broken instance.
+    """
+    global CLIENT  # pylint: disable=global-statement
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "GEMINI_API_KEY is not set in the environment. "
+            "Verify the Secret Manager binding on the Cloud Run service and redeploy."
+        )
+    CLIENT = genai.Client()
+    logger.info("GEMINI_API_KEY validated. GenAI client initialized. Service ready.")
+    yield
+    # Teardown — release CLIENT reference on shutdown
+    CLIENT = None
+    logger.info("Service shutdown complete.")
+
 
 app = FastAPI(
     title="Smart-Prompt-Builder Engine API",
     description="High-performance multi-modal processing backend",
-    version="2.11.1"
+    version="2.12.0",
+    lifespan=lifespan,
 )
 
 # Exception handler for unhandled exceptions to catch the 500 error
@@ -43,18 +71,20 @@ async def global_exception_handler(request: Request, exc: Exception):
         }
     )
 
-# CORS Middleware - restricted to Google Apps Script origins only
+# CORS Middleware — restricted to Google Apps Script origins only.
+# allow_methods is limited to the three methods actually used by this API.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://script.google.com"],
     allow_origin_regex=r"https://.*\.script\.googleusercontent\.com",
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
 
-# Request Models
+# ── Request / Response Models ────────────────────────────────────────────────
+
 class ActiveTemplate(BaseModel):
     """Schema representing an active prompt template item requested from the client."""
 
@@ -78,7 +108,8 @@ class TaskResult(BaseModel):
     error: Optional[str] = None
 
 
-# Async Task Executor Process
+# ── Core Generation Logic ────────────────────────────────────────────────────
+
 async def generate_single_prompt(task: ActiveTemplate, model_name: str) -> TaskResult:
     """Executes a single structural task request asynchronously via the Gemini SDK."""
     try:
@@ -98,7 +129,7 @@ async def generate_single_prompt(task: ActiveTemplate, model_name: str) -> TaskR
                 })
 
         # Run generation async natively with the Google GenAI SDK
-        response = await client.aio.models.generate_content(
+        response = await CLIENT.aio.models.generate_content(
             model=model_name,
             contents=final_parts
         )
@@ -118,25 +149,25 @@ async def generate_single_prompt(task: ActiveTemplate, model_name: str) -> TaskR
         )
 
 
+# ── Routes ───────────────────────────────────────────────────────────────────
+
 @app.get("/")
 def health_check():
     """Health check for Google Cloud Run deployment."""
-    return {"status": "healthy", "service": "smart-prompt-builder-engine"}
+    return {"status": "healthy", "service": "smart-prompt-builder-engine", "version": "2.12.0"}
 
 
 @app.post("/api/v1/generate/batch", response_model=Dict[str, List[TaskResult]])
 async def batch_generate(request: BatchGenerateRequest):
     """
     True server-side concurrent processing via Promise.all equivalent (asyncio.gather).
-    Validates API key presence, maps model aliases, and dispatches all tasks concurrently.
+    Maps model aliases, dispatches all tasks concurrently, and returns aggregated results.
+    API key validation is handled at startup via the lifespan manager — not per-request.
     """
     logger.info("Received batch generation request for %s tasks.", len(request.tasks))
-    if not os.environ.get("GEMINI_API_KEY"):
-        logger.error("GEMINI_API_KEY not configured on server.")
-        raise HTTPException(status_code=500, detail="GEMINI_API_KEY not configured on server.")
 
     try:
-        # Map frontend visual tags to precise model IDs
+        # Map frontend visual tags to precise Gemini model IDs
         model_mapping = {
             "2.5": "gemini-2.5-flash",
             "3.1": "gemini-2.5-pro"

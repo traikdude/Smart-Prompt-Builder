@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: smart-prompt-builder-backend
+  namespace: smart-prompt-builder  # M-3: Scoped namespace for RBAC isolation
   labels:
     app: smart-prompt-builder
     component: backend
@@ -19,7 +20,7 @@ spec:
     spec:
       containers:
       - name: engine
-        image: gcr.io/smart-prompt-builder-825046261103/backend:latest # Placeholder - needs actual image push
+        image: gcr.io/smart-prompt-builder-825046261103/backend:latest # Pin to SHA in production
         ports:
         - containerPort: 8080
         env:
@@ -35,18 +36,35 @@ spec:
           requests:
             cpu: "500m"
             memory: "512Mi"
+        # M-1: Liveness probe — restarts container if app becomes unresponsive
         livenessProbe:
           httpGet:
             path: /
             port: 8080
-          initialDelaySeconds: 5
+          initialDelaySeconds: 10
           periodSeconds: 10
+          failureThreshold: 3
+        # M-1: Readiness probe — withholds traffic until app is fully initialized.
+        # Critical for the lifespan startup validation: if GEMINI_API_KEY is missing
+        # the startup will raise RuntimeError and this probe will fail, preventing
+        # broken pods from receiving any traffic.
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: smart-prompt-builder-service
+  namespace: smart-prompt-builder  # M-3: Must match Deployment namespace
 spec:
+  # NOTE (M-2): For future GKE production migration, replace LoadBalancer with
+  # ClusterIP + Ingress using a Google-managed TLS certificate to avoid exposing
+  # raw HTTP/80. Current Cloud Run deployment handles TLS termination natively.
   type: LoadBalancer
   selector:
     app: smart-prompt-builder
