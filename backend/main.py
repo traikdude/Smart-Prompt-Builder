@@ -168,12 +168,12 @@ async def batch_generate(request: BatchGenerateRequest):
 
     try:
         # Cost optimization (2026-04-13): '3.1' previously mapped to gemini-2.5-pro
-        # which is 8-10x more expensive than Flash with negligible output quality
-        # difference for standard prompt-generation workloads.
-        # Pro can be re-enabled here if advanced reasoning tasks require it.
+        # which is 8-10x more expensive than Flash for standard workloads. Pro
+        # restored by request — the frontend UI now clearly labels it as a premium model.
+        # 💰 Cost reference: Flash = $2.50/1M output tokens | Pro = $10-15/1M output tokens
         model_mapping = {
             "2.5": "gemini-2.5-flash",
-            "3.1": "gemini-2.5-flash"
+            "3.1": "gemini-2.5-pro"
         }
         actual_model_name = model_mapping.get(request.model_name, request.model_name)
 

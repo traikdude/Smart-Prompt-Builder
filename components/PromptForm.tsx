@@ -451,6 +451,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
         <div className="flex items-center justify-center gap-2 mb-3">
           <span className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Model</span>
           <div className="flex items-center bg-slate-800/60 rounded-lg border border-slate-700/50 p-0.5">
+            {/* ── Gemini 2.5 Flash — Standard tier ── */}
             <button
               onClick={() => onModelFamilyChange('2.5')}
               className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
@@ -458,26 +459,49 @@ const PromptForm: React.FC<PromptFormProps> = ({
                   ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/30 shadow-[0_0_10px_rgba(34,211,238,0.15)]'
                   : 'text-slate-500 hover:text-slate-300'
               }`}
-              title="Gemini 2.5 generation — Stable, well-tested models"
+              title="⚡ Gemini 2.5 Flash — Standard tier | $0.30/1M input · $2.50/1M output tokens"
             >
               ⚡ 2.5
             </button>
+
+            {/* ── Gemini 2.5 Pro — Premium / higher cost ── */}
             <button
               onClick={() => onModelFamilyChange('3.1')}
-              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+              className={`relative px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
                 modelFamily === '3.1'
-                  ? 'bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-pink-300 border border-pink-500/30 shadow-[0_0_10px_rgba(255,107,157,0.15)]'
-                  : 'text-slate-500 hover:text-slate-300'
+                  ? 'bg-gradient-to-r from-amber-500/25 to-orange-500/25 text-amber-300 border border-amber-500/40 shadow-[0_0_14px_rgba(251,191,36,0.25)]'
+                  : 'text-slate-500 hover:text-amber-400/70'
               }`}
-              title="Gemini 3.1 generation — Latest models with enhanced capabilities"
+              title="💰 Gemini 2.5 Pro — Premium tier | $1.25–2.50/1M input · $10–15/1M output tokens (8–10× more expensive than Flash)"
             >
-              🚀 3.1
+              💰 3.1
+              {/* Cost-tier badge — only visible when Pro is the active selection */}
+              {modelFamily === '3.1' && (
+                <span className="absolute -top-2.5 -right-2 bg-amber-500 text-black text-[8px] font-black px-1 py-0.5 rounded-full leading-none tracking-tight shadow-lg animate-pulse">
+                  PRO
+                </span>
+              )}
             </button>
           </div>
-          <span className="text-[10px] text-slate-600 hidden sm:inline">
-            {modelFamily === '2.5' ? 'Stable' : 'Latest'}
+
+          {/* Contextual label — shows cost warning when Pro is active */}
+          <span className={`text-[10px] font-semibold hidden sm:inline transition-colors ${
+            modelFamily === '3.1' ? 'text-amber-400/80' : 'text-slate-600'
+          }`}>
+            {modelFamily === '2.5' ? 'Stable' : '⚠️ Premium Cost'}
           </span>
         </div>
+
+        {/* Cost-warning banner — only visible when Pro is selected */}
+        {modelFamily === '3.1' && (
+          <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300/90 text-[11px]">
+            <span className="text-base leading-none">💰</span>
+            <span>
+              <strong>Pro model active.</strong> Output tokens cost ~6× more than Flash.
+              Switch to <button onClick={() => onModelFamilyChange('2.5')} className="underline underline-offset-2 hover:text-amber-200 font-bold">⚡ 2.5</button> for standard tasks.
+            </span>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Smart Generate */}
