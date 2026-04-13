@@ -425,7 +425,7 @@ const App: React.FC = () => {
         ? templates.filter(t => selectedTemplateIds.includes(t.id))
         : [{ id: 'none', name: 'Default Engine', content: 'Please process this text:\n\n{{content}}', placeholderTrigger: '{{content}}' } as PromptTemplate];
 
-      templateForHistory = activeTemplates[0];
+      const templateForHistory = activeTemplates[0];
 
       // Build base configurations shared across all pipelines
       let basePromptText = "";
@@ -522,7 +522,7 @@ const App: React.FC = () => {
                'Content-Type': 'application/json'
              },
              body: JSON.stringify({
-               model_name: model,
+               model_name: modelFamily,
                tasks: [
                  { id: template.id, contents: pipelineContents }
                ]
@@ -586,7 +586,7 @@ const App: React.FC = () => {
         triggerCelebration(); 
         showToastMessage(`Generated dynamically with ${mode.toUpperCase()} mode! 🧠`);
       }
-      saveToHistory(templateForHistory, userContent, "Rendered dynamic payloads");
+      saveToHistory(activeTemplates[0], userContent, "Rendered dynamic payloads");
       
       // Clear progress tasks after a short delay so the success states are briefly visible
       setTimeout(() => {
