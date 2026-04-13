@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from google import genai
 from pydantic import BaseModel
 
@@ -21,8 +21,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Module-level GenAI client — intentionally unset until lifespan validates the secret.
-# UPPER_CASE signals this is a module-level constant (Pylint C0103).
-# Initialized inside lifespan() to ensure GEMINI_API_KEY is present first.
 CLIENT: Optional[genai.Client] = None
 
 
@@ -30,22 +28,15 @@ CLIENT: Optional[genai.Client] = None
 async def lifespan(app: FastAPI):  # pylint: disable=redefined-outer-name,unused-argument
     """
     Application lifespan manager.
-    Validates GEMINI_API_KEY and initializes the GenAI client before the
-    server begins accepting requests. Raises RuntimeError on missing secret
-    so Cloud Run's readiness probe fails fast with a visible error instead
-    of silently routing traffic to a broken instance.
+    Validates GEMINI_API_KEY and initializes the GenAI client.
     """
     global CLIENT  # pylint: disable=global-statement
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        raise RuntimeError(
-            "GEMINI_API_KEY is not set in the environment. "
-            "Verify the Secret Manager binding on the Cloud Run service and redeploy."
-        )
+        raise RuntimeError("GEMINI_API_KEY is not set in the environment.")
     CLIENT = genai.Client()
     logger.info("GEMINI_API_KEY validated. GenAI client initialized. Service ready.")
     yield
-    # Teardown — release CLIENT reference on shutdown
     CLIENT = None
     logger.info("Service shutdown complete.")
 
@@ -53,19 +44,14 @@ async def lifespan(app: FastAPI):  # pylint: disable=redefined-outer-name,unused
 app = FastAPI(
     title="Smart-Prompt-Builder Engine API",
     description="High-performance multi-modal processing backend",
-    version="2.12.0",
+    version="2.13.0",
     lifespan=lifespan,
 )
 
 
-# Exception handler for unhandled exceptions
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """
-    Global trap for all unhandled backend exceptions.
-    Sanitizes the response to prevent leaking internal tracebacks to the client
-    while ensuring the full error is captured in server logs for debugging.
-    """
+    """Global trap for all unhandled backend exceptions (Sanitized)."""
     logger.exception("CRITICAL ERROR on %s: %s", request.url.path, str(exc))
     return JSONResponse(
         status_code=500,
@@ -75,10 +61,6 @@ async def global_exception_handler(request: Request, exc: Exception):
         }
     )
 
-# CORS Middleware — open to all origins so the GAS iframe can reach the backend.
-# The API has no user auth layer — security comes from the server-side Gemini API key.
-# NOTE: Once the real GAS iframe Origin is captured from logs, lock allow_origins
-#       back down to that specific subdomain pattern.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -96,121 +78,143 @@ class ModelAlias(str, Enum):
     PRO = "3.1"
 
 
-# Model version mapping for cost optimization and stability.
 # Maps stable aliases to actual Gemini GenAI model IDs.
-# 💰 Cost reference: Flash = $2.50/1M output tokens | Pro = $10-15/1M output tokens
 MODEL_ID_MAP = {
     ModelAlias.FLASH: "gemini-2.5-flash",
     ModelAlias.PRO: "gemini-2.5-pro"
 }
 
+# Fallback sequence for high-reliability streaming requests.
+MODEL_FALLBACK_CHAIN = [
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash"
+]
+
 
 # ── Request / Response Models ────────────────────────────────────────────────
 
 class ActiveTemplate(BaseModel):
-    """Schema representing an active prompt template item requested from the client."""
-
+    """Schema representing an active prompt template item."""
     id: str
     contents: List[Any]
 
 
 class BatchGenerateRequest(BaseModel):
-    """Schema enforcing the batch of prompts to process simultaneously."""
-
+    """Schema for batch prompt processing."""
     model_name: str = "gemini-2.5-flash"
     tasks: List[ActiveTemplate]
 
 
+class StreamGenerateRequest(BaseModel):
+    """Schema for single-task streaming generation."""
+    model_name: str = "gemini-2.5-flash"
+    contents: List[Any]
+    system_instruction: Optional[str] = None
+
+
 class TaskResult(BaseModel):
     """Schema representing the status and generated payload of a processed task."""
-
     id: str
     status: str
     raw_text: Optional[str] = None
     error: Optional[str] = None
 
 
-# ── Core Generation Logic ────────────────────────────────────────────────────
+# ── Core Helpers ─────────────────────────────────────────────────────────────
+
+def map_contents(contents: List[Any]) -> List[Any]:
+    """Maps frontend content parts to SDK-compatible structures."""
+    final_parts = []
+    for item in contents:
+        if isinstance(item, str):
+            final_parts.append(item)
+        elif (isinstance(item, dict) and
+              "inlineData" in item and
+              isinstance(item["inlineData"], dict)):
+            final_parts.append({
+                "inline_data": {
+                    "data": item["inlineData"].get("data"),
+                    "mime_type": item["inlineData"].get("mimeType", "application/octet-stream")
+                }
+            })
+    return final_parts
+
+
+# ── Generation Logic ─────────────────────────────────────────────────────────
 
 async def generate_single_prompt(task: ActiveTemplate, model_name: str) -> TaskResult:
-    """Executes a single structural task request asynchronously via the Gemini SDK."""
+    """Executes a single task request asynchronously."""
     try:
-        logger.info("Starting generation for task %s using model %s", task.id, model_name)
-        # Build Gemini SDK-compatible content parts.
-        # Maps JS-style camelCase inlineData -> Python snake_case inline_data.
-        final_parts = []
-        for item in task.contents:
-            if isinstance(item, str):
-                final_parts.append(item)
-            elif (isinstance(item, dict) and
-                  "inlineData" in item and
-                  isinstance(item["inlineData"], dict)):
-                final_parts.append({
-                    "inline_data": {
-                        "data": item["inlineData"].get("data"),
-                        "mime_type": item["inlineData"].get("mimeType", "application/octet-stream")
-                    }
-                })
-
-        # Run generation async natively with the Google GenAI SDK
+        logger.info("Starting task %s using model %s", task.id, model_name)
+        parts = map_contents(task.contents)
         response = await CLIENT.aio.models.generate_content(
             model=model_name,
-            contents=final_parts
+            contents=parts
         )
         logger.info("Task %s completed successfully.", task.id)
-        return TaskResult(
-            id=task.id,
-            status="completed",
-            raw_text=response.text
-        )
+        return TaskResult(id=task.id, status="completed", raw_text=response.text)
     except Exception as e:  # pylint: disable=broad-exception-caught
         logger.exception("Generate single prompt failed for %s", task.id)
-        return TaskResult(
-            id=task.id,
-            status="failed",
-            error=f"{type(e).__name__}: {str(e)}"
-        )
+        return TaskResult(id=task.id, status="failed", error=f"{type(e).__name__}: {str(e)}")
 
 
 # ── Routes ───────────────────────────────────────────────────────────────────
 
 @app.get("/")
 def health_check():
-    """Health check for Google Cloud Run deployment."""
-    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.12.6"}
+    """Service health check."""
+    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.13.0"}
 
 
 @app.post("/api/v1/generate/batch", response_model=Dict[str, List[TaskResult]])
 async def batch_generate(request: Request, body: BatchGenerateRequest):
-    """
-    True server-side concurrent processing via Promise.all equivalent (asyncio.gather).
-    Maps model aliases, dispatches all tasks concurrently, and returns aggregated results.
-    API key validation is handled at startup via the lifespan manager — not per-request.
-    """
+    """Concurrent processing for prompt batches."""
     origin = request.headers.get("origin", "NO-ORIGIN-HEADER")
     logger.info("Batch request from Origin: %s | tasks: %s", origin, len(body.tasks))
 
     try:
-        # Resolve actual model ID from configuration mapping
-        # Maps frontend string alias ("2.5") to stable GenAI ID ("gemini-2.5-flash")
         actual_model_name = MODEL_ID_MAP.get(body.model_name, body.model_name)
-
-        coroutines = [
-            generate_single_prompt(task, actual_model_name)
-            for task in body.tasks
-        ]
-
-        # Process all template nodes concurrently without blocking
+        coroutines = [generate_single_prompt(task, actual_model_name) for task in body.tasks]
         results = await asyncio.gather(*coroutines)
-        logger.info("Batch generation completed successfully.")
         return {"results": list(results)}
     except Exception:
-        error_trace = traceback.format_exc()
-        logger.error("Batch generation pipeline failed critically:\n%s", error_trace)
+        logger.error("Batch generation pipeline failed critically:\n%s", traceback.format_exc())
         raise
+
+
+@app.post("/api/v1/generate/stream")
+async def stream_generate(body: StreamGenerateRequest):
+    """Universal streaming endpoint with server-side fallback."""
+    async def event_generator():
+        requested_model = MODEL_ID_MAP.get(body.model_name, body.model_name)
+        models_to_try = [requested_model]
+        for m in MODEL_FALLBACK_CHAIN:
+            if m not in models_to_try:
+                models_to_try.append(m)
+
+        parts = map_contents(body.contents)
+
+        for model in models_to_try:
+            try:
+                logger.info("Attempting stream with %s", model)
+                async for chunk in await CLIENT.aio.models.generate_content_stream(
+                    model=model,
+                    contents=parts,
+                    config={"system_instruction": body.system_instruction, "temperature": 0.1}
+                ):
+                    if chunk.text:
+                        yield chunk.text
+                logger.info("Streaming success with %s", model)
+                return
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                logger.warning("Stream failed for %s: %s", model, str(e))
+                if model == models_to_try[-1]:
+                    yield f"\n[GATEWAY_ERROR] All models exhausted: {str(e)}"
+
+    return StreamingResponse(event_generator(), media_type="text/plain")
 
 
 if __name__ == "__main__":
     import uvicorn
-    # Optional local dev server start
     uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)

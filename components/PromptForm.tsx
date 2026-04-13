@@ -110,16 +110,17 @@ const PromptForm: React.FC<PromptFormProps> = ({
       <div className="mb-6 sm:mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 relative z-10">
         
         {/* The Engine: Template Selector */}
-        <div>
+        <div className="group/engine">
           <div className="flex justify-between items-center mb-3">
             <Tooltip content="Select a transformation template to process your input through." position="top">
-              <label htmlFor="template" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2 cursor-help">
-                THE ENGINE <span className="text-xl animate-bounce">⚡</span>
+              <label htmlFor="template" className="block text-xs font-black text-slate-400 tracking-[0.2em] uppercase flex items-center gap-2 cursor-help group-hover/engine:text-purple-400 transition-colors">
+                <span className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span>
+                THE ENGINE
               </label>
             </Tooltip>
             <button
               onClick={onNewTemplate}
-              className="text-[10px] sm:text-xs font-bold text-purple-400 hover:text-white hover:bg-purple-500 flex items-center gap-1 bg-purple-500/15 border border-purple-500/30 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]"
+              className="text-[10px] sm:text-xs font-bold text-purple-400 hover:text-white hover:bg-purple-500 flex items-center gap-1 bg-purple-500/10 border border-purple-500/20 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] active:scale-95"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -131,22 +132,25 @@ const PromptForm: React.FC<PromptFormProps> = ({
             <div className="relative flex-grow group" ref={templateDropdownRef}>
               <div 
                 onClick={() => setIsTemplateDropdownOpen(!isTemplateDropdownOpen)}
-                className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-purple-500/50 text-sm sm:text-base flex justify-between items-center"
+                className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-900/60 hover:bg-slate-800 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-purple-500/40 text-sm sm:text-base flex justify-between items-center shadow-inner"
               >
                 <div className="truncate pr-4 flex flex-wrap gap-1">
                   {selectedTemplates.length === 0 ? (
-                    <span className="text-slate-400">— Default (No Engine) —</span>
+                    <span className="text-slate-500 font-mono text-xs uppercase tracking-wider">— System Default —</span>
                   ) : (
                     <div className="flex items-center gap-2">
                        {selectedTemplates.length === 1 ? (
-                         <span>{CATEGORY_COLORS[selectedTemplates[0].category || 'custom']?.emoji} {selectedTemplates[0].name}</span>
+                         <span className="flex items-center gap-2">
+                           <span className="text-lg">{CATEGORY_COLORS[selectedTemplates[0].category || 'custom']?.emoji}</span>
+                           <span>{selectedTemplates[0].name}</span>
+                         </span>
                        ) : (
-                         <span className="text-purple-300">{selectedTemplates.length} Templates Selected</span>
+                         <span className="text-purple-300 font-bold bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20">{selectedTemplates.length} Engines Active</span>
                        )}
                     </div>
                   )}
                 </div>
-                <div className="text-purple-400 group-hover:scale-110 transition-transform">
+                <div className="text-purple-400 group-hover:scale-110 group-hover:rotate-180 transition-all duration-300">
                   <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
                   </svg>
@@ -213,11 +217,12 @@ const PromptForm: React.FC<PromptFormProps> = ({
         </div>
 
         {/* The Lens: Formatting Selector */}
-        <div>
+        <div className="group/lens">
           <div className="flex justify-between items-center mb-3">
             <Tooltip content="Apply a structural format override to your output." position="top">
-              <label htmlFor="format" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2 cursor-help">
-                 THE LENS <span className="text-xl animate-pulse">🎛️</span>
+              <label htmlFor="format" className="block text-xs font-black text-slate-400 tracking-[0.2em] uppercase flex items-center gap-2 cursor-help group-hover/lens:text-pink-400 transition-colors">
+                 <span className="w-2 h-2 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(244,114,182,0.6)]"></span>
+                 THE LENS
               </label>
             </Tooltip>
           </div>
@@ -226,7 +231,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
               id="format"
               value={selectedFormatId}
               onChange={onFormatChange}
-              className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-pink-500/50 text-sm sm:text-base"
+              className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-900/60 hover:bg-slate-800 border border-slate-700/50 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-pink-400/50 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-pink-500/40 text-sm sm:text-base shadow-inner"
             >
               {FORMAT_STYLES.map(format => (
                 <option key={format.id} value={format.id}>
@@ -234,7 +239,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-pink-400 group-hover:scale-110 transition-transform">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-pink-400 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
               <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
               </svg>
@@ -249,7 +254,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
           {selectedTemplates.map(template => {
             const cat = CATEGORY_COLORS[template.category || 'custom'] || CATEGORY_COLORS.custom;
             return (
-              <div key={template.id} className={`bg-slate-800/40 border rounded-xl p-3 sm:p-4 transition-all duration-300 hover:scale-[1.01] origin-center ${cat.border}`} style={{ borderLeftWidth: '3px' }}>
+              <div key={template.id} className={`bg-slate-800/20 backdrop-blur-sm border rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-slate-800/40 hover:scale-[1.01] origin-center ${cat.border}`} style={{ borderLeftWidth: '4px' }}>
                  <div className="flex items-start gap-3 sm:gap-4">
                    <div className={`p-1.5 rounded-lg hidden sm:flex items-center justify-center text-lg border ${cat.bg} ${cat.border} ${cat.glow}`}>
                      {cat.emoji}
@@ -257,7 +262,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
                    <div className="flex-grow">
                      <div className="flex items-center gap-2 flex-wrap mb-1">
                        <p className="text-sm font-bold text-slate-200">{template.name}</p>
-                       <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${cat.bg} ${cat.text} ${cat.border}`}>
+                       <span className={`text-[8px] font-black uppercase tracking-[0.1em] px-2 py-0.5 rounded-full border ${cat.bg} ${cat.text} ${cat.border}`}>
                          {cat.label}
                        </span>
                      </div>
@@ -271,7 +276,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
       )}
 
       {/* 🎨 Text Style Toolbar — Font / Emoji / ASCII dropdowns */}
-      <div className="mb-6 sm:mb-8 bg-slate-800/30 border border-slate-700/50 rounded-xl p-4">
+      <div className="mb-6 sm:mb-8 bg-slate-900/40 backdrop-blur-md border border-slate-700/30 rounded-xl p-4 shadow-inner">
         <TextStyleToolbar
           selectedModifiers={selectedModifiers}
           onModifierChange={onModifierChange}
@@ -283,14 +288,15 @@ const PromptForm: React.FC<PromptFormProps> = ({
       <div className="mb-4 relative z-10">
         <div className="flex justify-between items-center mb-3">
           <Tooltip content="Paste the raw text, code, or context you want the AI to analyze and transform." position="top">
-            <label htmlFor="content" className="block text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2 cursor-help">
-              YOUR CONTENT <span className="text-xl">✍️</span>
+            <label htmlFor="content" className="block text-xs font-black text-slate-400 tracking-[0.2em] uppercase flex items-center gap-2 cursor-help">
+              <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.6)]"></span>
+              YOUR CONTENT
             </label>
           </Tooltip>
           <Tooltip content="Populates the form with a demo payload so you can test how the agent processes inputs." position="top">
             <button
                onClick={onLoadSyntaxTest}
-               className="text-[10px] sm:text-xs font-bold text-slate-400 hover:text-white bg-slate-800 border border-slate-700 hover:bg-amber-500 hover:border-amber-500 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all hover:shadow-[0_0_10px_rgba(251,191,36,0.4)]"
+               className="text-[10px] sm:text-xs font-bold text-slate-400 hover:text-white bg-slate-800/80 border border-slate-700 hover:bg-amber-500/20 hover:border-amber-500/50 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all hover:shadow-[0_0_10px_rgba(251,191,36,0.3)] active:scale-95"
             >
               Load Example
             </button>
@@ -301,26 +307,27 @@ const PromptForm: React.FC<PromptFormProps> = ({
           value={userContent}
           onChange={onContentChange}
           placeholder="Paste or type what you need help with here..."
-          className="w-full h-40 sm:h-48 px-4 sm:px-5 py-3 sm:py-4 bg-slate-900/80 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 text-slate-200 placeholder-slate-500 resize-none transition-all font-mono text-sm shadow-inner hover:bg-slate-900 text-[16px] sm:text-sm"
+          className="w-full h-40 sm:h-48 px-4 sm:px-5 py-3 sm:py-4 bg-slate-900/60 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/30 focus:border-purple-500/50 text-slate-200 placeholder-slate-500 resize-none transition-all font-mono text-sm shadow-inner hover:bg-slate-900/80 text-[16px] sm:text-sm"
         />
         
-        {/* 📊 Input Analytics Bar — the playful improvement */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mt-4 bg-slate-800/40 p-3 sm:p-3 rounded-xl border border-slate-700/50">
+        {/* 📊 Input Intelligence Hub */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mt-4 bg-slate-900/40 p-3 sm:p-2.5 rounded-xl border border-slate-700/30 shadow-inner backdrop-blur-sm">
           
-          {/* Analytics chips */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className={`text-[10px] sm:text-xs font-mono font-bold px-2.5 py-1 rounded-full border transition-all ${wordCount > 0 ? 'bg-pink-500/15 text-pink-400 border-pink-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'}`}>
-              📝 {wordCount} words
-            </span>
-            <span className={`text-[10px] sm:text-xs font-mono font-bold px-2.5 py-1 rounded-full border transition-all ${sentenceCount > 0 ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'}`}>
-              📖 {sentenceCount} sentences
-            </span>
-            <span className={`text-[10px] sm:text-xs font-mono font-bold px-2.5 py-1 rounded-full border transition-all hidden sm:inline-block ${userContent.length > 0 ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'}`}>
-              ⏱️ ~{readingTime}m read
-            </span>
-            <span className={`text-[10px] sm:text-xs font-mono font-bold px-2.5 py-1 rounded-full border transition-all ${userContent.length > 0 ? 'bg-purple-500/15 text-purple-400 border-purple-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'}`}>
-              ⌨️ {userContent.length.toLocaleString()} chars
-            </span>
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800/50 border border-slate-700/50">
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider mr-1">Intelligence</span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={`text-[10px] font-mono font-bold transition-all ${wordCount > 0 ? 'text-pink-400' : 'text-slate-600'}`}>
+                {wordCount} words
+              </span>
+              <span className="text-slate-700">•</span>
+              <span className={`text-[10px] font-mono font-bold transition-all ${sentenceCount > 0 ? 'text-amber-400' : 'text-slate-600'}`}>
+                {sentenceCount} sentences
+              </span>
+              <span className="text-slate-700">•</span>
+              <span className={`text-[10px] font-mono font-bold transition-all ${userContent.length > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
+                ~{readingTime}m read
+              </span>
+            </div>
           </div>
 
           {/* Spacer */}

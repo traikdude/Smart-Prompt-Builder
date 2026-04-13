@@ -267,26 +267,28 @@ const PayloadCard: React.FC<{
 
         {/* ── Feedback Row ── */}
         <div className={`flex items-center justify-between mt-4 pt-4 border-t border-slate-700/20 ${isCollapsed ? 'hidden' : ''}`}>
-          <span className="text-xs text-slate-500 font-medium">
-            {feedback ? (
-              <span className="flex items-center gap-1.5 text-slate-400">
-                <span className={feedback === 'up' ? 'text-emerald-400' : 'text-pink-400'}>
-                  {feedback === 'up' ? '👍' : '👎'}
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Quality Control</span>
+            <span className="text-xs text-slate-400 font-medium h-5 flex items-center">
+              {feedback ? (
+                <span className="flex items-center gap-1.5 animate-fade-in">
+                  <span className={feedback === 'up' ? 'text-emerald-400' : 'text-pink-400'}>
+                    {feedback === 'up' ? '✨ Helpful' : '🔧 Needs Tuning'}
+                  </span>
                 </span>
-                Feedback recorded!
-              </span>
-            ) : 'Rate this payload'}
-          </span>
-          <div className="flex items-center gap-1.5">
+              ) : 'Rate this generation'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
             <button
               onClick={() => handleFeedback('up')}
               disabled={!!feedback}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+              className={`flex items-center justify-center w-9 h-9 rounded-xl transition-all border ${
                 feedback === 'up'
-                  ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 scale-110'
+                  ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.3)]'
                   : feedback === 'down'
-                  ? 'opacity-30 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
-                  : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400 hover:scale-105'
+                  ? 'opacity-20 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
+                  : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400 hover:scale-110 active:scale-95'
               }`}
               title="This was helpful"
             >
@@ -295,12 +297,12 @@ const PayloadCard: React.FC<{
             <button
               onClick={() => handleFeedback('down')}
               disabled={!!feedback}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+              className={`flex items-center justify-center w-9 h-9 rounded-xl transition-all border ${
                 feedback === 'down'
-                  ? 'bg-pink-500/20 border-pink-500/50 text-pink-400 scale-110'
+                  ? 'bg-pink-500/20 border-pink-500/50 text-pink-400 shadow-[0_0_12px_rgba(244,114,182,0.3)]'
                   : feedback === 'up'
-                  ? 'opacity-30 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
-                  : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-pink-500/10 hover:border-pink-500/40 hover:text-pink-400 hover:scale-105'
+                  ? 'opacity-20 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
+                  : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-pink-500/10 hover:border-pink-500/40 hover:text-pink-400 hover:scale-110 active:scale-95'
               }`}
               title="This needs improvement"
             >
