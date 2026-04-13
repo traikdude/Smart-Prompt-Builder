@@ -844,6 +844,7 @@ const App: React.FC = () => {
                 onCopy={handleCopy}
                 onClear={() => { setGeneratedPrompt(null); setUserContent(''); }}
                 onExport={handleExport}
+                showToast={showToastMessage}
               />
             )}
           </main>

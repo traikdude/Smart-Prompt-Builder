@@ -8,6 +8,7 @@ interface OutputCardProps {
   onCopy: () => void;
   onClear: () => void;
   onExport: (format: 'txt' | 'md') => void;
+  showToast?: (message: string, type?: 'success' | 'info' | 'error') => void;
 }
 
 const FONTS = [
@@ -15,10 +16,19 @@ const FONTS = [
   { name: 'Fira Code', value: 'font-fira', family: "'Fira Code', monospace" },
 ];
 
-const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExport }) => {
+const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExport, showToast }) => {
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [showFontMenu, setShowFontMenu] = useState(false);
   const [currentFont, setCurrentFont] = useState(FONTS[0]);
+  const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+
+  const handleFeedback = (vote: 'up' | 'down') => {
+    if (feedback) return; // Already voted
+    setFeedback(vote);
+    if (showToast) {
+      showToast(vote === 'up' ? 'Thanks for the positive feedback! 🙌' : 'Got it — we\'ll keep improving! 🛠️', 'info');
+    }
+  };
 
   if (!content) return null;
 
@@ -168,6 +178,50 @@ const OutputCard: React.FC<OutputCardProps> = ({ content, onCopy, onClear, onExp
             >
               {content}
             </ReactMarkdown>
+          </div>
+        </div>
+
+        {/* ── Feedback Row ── */}
+        <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-700/30">
+          <span className="text-xs text-slate-500 font-medium">
+            {feedback ? (
+              <span className="flex items-center gap-1.5 text-slate-400 animate-fade-in-up">
+                <span className={feedback === 'up' ? 'text-emerald-400' : 'text-pink-400'}>
+                  {feedback === 'up' ? '👍' : '👎'}
+                </span>
+                Feedback recorded — thank you!
+              </span>
+            ) : 'Was this output helpful?'}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleFeedback('up')}
+              disabled={!!feedback}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                feedback === 'up'
+                  ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 scale-110'
+                  : feedback === 'down'
+                  ? 'opacity-30 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
+                  : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400 hover:scale-105'
+              }`}
+              title="This was helpful"
+            >
+              👍 <span className="hidden sm:inline">Helpful</span>
+            </button>
+            <button
+              onClick={() => handleFeedback('down')}
+              disabled={!!feedback}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                feedback === 'down'
+                  ? 'bg-pink-500/20 border-pink-500/50 text-pink-400 scale-110'
+                  : feedback === 'up'
+                  ? 'opacity-30 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
+                  : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-pink-500/10 hover:border-pink-500/40 hover:text-pink-400 hover:scale-105'
+              }`}
+              title="This needs improvement"
+            >
+              👎 <span className="hidden sm:inline">Improve</span>
+            </button>
           </div>
         </div>
       </div>

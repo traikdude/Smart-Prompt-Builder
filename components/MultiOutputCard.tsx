@@ -40,6 +40,13 @@ const PayloadCard: React.FC<{
   const [showFontMenu, setShowFontMenu] = useState(false);
   const [currentFont, setCurrentFont] = useState(FONTS[0]);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+
+  const handleFeedback = (vote: 'up' | 'down') => {
+    if (feedback) return;
+    setFeedback(vote);
+    showToast(vote === 'up' ? `Rated helpful! 🙌` : `Got it — we'll keep improving! 🛠️`, 'info');
+  };
 
   const wordCount = payload.content.trim().split(/\s+/).length;
   const charCount = payload.content.length;
@@ -255,6 +262,50 @@ const PayloadCard: React.FC<{
                 {payload.content}
               </ReactMarkdown>
             </div>
+          </div>
+        </div>
+
+        {/* ── Feedback Row ── */}
+        <div className={`flex items-center justify-between mt-4 pt-4 border-t border-slate-700/20 ${isCollapsed ? 'hidden' : ''}`}>
+          <span className="text-xs text-slate-500 font-medium">
+            {feedback ? (
+              <span className="flex items-center gap-1.5 text-slate-400">
+                <span className={feedback === 'up' ? 'text-emerald-400' : 'text-pink-400'}>
+                  {feedback === 'up' ? '👍' : '👎'}
+                </span>
+                Feedback recorded!
+              </span>
+            ) : 'Rate this payload'}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => handleFeedback('up')}
+              disabled={!!feedback}
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                feedback === 'up'
+                  ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 scale-110'
+                  : feedback === 'down'
+                  ? 'opacity-30 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
+                  : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400 hover:scale-105'
+              }`}
+              title="This was helpful"
+            >
+              👍
+            </button>
+            <button
+              onClick={() => handleFeedback('down')}
+              disabled={!!feedback}
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                feedback === 'down'
+                  ? 'bg-pink-500/20 border-pink-500/50 text-pink-400 scale-110'
+                  : feedback === 'up'
+                  ? 'opacity-30 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
+                  : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-pink-500/10 hover:border-pink-500/40 hover:text-pink-400 hover:scale-105'
+              }`}
+              title="This needs improvement"
+            >
+              👎
+            </button>
           </div>
         </div>
       </div>
