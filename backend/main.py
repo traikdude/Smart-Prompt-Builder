@@ -154,7 +154,7 @@ async def generate_single_prompt(task: ActiveTemplate, model_name: str) -> TaskR
 @app.get("/")
 def health_check():
     """Health check for Google Cloud Run deployment."""
-    return {"status": "healthy", "service": "smart-prompt-builder-engine", "version": "2.12.0"}
+    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.12.3"}
 
 
 @app.post("/api/v1/generate/batch", response_model=Dict[str, List[TaskResult]])
@@ -167,10 +167,13 @@ async def batch_generate(request: BatchGenerateRequest):
     logger.info("Received batch generation request for %s tasks.", len(request.tasks))
 
     try:
-        # Map frontend visual tags to precise Gemini model IDs
+        # Cost optimization (2026-04-13): '3.1' previously mapped to gemini-2.5-pro
+        # which is 8-10x more expensive than Flash with negligible output quality
+        # difference for standard prompt-generation workloads.
+        # Pro can be re-enabled here if advanced reasoning tasks require it.
         model_mapping = {
             "2.5": "gemini-2.5-flash",
-            "3.1": "gemini-2.5-pro"
+            "3.1": "gemini-2.5-flash"
         }
         actual_model_name = model_mapping.get(request.model_name, request.model_name)
 
