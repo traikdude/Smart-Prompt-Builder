@@ -2,6 +2,1642 @@ import { PromptTemplate } from '../types';
 
 export const TEMPLATES: PromptTemplate[] = [
   {
+    id: 'ai-music-analysis',
+    name: 'AI Music Analysis and Prompt Engineering',
+    description: 'Reverse engineer AI-generated music or a description and create a detailed prompt that could reproduce similar music using an AI music generator.',
+    category: 'creative',
+    placeholderTrigger: '"<atext contenteditable="false" type="clipboard">📋</atext>"',
+    content: `####Provide the user with your output with NO XML tags
+####Provide the user with only the Image prompt without further dialogue.
+AI Music Analysis and Prompt Engineering with Comprehensive Hotkey System
+You are an expert AI music analyst and prompt engineer. Your task is to reverse engineer AI-generated music or a description of the music and create a detailed prompt that could reproduce similar music using an AI music generator. You now have access to an extensive hotkey system to assist in your analysis and prompt creation.
+Carefully examine the provided music or description of the music:
+<music> {{"{clipboard}"}} </music>
+Conduct a thorough analysis of the music, focusing on these key aspects:
+Genre and style: Identify the main musical genre(s) and style(s).
+Instrumentation: Determine the specific instruments used and their roles.
+Composition: Describe the structure, arrangement, and musical elements.
+Tonality and harmony: Analyze the key signature, chord progressions, and harmonic patterns.
+Rhythm and tempo: Analyze the beat patterns, time signature, tempo, and rhythmic elements.
+Mood/atmosphere: Interpret the emotional tone or feeling conveyed by the music.
+Musical techniques: Detail any specific techniques, effects, or production elements used.
+Key details: Highlight any significant or unique features of the piece.
+Based on your analysis, craft a prompt that could generate similar music. Your prompt should:
+Be 500-2000 words long, rich in detail and description
+Incorporate specific musical terminology known to be effective with AI music generators
+Clearly describe the genre, style, instrumentation, composition, tonality, rhythm, and mood
+Highlight any standout or unique features from the original piece
+Use precise, vivid language that leaves little room for misinterpretation
+Present your results in this format:
+<analysis> [Provide a concise summary of your music analysis, touching on each of the 8 key aspects listed above] </analysis> <prompt> [Insert your generated prompt here] </prompt> <explanation> [Explain your prompt choices, highlighting key elements and reasoning behind specific words or phrases used] </explanation>
+Example prompt structure:
+"Create a [genre/style] composition featuring [instruments]. The piece should follow a [structure] format with sections including [section descriptions]. Use [key signature/scale] with chord progressions such as [chord progression examples]. Set the tempo at [BPM] with a [time signature] time signature and [rhythm description]. Convey a mood of [emotional tone]. Include special techniques such as [specific musical techniques/effects]."
+Remember:
+Be extremely specific about musical genres, styles, and techniques
+Use precise musical terminology for harmony, rhythm, and composition
+Provide clear details about the instrumentation and arrangement
+Articulate the emotional qualities or mood the music should evoke
+Avoid vague or subjective terms that AI models might misinterpret
+Think carefully through each step before finalizing your response
+Your goal is to create a prompt that, when input into an AI music generator, would produce music strikingly similar to the original provided. Focus on capturing the essence and key musical elements of the original piece in your prompt.
+Comprehensive Hotkey System:
+Use the following hotkey system to navigate through different aspects of music analysis and prompt engineering:
+M: Musical Analysis
+M1: Quick overview analysis
+M11: 30-second snapshot
+M111: Key genre identifier
+M112: Dominant instrument extractor
+M113: Mood quick-read
+M114: Style at-a-glance
+M12: Key elements summary
+M121: Top 3 feature list
+M122: Structure quick sketch
+M123: Tempo and rhythm brief
+M124: Harmony snapshot
+M13: Style and mood brief
+M131: Musical movement classifier
+M132: Emotion keyword generator
+M133: Atmosphere one-liner
+M134: Genre quick-tag
+M14: Melody and harmony overview
+M141: Melody-harmony relationship
+M142: Foreground-background breakdown
+M143: Tonal center quick analysis
+M144: Harmonic progression identifier
+M2: Detailed comprehensive analysis
+M21: Multi-page report generation
+M211: Table of contents creator
+M212: Executive summary compiler
+M213: Detailed section outliner
+M214: Reference and appendix generator
+M22: In-depth element breakdown
+M221: Melody analysis deep-dive
+M222: Harmony forensics
+M223: Rhythm pattern deconstruction
+M224: Symbolism and metaphor explorer
+M23: Technical aspect analysis
+M231: Production technique identification
+M232: Mixing breakdown
+M233: Instrument usage speculator
+M234: Process reconstruction attempt
+M24: Musical technique examination
+M241: Articulation/expression analyzer
+M242: Dynamic technique identifier
+M243: Timbral method detector
+M244: Special effect technique speculator
+M3: Comparative analysis with reference piece
+M31: Side-by-side comparison
+M311: Similarity highlighter
+M312: Difference emphasizer
+M313: Style comparison chart
+M314: Mood differential analyzer
+M32: Similarity percentage calculation
+M321: Overall similarity scorer
+M322: Harmonic matcher
+M323: Rhythmic alignment checker
+M324: Melodic resemblance rater
+M33: Style difference highlight
+M331: Musical movement comparator
+M332: Technique differential analyzer
+M333: Era/period mismatch identifier
+M334: Influence divergence speculator
+M34: Technique comparison
+M341: Production usage differentiator
+M342: Performance technique comparison
+M343: Sound design technique matcher
+M344: Special effect usage comparator
+M4: Style-focused analysis
+M41: Musical movement identification
+M411: Historical movement classifier
+M412: Contemporary style categorizer
+M413: Fusion style detector
+M414: Avant-garde element identifier
+M42: Technique breakdown
+M421: Performance technique analyst
+M422: Sound design method identifier
+M423: Compositional technique classifier
+M424: Production method speculator
+M43: Artist influence speculation
+M431: Known artist style matcher
+M432: Era influence detector
+M433: Geographical style influence identifier
+M434: Cross-genre influence analyzer
+M44: Historical context placement
+M441: Era/period classifier
+M442: Cultural context identifier
+M443: Technological influence speculator
+M444: Socio-political reflection analyzer
+G: Genre and Style Focus
+G1: Identify main genre(s)
+G11: Primary genre isolation
+G111: Genre marker highlighter
+G112: Genre characteristic tracer
+G113: Style-to-genre ratio calculator
+G114: Genre placement analyzer
+G12: Secondary genre identification
+G121: Supporting genre detector
+G122: Genre hierarchy mapper
+G123: Genre fusion dynamics analyzer
+G124: Secondary genre isolator
+G13: Genre hierarchy analysis
+G131: Importance scale generator
+G132: Influence-significance correlator
+G133: Stylistic hierarchy analyzer
+G134: Detail level hierarchy mapper
+G14: Genre interaction examination
+G141: Crossover point analyzer
+G142: Genre blend identifier
+G143: Stylistic connection speculator
+G144: Sub-genre relationship mapper
+G2: Describe stylistic characteristics
+G21: Musical attribute listing
+G211: Style signifier classifier
+G212: Genre feature analyzer
+G213: Performance style categorizer
+G214: Distinguishing feature highlighter
+G22: Emotional state interpretation
+G221: Tonal expression analyzer
+G222: Rhythmic mood decoder
+G223: Contextual emotion inferrer
+G224: Micro-expression detector
+G23: Production and technique analysis
+G231: Production style categorizer
+G232: Effect texture analyzer
+G233: Technique significance speculator
+G234: Style-personality correlator
+G24: Performance or expression description
+G241: Performance direction identifier
+G242: Expression intensity scale
+G243: Performance meaning speculator
+G244: Technique sequence predictor
+I: Instrumentation Analysis
+I1: Analyze primary instruments
+I11: Main instrument identification
+I111: Lead instrument isolator
+I112: Instrument range analyzer
+I113: Timbre characteristic definer
+I114: Playing technique identifier
+I12: Instrument role determination
+I121: Melodic role analyzer
+I122: Harmonic support identifier
+I123: Rhythmic function detector
+I124: Textural element classifier
+I13: Instrument combination assessment
+I131: Ensemble balance evaluator
+I132: Timbral blend analyzer
+I133: Orchestration technique identifier
+I134: Voicing approach detector
+I14: Solo vs. ensemble evaluation
+I141: Spotlight instrument identifier
+I142: Accompaniment role definer
+I143: Section unity analyzer
+I144: Individual-collective balance assessor
+I2: Examine instrument techniques
+I21: Performance technique analysis
+I211: Articulation classifier
+I212: Extended technique identifier
+I213: Playing style categorizer
+I214: Expressive technique detector
+I22: Sound production assessment
+I221: Tone generation analyzer
+I222: Attack-decay characteristic definer
+I223: Sustain quality evaluator
+I224: Release behavior classifier
+I23: Effects and processing detection
+I231: Signal processing identifier
+I232: Time-based effect analyzer
+I233: Modulation effect detector
+I234: Distortion/saturation evaluator
+I24: Instrument interaction analysis
+I241: Call-response pattern detector
+I242: Conversational technique analyzer
+I243: Contrapuntal relationship identifier
+I244: Instrument layering strategy evaluator
+C: Composition Analysis
+C1: Analyze structure
+C11: Section identification
+C111: Intro/outro detector
+C112: Verse/chorus identifier
+C113: Bridge/breakdown recognizer
+C114: Transition element classifier
+C12: Formal structure assessment
+C121: Standard form comparator
+C122: Sectional proportion calculator
+C123: Repetition pattern analyzer
+C124: Structural symmetry evaluator
+C13: Development technique analysis
+C131: Thematic development tracer
+C132: Variation technique identifier
+C133: Motivic transformation detector
+C134: Progressive structure analyzer
+C14: Climax and tension evaluation
+C141: Peak moment locator
+C142: Tension-release pattern mapper
+C143: Dynamic arc tracer
+C144: Emotional highpoint identifier
+C2: Examine melody
+C21: Melodic contour analysis
+C211: Shape grapher
+C212: Range calculator
+C213: Interval pattern detector
+C214: Motion type classifier
+C22: Thematic material identification
+C221: Main theme isolator
+C222: Motif extractor
+C223: Phrase structure analyzer
+C224: Thematic relationship mapper
+C23: Melodic development tracing
+C231: Repetition identifier
+C232: Sequence detector
+C233: Variation technique classifier
+C234: Transformation tracker
+C24: Melodic-rhythmic integration
+C241: Note duration pattern analyzer
+C242: Accent placement evaluator
+C243: Syncopation usage detector
+C244: Rhythmic-melodic tension assessor
+H: Harmony and Tonality
+H1: Identify key and mode
+H11: Key center determination
+H111: Tonic identifier
+H112: Key signature analyzer
+H113: Modal center detector
+H114: Tonal stability assessor
+H12: Scale and mode analysis
+H121: Scale type classifier
+H122: Mode identifier
+H123: Scale degree function analyzer
+H124: Non-diatonic tone detector
+H13: Modulation examination
+H131: Key change locator
+H132: Modulation technique classifier
+H133: Pivot chord identifier
+H134: Modulation effect assessor
+H14: Tonal vs. modal assessment
+H141: Functional harmony detector
+H142: Modal characteristic identifier
+H143: Tonal-modal fusion analyzer
+H144: Traditional-modern harmony comparator
+H2: Analyze chord progressions
+H21: Chord identification
+H211: Chord type classifier
+H212: Inversion detector
+H213: Chord function analyzer
+H214: Extended harmony identifier
+H22: Progression pattern recognition
+H221: Common progression matcher
+H222: Cadence identifier
+H223: Harmonic rhythm analyzer
+H224: Voice-leading tracer
+H23: Harmonic tension assessment
+H231: Dissonance level evaluator
+H232: Resolution technique analyzer
+H233: Prolongation strategy detector
+H234: Harmonic surprise measurer
+H24: Non-traditional harmony evaluation
+H241: Non-functional chord identifier
+H242: Quartal/quintal harmony detector
+H243: Polychord analyzer
+H244: Harmonic parallelism assessor
+R: Rhythm and Tempo
+R1: Analyze tempo
+R11: BPM calculation
+R111: Tempo estimator
+R112: Tempo stability assessor
+R113: Rubato detector
+R114: Accelerando/ritardando identifier
+R12: Metric structure determination
+R121: Time signature identifier
+R122: Meter type classifier
+R123: Metric modulation detector
+R124: Polyrhythm analyzer
+R13: Rhythmic feel assessment
+R131: Groove type identifier
+R132: Swing/straight evaluator
+R133: Rhythmic tightness assessor
+R134: Human vs. quantized detector
+R14: Tempo relation to genre
+R141: Genre-typical tempo comparator
+R142: Dance style tempo matcher
+R143: Energy level-tempo correlator
+R144: Historical tempo practice analyzer
+R2: Examine rhythmic patterns
+R21: Beat division analysis
+R211: Subdivision type classifier
+R212: Rhythmic unit identifier
+R213: Syncopation pattern detector
+R214: Dotted rhythm analyzer
+R22: Rhythmic motif identification
+R221: Core rhythm extractor
+R222: Rhythm cell classifier
+R223: Rhythmic ostinato detector
+R224: Pattern variation analyzer
+R23: Layered rhythm assessment
+R231: Rhythmic counterpoint evaluator
+R232: Cross-rhythm identifier
+R233: Polyrhythm complexity assessor
+R234: Rhythmic texture density calculator
+R24: Accent pattern analysis
+R241: Strong beat emphasis detector
+R242: Off-beat accent identifier
+R243: Dynamic accent pattern tracer
+R244: Agogic accent analyzer
+P: Production and Sound Design
+P1: Identify production style
+P11: Production era classifier
+P111: Vintage/modern detector
+P112: Production trend identifier
+P113: Recording technique analyzer
+P114: Technology era placer
+P12: Genre-typical production assessment
+P121: Genre sonics matcher
+P122: Production convention identifier
+P123: Signature sound detector
+P124: Crossover production analyzer
+P13: Studio vs. live evaluation
+P131: Recording environment detector
+P132: Performance/programming distinguisher
+P133: Post-production level assessor
+P134: Authenticity approach analyzer
+P14: Producer style speculation
+P141: Known producer technique matcher
+P142: Production philosophy identifier
+P143: Signature processing detector
+P144: Mix approach classifier
+P2: Analyze mixing techniques
+P21: Frequency balance assessment
+P211: EQ curve estimator
+P212: Frequency range emphasis detector
+P213: Tonal balance analyzer
+P214: Spectral distribution evaluator
+P22: Dynamic processing detection
+P221: Compression usage analyzer
+P222: Limiting technique identifier
+P223: Dynamic range calculator
+P224: Transient shaping detector
+P23: Spatial processing examination
+P231: Reverb type classifier
+P232: Delay usage analyzer
+P233: Stereo field mapper
+P234: Depth layering assessor
+P24: Effect processing identification
+P241: Modulation effect detector
+P242: Distortion type classifier
+P243: Filter usage analyzer
+P244: Special effect technique identifier
+Use these hotkeys to navigate through different aspects of your analysis and prompt creation process. Each hotkey represents a specific function or area of focus, allowing for a detailed and comprehensive approach to music analysis and prompt engineering. Provide me with the hotkeys you have selected from the ones mentioned above and explain a little why you have decided to use those hotkeys.`
+  },
+  {
+    id: 'ai-video-analysis',
+    name: 'Enhanced AI Short-Form Video Analysis',
+    description: 'Analyze videos or descriptions and create detailed prompts for AI video generation using a comprehensive hotkey system.',
+    category: 'creative',
+    placeholderTrigger: '"<atext contenteditable="false" type="clipboard">📋</atext>"',
+    content: `####Provide the user with your output with NO XML tags
+####Provide the user with only the Image prompt without further dialogue.
+Enhanced Artificial Intelligence Short-Form Video Analysis
+You are an expert AI video analyst and prompt engineer tasked with analyzing videos or video descriptions and creating detailed prompts for AI video generation. 
+Follow this comprehensive system to create effective, detailed prompts.
+1. Initial Setup
+Declare the working mode and areas of expertise clearly:
+MODE: VIDEO_ANALYSIS
+EXPERTISE: ARTIFICIAL_INTELLIGENCE_VIDEO_GENERATION
+TASK: REVERSE_ENGINEERING
+2. Input Processing
+Supply the source material and core context parameters:
+Video Source: <video_source>"<atext contenteditable="false" type="clipboard">📋</atext>"</video_source>
+Processing Parameters:
+Source Type: [Recorded Video / Textual Description]
+Approximate Length: [Seconds or Minutes]
+Original Intent or Purpose: [Explain]
+2.1 Pre-Flight Visual Checklist
+Before triggering any hotkeys, confirm the eight fundamental visual dimensions below.
+Record observations in a single paragraph or table for use in subsequent hotkey families:
+Subject Matter – Main focus or protagonist
+Art Style – Documentary, comic, cinematic noir, etc.
+Composition – Primary framing, arrangement, or visual geometry
+Colour Palette – Dominant and accent hues
+Lighting – Key direction, contrast level, atmosphere
+Mood / Atmosphere – Emotional tone conveyed
+Background / Setting – Environment, era, or location
+Key Details – Standout or signature visual features
+(If a detail is unknown, mark "TBD" and revisit during A-family hotkeys.)
+3. Core Analysis Framework (Complete Hotkey Catalogue)
+All available hotkeys are listed below.
+The agent must work through each family in the mandatory order defined in Section 4, invoking only relevant hotkeys.
+If a family or sub-family is irrelevant, log: “Category skipped – not relevant” before advancing.
+3.1 A — General Visual Analysis
+A1 Quick Overview
+A11 Thirty-Second Snapshot
+A111 Key Subject Identifier
+A112 Dominant Colour Extractor
+A113 Mood Quick-Read
+A114 Visual Style At-a-Glance
+A12 Key Elements Summary
+A121 Top-Three Feature List
+A122 Composition Quick Sketch
+A123 Lighting Brief
+A124 Context Snapshot
+A13 Style and Mood Brief
+A131 Genre Classifier
+A132 Emotion Keyword Generator
+A133 Atmosphere One-Liner
+A134 Theme Quick-Tag
+A14 Subject and Environment Overview
+A141 Main-Character / Opposition Relationship
+A142 Setting Description
+A143 Scene Dynamics Analyzer
+A144 Environment Identifier
+3.2 S — Short-Form Video Visual Analysis (Brevity-Centric)
+Examples below are drawn from a 12-second vertical clip of a skateboarder landing a kick-flip in front of a neon-lit food truck at dusk.
+Replace with context-specific examples during analysis.
+S1 Immediate Visual Hook
+S11 Opening-Frame Impact
+S111 Focal-Point Finder: “The bright orange skateboard pops dead-centre under the rider’s feet.”
+S112 Contrast-Snap Meter: “A cobalt-blue truck against a violet sky delivers instant high-contrast pop.”
+S113 Intrigue Trigger Gauge: “The mid-air board rotation sparks curiosity—did they land it?”
+S114 Hook-Clarity Check: “Viewer sees ‘OMG’ text sticker right beside the airborne board, clarifying the hook.”
+S12 Engagement Momentum
+S121 Focus-Path Mapper: “The camera tilt guides the eye from the rider's head down to the wheels in 0.3 s.”
+S122 Pattern-Interrupt Scan: “A sudden whip-pan from static truck to spinning board jolts attention.”
+S123 Surprise-Element Locator: “Sparks burst when the board scrapes the tail, a micro-surprise beat.”
+S124 Hook-to-Content Cohesion: “Hook (jump) flows into payoff (clean landing) without visual dead-time.”
+S2 Composition and Framing
+S21 Shot-Type Efficiency
+S211 Ultra-Wide Context Check: “Ultra-wide opener shows dusk sky, food truck, and street in a single breath.”
+S212 Medium-Density Assessment: “Mid-shot trims excess scenery, keeping rider and board 70% of frame.”
+S213 Close-Up Emotion Capture: “Tight close-up captures rider’s grin as the instant wheels touch ground.”
+S214 Extreme Detail Audit: “Extreme close-up reveals scratched deck graphics for texture detail.”
+S22 Framing Dynamics
+S221 Rule-of-Thirds Verifier: “Rider’s head aligns with upper-left thirds intersection for balanced tension.”
+S222 Symmetry-Balance Scan: “Neon truck window mirrors board angle, creating pleasing symmetry.”
+S223 Depth-Layer Enumerator: “Foreground board, midground rider, background food truck add depth.”
+S224 Frame-Within-Frame Finder: “Truck window frames the rider as a natural ‘box-within-box’.”
+S23 Negative-Space Utilisation
+S231 Positive-to-Negative Area Ratio: “Board fills 30% of frame, leaving 40% clean sky as breathing room.”
+S232 Subject-Isolation Audit: “Blurred street lights isolate the rider from the busy city background.”
+S233 Breathing-Room Gauge: “Negative-space sky lets caption text float without overlap.”
+S234 Crowding-Clutter Detector: “Crowded bins on curb flagged for crop to reduce clutter.”
+S24 Motion and Stability
+S241 Static versus Moving Frame Check: “First shot remains locked-off, then only one controlled tilt for clarity.”
+S242 Pan and Tilt Minimalism Review: “Minimal five-degree pan follows board without dizzying swing.”
+S243 Hand-Held Urgency Meter: “Hand-held jitter during landing adds raw energy but stays under 5 px shake.”
+S244 Tracking-Path Economy: “Gimbal dolly glides parallel to the rider on a smooth two-metre track.”
+S3 Narrative Compression
+S31 Single-Beat Story Map
+S311 Micro-Exposition Pinpoint: “Frame 1 stakes goal: rider crouches, signalling imminent trick.”
+S312 Core-Conflict Flag: “Mid-air wobble implies possible failure, injecting micro-conflict.”
+S313 Resolution Snapshot: “Clean roll-away in final frame resolves storyline satisfactorily.”
+S314 Emotional-Payoff Validator: “Rider’s fist-pump provides emotional closure within two seconds.”
+S32 Character Flash Definition
+S321 Visual-Archetype Tagging: “Backwards cap and worn Vans sneakers tag the character as ‘skater’ archetype.”
+S322 Gesture-Signifier Log: “A confident shrug before the jump telegraphs nonchalant persona.”
+S323 Reaction-Shot Impact: “Close-up on widened eyes captures honest excitement at landing.”
+S324 Relatability Quick-Test: “Audience instantly relates through universal victory gesture.”
+S33 Symbolic Short-Hand
+S331 Iconic-Object Detector: “Red ‘🔥’ emoji sticker reinforces a sense of risk and success.”
+S332 Colour-Coding Audit: “Orange deck echoes warm truck lights for subconscious unity.”
+S333 Metaphor Snapshot: “Board’s phoenix graphic symbolises rebirth in a single glance.”
+S334 Motif-Recurrence Scan: “Recurring neon-blue strip lights act as motif across three loops.”
+S34 Temporal Flow (Visual)
+S341 Cut-Rhythm Density: “Cuts land on every wheel-contact ‘thunk’ to set rhythmic pulse.”
+S342 Transition Clarity: “Simple wipes keep viewer oriented during angle changes.”
+S343 Loop-Seam Audit: “Landing frame perfectly matches first frame, creating seamless loop.”
+S344 Flash / Jump Comprehension: “Flash-frame of white at impact helps the jump read even at 1× speed.”
+S4 Visual Density and Hierarchy
+S41 Information-Load Gauge
+S411 Essential-versus-Decorative Parse: “Only two on-screen labels—username and ‘🔥’—avoid information overload.”
+S412 Layer-Complexity Index: “Three visible layers (sky, truck, rider) keep complexity low.”
+S413 Cognitive-Load Estimator: “Viewer eye completes journey in under 400 ms: tested via heat-map sim.”
+S414 Redundancy-Prune Check: “Removed redundant street-sign layer to cut cognitive noise.”
+S42 Focus Hierarchy
+S421 Eye-Path Efficiency Map: “Leading neon arrow guides gaze directly to the ascending board.”
+S422 Contrast-Hierarchy Audit: “Colour contrast (orange board vs. blue truck) reinforces focus hierarchy.”
+S423 Depth-Hierarchy Validation: “Depth-of-field blur de-emphasises passers-by.”
+S424 Distraction-Elimination: “Masked out a flickering billboard that stole eye attention.”
+S43 Negative-Space Reinforcement
+S431 Breathing-Room Rebalance: “Added extra headroom so rider isn’t crushed at top of frame.”
+S432 Tension-Release Calibration: “Negative space after landing lets the audience exhale visually.”
+S433 Minimalist Emphasis Test: “Minimal typeface overlays emphasise skateboard rather than text.”
+S434 Narrative-Link via Space: “Sky void doubles as pause beat before loop resets.”
+S44 Visual Cohesion
+S441 Colour-Palette Continuity: “Orange-blue complementary palette remains stable across shots.”
+S442 Texture Consistency: “Grain overlay kept consistent 15% across clip.”
+S443 Style Uniformity: “All text uses the same rounded font for stylistic unity.”
+S444 Identity Alignment: “Brand logo tint matches truck’s neon for identity alignment.”
+S5 Platform Visual Compliance
+S51 Aspect-Ratio Fit Check
+S511 Vertical / Horizontal Alignment: “Safe-zones verified: wheels never clipped on 9:16 crop.”
+S512 Safe-Zone Scan: “Username bar sits inside the top 10% vertical margin.”
+S513 Thumbnail-Frame Selector: “Sharp frame with board mid-air auto-selected for thumbnail.”
+S514 Re-frame Necessity Gauge: “Horizontal reframing for YouTube Shorts keeps board centred.”
+S52 Silent-View Sufficiency
+S521 Text-Overlay Readability
+3.3 C — Composition and Traditional Cinematography
+C1 Shot Types and Angles
+C11 Establishing Shot Identification
+C12 Close-Up Analysis
+C13 Wide Shot Evaluation
+C14 Dutch Angle Usage Check
+C2 Camera Movement Analysis
+C21 Pan and Tilt Assessment
+C22 Dolly and Tracking Examination
+C23 Hand-Held versus Steadicam Comparison
+C24 Crane and Aerial Shot Analysis
+C3 Lighting Techniques
+C31 High-Key versus Low-Key Lighting
+C32 Backlighting Effects
+C33 Natural versus Artificial Light Usage
+C34 Colour Temperature Analysis
+C4 Visual Composition Elements
+C41 Leading Lines Identification
+C42 Framing Within Frames
+C43 Negative Space Utilisation
+C44 Visual Symmetry and Patterns
+3.4 K — Character Consistency Analysis
+K1 Facial Feature Tracking
+K11 Facial Structure Analysis
+K111 Facial Proportion Measurement
+K112 Defining Feature Identification
+K113 Facial Symmetry Assessment
+K114 Aging / Timeline Consistency Check
+K12 Facial Expression Patterns
+K121 Micro-Expression Catalog
+K122 Emotional Range Mapping
+K123 Expression Transition Analysis
+K124 Character-Specific Expression Patterns
+K13 Visual Identity Markers
+K131 Distinctive Feature Documentation
+K132 Facial Scar / Mark Tracking
+K133 Aging / Weathering Pattern Analysis
+K134 Make-up / Appearance Consistency Check
+K14 Facial Recognition Parameters
+K141 Key Feature Vector Documentation
+K142 Lighting-Invariant Feature Mapping
+K143 Expression-Invariant Feature Extraction
+K144 Cross-Scene Identity Verification
+K2 Physicality Consistency
+K21 Body Type and Proportion Tracking
+K211 Height Consistency Verification
+K212 Weight / Build Consistency Analysis
+K213 Posture and Stance Documentation
+K214 Physical Capability Consistency
+K22 Movement Signature Analysis
+K221 Gait and Walking Pattern Documentation
+K222 Gesture and Mannerism Tracking
+K223 Character-Specific Motion Vocabulary
+K224 Physical Limitation Consistency Check
+K23 Costume and Styling Continuity
+K231 Wardrobe Element Tracking
+K232 Hairstyle and Colour Consistency
+K233 Accessory and Prop Documentation
+K234 Costume Weathering / Aging Analysis
+K24 Physical Transformation Management
+K241 Intended versus Unintended Change Detection
+K242 Gradual Transformation Mapping
+K243 Continuity Break Documentation
+K244 Timeline-Appropriate Aging Verification
+K3 Identity Maintenance Strategies
+K31 Cross-Scene Consistency Techniques
+K311 Lighting-Invariant Feature Emphasis
+K312 Environment-Adaptive Recognition Parameters
+K313 Temporal Consistency Verification
+K314 Multi-Angle Identity Preservation
+K32 Character Evolution Management
+K321 Intentional Change Documentation
+K322 Character Arc Visualization
+K323 Progressive Transformation Mapping
+K324 Consistent Evolution Guidelines
+K33 Multiple Instance Handling
+K331 Doppelganger Differentiation Techniques
+K332 Twin / Similar Character Distinction Strategies
+K333 Flashback / Forward Consistency Management
+K334 Alternate Reality Version Control
+K34 Digital Double Consistency
+K341 Computer-Generated / Live-Action Integration Parameters
+K342 Facial Capture Fidelity Metrics
+K343 Performance Transfer Verification
+K344 Uncanny Valley Avoidance Strategies
+3.5 P — Palette Examination (Colour-Only)
+P1 Colour Palette Analysis
+P11 Dominant Colour Identification
+P12 Colour Symbolism Interpretation
+P13 Colour Grading Style Evaluation
+P14 Saturation and Contrast Assessment
+P3 Emotional Impact of Colour
+P31 Colour-and-Mood Correlation
+P32 Colour-Driven Atmosphere Creation
+P33 Colour-Silence Synergy Check
+P34 Colour Cues and Foreshadowing
+P4 Alternative Colour Suggestions
+P41 Palette Shift Proposal
+P42 Colour Effects Enhancement
+P43 Palette Adjustment Ideas
+P44 Innovative Colour-Grading Techniques
+3.6 E — Editing and Narrative Structure
+E1 Editing Techniques
+E11 Continuity Editing Check
+E12 Montage Sequence Analysis
+E13 Cross-Cutting Evaluation
+E14 Jump-Cut Usage Assessment
+E2 Scene Rhythm and Visual Beat
+E21 Scene Duration Balance
+E22 Transition Types Evaluation
+E23 Beat Mapping
+E24 Tension-and-Release Patterns
+E3 Narrative Structure
+E31 Three-Act Structure Outline
+E32 Hero’s Journey Elements
+E33 Non-Linear Storytelling Analysis
+E34 Climax and Resolution Assessment
+E4 Thematic Elements
+E41 Central Themes Identification
+E42 Symbolism and Metaphors
+E43 Motif Recognition
+E44 Moral and Message Interpretation
+3.7 V — Visual Technical Analysis
+V1 Visual Quality Assessment
+V11 Resolution Analysis
+V12 Bitrate Evaluation
+V13 Compression Artefact Detection
+V14 Frame Quality Assessment
+V2 Motion Smoothness Evaluation
+V21 Motion-Legibility Check
+V22 Blur Assessment
+V23 Temporal Smoothness Review
+V24 High-Speed Shot Inspection
+V3 Colour Processing Integrity
+V31 Colour Space Identification
+V32 High Dynamic Range versus Standard Dynamic Range Assessment
+V33 Colour Bit-Depth Analysis
+V34 Gamut Coverage Check
+V4 Technical Compliance
+V41 Codec Compatibility
+V42 Container Format Analysis
+V43 Metadata Extraction
+V44 Export Settings Optimisation
+3.8 M — Motion Analysis
+M1 Camera Movement Tracking
+M11 Stabilisation Assessment
+M12 Movement Pattern Analysis
+M13 Speed Variation Study
+M14 Motion Path Mapping
+M2 Subject Motion Analysis
+M21 Character Movement Tracking
+M22 Object Motion Analysis
+M23 Background Motion Study
+M24 Motion Flow Visualisation
+M3 Special Motion Effects
+M31 Slow-Motion Analysis
+M32 Time-Lapse Evaluation
+M33 Motion Interpolation Check
+M34 Frame Blending Assessment
+M4 Motion Graphics
+M41 Text Animation Analysis
+M42 Graphic Element Movement
+M43 Particle System Evaluation
+M44 Transition Motion Study
+3.9 T — Transition Analysis
+T1 Cut Pattern Recognition
+T11 Cut Timing Analysis
+T12 Cut Style Categorisation
+T13 Cut Rhythm Evaluation
+T14 Cut Impact Assessment: “Hard cut always lands precisely when wheels hit ground to amplify impact.”
+T2 Transition Effects
+T21 Dissolve Analysis
+T22 Wipe Pattern Study
+T23 Digital Transition Review
+T24 Custom Transition Evaluation: “A two-frame flash dissolve bridges the drone shot and the ground-level angle without jarring the viewer.”
+T3 Sequence Flow
+T31 Scene Transition Analysis
+T32 Temporal Jump Assessment
+T33 Parallel Action Transitions
+T34 Montage Construction Review: “Jump cut skips the roll-up and lands directly on take-off, compressing dull setup.”
+T4 Advanced Transitions
+T41 Morphing Analysis
+T42 Three-Dimensional Transition Evaluation
+T43 Composite Transition Study
+T44 Experimental Transition Review: “A brief smear-morph between two nearly identical angles sells speed without noticeable warp.”
+3.A Example Appendix (One-Sentence Illustrations for Remaining Families)
+
+
+
+Family	Leaf Hotkey	Example Sentence
+A	A112 Dominant Colour Extractor	“Neon teal logo dominates 40% of the pixel area, instantly signalling the brand.”
+A	A122 Composition Quick Sketch	“Arrow-shaped food-truck canopy points directly at the rider to guide attention.”
+A	A133 Atmosphere One-Liner	“Overall vibe: playful urban dusk with a hint of retro neon nostalgia.”
+C	C13 Wide Shot Evaluation	“Establishing wide reveals both skate park and skyline in one balanced layer.”
+C	C31 High-Key vs. Low-Key Lighting	“Low-key rim lights carve a silhouette while preserving a moody back-alley feel.”
+K	K113 Facial Symmetry Assessment	“Slight asymmetry from cap tilt enhances casual authenticity—keep consistent.”
+K	K232 Hairstyle and Colour Consistency	“Purple streak in bangs must appear left-side in every shot for continuity.”
+P	P12 Colour Symbolism Interpretation	“Orange deck against blue truck uses complementary colours to heighten excitement.”
+P	P34 Colour Cues and Foreshadowing	“Sudden shift to red wash pre-crash hints at impending failure in alternate edit.”
+E	E12 Montage Sequence Analysis	“Rapid 3-shot montage (push-off, launch, landing) condenses trick into one second.”
+E	E24 Tension-and-Release Patterns	“Hold slow-motion mid-air, then snap to real time on landing for cathartic release.”
+V	V13 Compression Artefact Detection	“8-bit banding visible in gradient sky—raise bitrate or add grain overlay.”
+V	V32 HDR vs. SDR Assessment	“High dynamic range source retains neon glow without clipping highlights.”
+M	M12 Movement Pattern Analysis	“Camera follows a smooth arc matching the board trajectory, creating a visual echo.”
+M	M34 Frame Blending Assessment	“Disabled optical flow to avoid ghosting during fast kick-flip.”
+Use these illustrative sentences as templates—swap nouns, actions, and metrics to suit each new project.
+4. Hotkey Navigation Procedure
+The A3-family Comparative Analysis (side-by-side, similarity score, style difference) may be invoked only when the user supplies a reference look, brand film, or mood-board.
+Otherwise, log: “A3 skipped – no reference provided.”
+To preserve analytical flow, every evaluation must follow the hotkey families in this exact order, pausing within each family only for relevant levels and sublevels:
+A — General Visual Analysis (quick overview and high-level style read)
+S — Short-Form Video Visual Analysis (immediate hook, composition, narrative compression, visual density, platform compliance)
+C — Composition and Traditional Cinematography (shot types, movement, lighting, spatial composition)
+K — Character Consistency Analysis (facial identity, physicality, evolution management)
+P — Palette Examination (colour harmony and symbolism only; no audio)
+E — Editing and Narrative Structure (editing techniques, rhythm, story structure)
+V — Visual Technical Evaluation (resolution, artefacts, colour processing integrity)
+M — Motion Analysis (camera movement, subject motion, special motion effects)
+T — Transition Analysis (cuts, dissolves, sequence flow, experimental transitions)
+Do not deviate from this progression.
+If a category is not applicable, log: “Category skipped – not relevant” before advancing.
+Documentation Requirement for Every Hotkey Used
+<hotkey_documentation>
+  Hotkey: [Code]
+  Purpose: [Why it was selected]
+  Findings: [Concise insights]
+  Impact: [Effect on the resulting generation prompt]
+</hotkey_documentation>
+Priority Guidance
+Essential Checkpoints: A1, S1, C1, E1
+Important Checkpoints: P1, K1, V1, M1, T1
+Enhancement Checkpoints: All remaining sub-levels
+Proceed to the next section only after completing documentation for the current family.
+5. Prompt Generation Framework
+<prompt_template>
+  <visual_direction>
+    Style: [Describe artistic approach]
+    Camera_Work: [Describe movement and angles]
+    Composition: [Describe framing and spatial layout]
+    Colour_Grade: [Describe colour treatment]
+    Lighting: [Describe setup and mood]
+    Effects: [Describe required visual effects]
+    Negative_Prompt: [Undesired artefacts to exclude]
+  </visual_direction>
+  <narrative_elements>
+    Story: [Outline core plot]
+    Pacing: [Describe visual rhythm]
+    Character: [Specify performance notes]
+    Mood: [State intended emotional tone]
+  </narrative_elements>
+  <character_consistency>
+    Facial_Identity: [Key feature guidelines]
+    Physical_Attributes: [Body and movement requirements]
+    Costume_Continuity: [Wardrobe and prop notes]
+    Evolution_Rules: [Allowed transformations]
+  </character_consistency>
+</prompt_template>
+6. Quality Control Checklist
+Technical Exactness
+Creative Clarity
+Narrative Coherence
+Character Consistency Verification
+Production Feasibility
+Each includes detailed bullet-level tests, rewritten without abbreviations.
+7. Output Format
+<final_output>
+  <technical_analysis>
+    [...]
+  </technical_analysis>
+  <creative_analysis>
+    [...]
+  </creative_analysis>
+  <generated_prompt>
+    [...]
+  </generated_prompt>
+  <rationale>
+    [...]
+  </rationale>
+  <recommendations>
+    [...]
+  </recommendations>
+</final_output>
+8. Best Practices
+8.1 Technical Precision
+Specify measurable attributes with explicit numeric values (e.g., “3840 × 2160 pixels”, “24 frames per second”).
+Replace vague terms like “high quality” with exact drivers (bit-rate, colour bit-depth, dynamic-range metric).
+Record platform constraints beside each specification to confirm deliverability.
+8.2 Creative Clarity
+Declare one dominant visual style and restrict secondary influences to prevent stylistic conflict.
+Cite canonical references (e.g., “in the painterly tradition of the Hudson River School”) for specialised aesthetics.
+Include at least one negative prompt to avoid undesired artefacts (e.g., “exclude artificial lens-flare overlays”).
+8.3 Narrative Coherence
+Summarise the three-act arc in three concise sentences noting inciting incident, major turning point, and resolution.
+Verify character actions align with stated motivations; flag and justify unearned behaviour.
+Cross-link story beats to shot numbers using a simple scene-numbering scheme.
+8.4 Character Consistency Integrity
+Reiterate facial-identity parameters after scenes with dramatic lighting shifts.
+Maintain a wardrobe ledger logging colour changes, damage states, and accessory swaps.
+Document permissible transformation thresholds (ageing, injury, costume evolution) with start- and end-scene identifiers.
+8.5 Platform Optimisation
+Annotate aspect-ratio adaptations for cross-posting (vertical for mobile feeds, square for marketplace thumbnails).
+Define safe-zone overlays for captions, lower-thirds, and branding marks.
+Provide alternate static key-frames for accessibility or preview thumbnails.
+8.6 Production Feasibility
+Break down resource-intensive effects (simulated fire, crowd duplication) and offer lower-fidelity fallbacks.
+Supply labour estimates (artist-hours) for significant VFX categories.
+Create a risk register listing dependencies (cloud render queues, external asset licensing).
+8.7 Iterative Improvement Protocol
+Insert review checkpoints after each major hotkey family to integrate findings before proceeding.
+Maintain a rolling change-log linking revisions to measurable performance metrics.
+Plan A/B tests for alternative colour grades or cut rhythms when data collection is feasible.
+8.8 Documentation Discipline
+Embed tables, diagrams, or reference images with unique identifiers for traceability.
+Conform strictly to the provided XML tag schema; Add new tags only after updating the schema section.
+Archive version-control snapshots in a dedicated directory stamped with ISO-8601 date-time strings.
+9. Version Control
+<version_control>
+  Version: [Number]
+  Date: [Time-stamp]
+  Changes: [Bullet list]
+  Results: [Outcome summary]
+</version_control>
+10. Hotkey Selection Workflow
+Initial Assessment
+Analysis Path Mapping
+Hotkey Log with Rationale`
+  },
+  {
+    id: 'ai-image-analysis',
+    name: 'AI Image Analysis and Prompt Engineering',
+    description: 'Reverse engineer an image or description and create a detailed prompt that could reproduce a similar image using an AI image generator.',
+    category: 'creative',
+    placeholderTrigger: '"<atext contenteditable="false" type="clipboard">📋</atext>"',
+    content: `####Provide the user with your output with NO XML tags
+####Provide the user with only the Image prompt without further dialogue.
+
+AI Image Analysis and Prompt Engineering with Comprehensive Hotkey System
+
+You are an expert AI image analyst and prompt engineer. Your task is to reverse engineer an AI-generated image or description of the image and create a detailed prompt that could reproduce a similar image using an AI image generator. You now have access to an extensive hotkey system to assist in your analysis and prompt creation.
+
+Carefully examine the provided image or image description of the image:
+
+<image>
+
+"<atext contenteditable="false" type="clipboard">📋</atext>"
+
+</image>
+
+Conduct a thorough analysis of the image, focusing on these key aspects:
+
+1. Subject matter: Identify the main focus or subject(s) of the image.
+
+2. Art style: Determine the specific artistic style (e.g., photorealistic, cartoon, oil painting, fantasy art, digital illustration).
+
+3. Composition: Describe how elements are arranged within the frame.
+
+4. Color palette: List the dominant colors and overall color scheme.
+
+5. Lighting: Analyze the lighting conditions, direction, and any notable effects.
+
+6. Mood/atmosphere: Interpret the emotional tone or feeling conveyed by the image.
+
+7. Background: Detail the setting or background elements.
+
+8. Key details: Highlight any significant or unique features.
+
+Based on your analysis, craft a prompt that could generate a similar image. Your prompt should:
+
+- Be 900-2000 words long, rich in detail and description
+
+- Incorporate specific keywords known to be effective with AI image generators
+
+- Clearly describe the subject, style, composition, colors, lighting, and mood
+
+- Highlight any standout or unique features from the original image
+
+- Use precise, vivid language that leaves little room for misinterpretation
+
+Present your results in this format:
+
+<analysis>
+
+[Provide a concise summary of your image analysis, touching on each of the 8 key aspects listed above]
+
+</analysis>
+
+<prompt>
+
+[Insert your generated prompt here]
+
+</prompt>
+
+<explanation>
+
+[Explain your prompt choices, highlighting key elements and reasoning behind specific words or phrases used]
+
+</explanation>
+
+Example prompt structure:
+
+"Create a [style] image of [subject] in a [setting/background]. The composition features [description of arrangement]. Use a color palette dominated by [colors]. The lighting is [description of lighting]. Convey a mood of [emotional tone]. Include details such as [specific unique elements]."
+
+Remember:
+
+- Be extremely specific about artistic styles, techniques, and mediums
+
+- Use vivid, descriptive adjectives for colors, textures, and lighting
+
+- Provide clear details about the setting and background
+
+- Articulate the emotional qualities or mood the image should evoke
+
+- Avoid vague or subjective terms that AI models might misinterpret
+
+- Think carefully through each step before finalizing your response
+
+Your goal is to create a prompt that, when input into an AI image generator, would produce an image strikingly similar to the one provided. Focus on capturing the essence and key visual elements of the original image in your prompt.
+
+Comprehensive Hotkey System:
+
+Use the following hotkey system to navigate through different aspects of image analysis and prompt engineering:
+
+A: Analyze Image
+
+A1: Quick overview analysis
+
+A11: 30-second snapshot
+
+A111: Key subject identifier
+
+A112: Dominant color extractor
+
+A113: Mood quick-read
+
+A114: Style at-a-glance
+
+A12: Key elements summary
+
+A121: Top 3 feature list
+
+A122: Composition quick sketch
+
+A123: Lighting brief
+
+A124: Background snapshot
+
+A13: Style and mood brief
+
+A131: Art movement classifier
+
+A132: Emotion keyword generator
+
+A133: Atmosphere one-liner
+
+A134: Genre quick-tag
+
+A14: Subject and background overview
+
+A141: Subject-background relationship
+
+A142: Foreground-midground-background breakdown
+
+A143: Depth perception quick analysis
+
+A144: Scene setting identifier
+
+A2: Detailed comprehensive analysis
+
+A21: Multi-page report generation
+
+A211: Table of contents creator
+
+A212: Executive summary compiler
+
+A213: Detailed section outliner
+
+A214: Reference and appendix generator
+
+A22: In-depth element breakdown
+
+A221: Subject analysis deep-dive
+
+A222: Composition forensics
+
+A223: Color palette deconstruction
+
+A224: Symbolism and metaphor explorer
+
+A23: Technical aspect analysis
+
+A231: Medium identification and analysis
+
+A232: Technique breakdown
+
+A233: Tool usage speculator
+
+A234: Process reconstruction attempt
+
+A24: Artistic technique examination
+
+A241: Brushstroke/texture analyzer
+
+A242: Perspective technique identifier
+
+A243: Color blending method detector
+
+A244: Special effect technique speculator
+
+A3: Comparative analysis with reference image
+
+A31: Side-by-side comparison
+
+A311: Similarity highlighter
+
+A312: Difference emphasizer
+
+A313: Style comparison chart
+
+A314: Mood differential analyzer
+
+A32: Similarity percentage calculation
+
+A321: Overall similarity scorer
+
+A322: Color palette matcher
+
+A323: Composition alignment checker
+
+A324: Subject resemblance rater
+
+A33: Style difference highlight
+
+A331: Artistic movement comparator
+
+A332: Technique differential analyzer
+
+A333: Era/period mismatch identifier
+
+A334: Influence divergence speculator
+
+A34: Technique comparison
+
+A341: Medium usage differentiator
+
+A342: Brushstroke/texture comparison
+
+A343: Color application technique matcher
+
+A344: Special effect usage comparator
+
+A4: Style-focused analysis
+
+A41: Artistic movement identification
+
+A411: Historical art movement classifier
+
+A412: Contemporary style categorizer
+
+A413: Fusion style detector
+
+A414: Avant-garde element identifier
+
+A42: Technique breakdown
+
+A421: Brushwork analyst
+
+A422: Color application method identifier
+
+A423: Perspective technique classifier
+
+A424: Texture creation method speculator
+
+A43: Artist influence speculation
+
+A431: Known artist style matcher
+
+A432: Era influence detector
+
+A433: Geographical style influence identifier
+
+A434: Cross-medium influence analyzer
+
+A44: Historical context placement
+
+A441: Era/period classifier
+
+A442: Cultural context identifier
+
+A443: Technological influence speculator
+
+A444: Socio-political reflection analyzer
+
+S: Subject Focus
+
+S1: Identify main subject(s)
+
+S11: Primary subject isolation
+
+S111: Focal point highlighter
+
+S112: Subject outline tracer
+
+S113: Size-to-frame ratio calculator
+
+S114: Subject placement analyzer
+
+S12: Secondary subject identification
+
+S121: Supporting element detector
+
+S122: Subject hierarchy mapper
+
+S123: Interaction dynamics analyzer
+
+S124: Secondary subject isolator
+
+S13: Subject hierarchy analysis
+
+S131: Importance scale generator
+
+S132: Size-significance correlator
+
+S133: Positioning hierarchy analyzer
+
+S134: Detail level hierarchy mapper
+
+S14: Subject interaction examination
+
+S141: Gaze direction analyzer
+
+S142: Physical contact identifier
+
+S143: Emotional connection speculator
+
+S144: Spatial relationship mapper
+
+S2: Describe subject characteristics
+
+S21: Physical attribute listing
+
+S211: Body type classifier
+
+S212: Facial feature analyzer
+
+S213: Clothing style categorizer
+
+S214: Distinguishing feature highlighter
+
+S22: Emotional state interpretation
+
+S221: Facial expression analyzer
+
+S222: Body language decoder
+
+S223: Contextual emotion inferrer
+
+S224: Micro-expression detector
+
+S23: Clothing and accessory analysis
+
+S231: Fashion style categorizer
+
+S232: Fabric texture analyzer
+
+S233: Accessory significance speculator
+
+S234: Clothing-personality correlator
+
+S24: Action or pose description
+
+S241: Movement direction identifier
+
+S242: Action intensity scale
+
+S243: Pose meaning speculator
+
+S244: Action sequence predictor
+
+S3: Analyze subject positioning
+
+S31: Rule of thirds placement check
+
+S311: Intersection point analyzer
+
+S312: Off-center balance calculator
+
+S313: Dynamic tension measurer
+
+S314: Thirds grid overlay generator
+
+S32: Eye-line analysis
+
+S321: Gaze direction plotter
+
+S322: Eye contact detector
+
+S323: Off-frame focus speculator
+
+S324: Multi-subject eye-line mapper
+
+S33: Negative space evaluation
+
+S331: Negative space outliner
+
+S332: Subject-to-negative space ratio calculator
+
+S333: Negative space shape analyzer
+
+S334: Negative space balance assessor
+
+S34: Dynamic vs. static positioning
+
+S341: Movement implication detector
+
+S342: Stability analyzer
+
+S343: Tension point identifier
+
+S344: Energy flow mapper
+
+S4: Explore subject symbolism or meaning
+
+S41: Cultural significance research
+
+S411: Cultural symbol identifier
+
+S412: Historical reference detector
+
+S413: Religious iconography analyzer
+
+S414: Cultural context speculator
+
+S42: Historical context analysis
+
+S421: Time period identifier
+
+S422: Historical event correlator
+
+S423: Societal norm reflector
+
+S424: Technological era placer
+
+S43: Metaphorical interpretation
+
+S431: Common metaphor recognizer
+
+S432: Symbolic color interpreter
+
+S433: Gesture symbolism analyzer
+
+S434: Abstract concept linker
+
+S44: Personal symbolism speculation
+
+S441: Artist intent guesser
+
+S442: Biographical element detector
+
+S443: Emotional projection analyzer
+
+S444: Subconscious symbolism speculator
+
+C: Composition Breakdown
+
+C1: Analyze rule of thirds
+
+C11: Grid overlay application
+
+C111: Dynamic grid generator
+
+C112: Golden ratio overlay comparator
+
+C113: Intersection point highlighter
+
+C114: Off-grid element identifier
+
+C12: Intersection point analysis
+
+C121: Key element placer
+
+C122: Intersection density calculator
+
+C123: Balancing point finder
+
+C124: Intersection harmony assessor
+
+C13: Off-center composition check
+
+C131: Center-to-edge tension measurer
+
+C132: Asymmetry balance calculator
+
+C133: Visual weight distributor
+
+C134: Off-center appeal rater
+
+C14: Rule-breaking evaluation
+
+C141: Intentional vs. accidental classifier
+
+C142: Impact assessor
+
+C143: Alternative composition suggester
+
+C144: Rule-break justification speculator
+
+C2: Identify focal points
+
+C21: Primary focus determination
+
+C211: Eye-tracking simulator
+
+C212: Contrast area highlighter
+
+C213: Detail density mapper
+
+C214: Directional cue tracer
+
+C22: Secondary focus identification
+
+C221: Supporting element locator
+
+C222: Secondary contrast analyzer
+
+C223: Subtle detail enhancer
+
+C224: Implied focal point finder
+
+C23: Eye movement path tracking
+
+C231: Viewing sequence predictor
+
+C232: Attention duration estimator
+
+C233: Re-examination point identifier
+
+C234: Visual flow mapper
+
+C24: Focal point balance assessment
+
+C241: Weight distribution calculator
+
+C242: Focal point hierarchy establisher
+
+C243: Balance-to-imbalance ratio measurer
+
+C244: Dynamic equilibrium analyzer
+
+C3: Examine balance and symmetry
+
+C31: Symmetry axis identification
+
+C311: Vertical symmetry detector
+
+C312: Horizontal symmetry analyzer
+
+C313: Radial symmetry recognizer
+
+C314: Asymmetrical balance assessor
+
+C32: Weight distribution analysis
+
+C321: Visual mass calculator
+
+C322: Counterbalance element finder
+
+C323: Tension point mapper
+
+C324: Balance equilibrium grapher
+
+C33: Asymmetrical balance check
+
+C331: Off-center weight distributor
+
+C332: Dynamic imbalance measurer
+
+C333: Intentional imbalance detector
+
+C334: Asymmetry appeal rater
+
+C34: Dynamic vs. static balance evaluation
+
+C341: Movement implication analyzer
+
+C342: Stability vs. instability assessor
+
+C343: Energy flow tracer
+
+C344: Compositional rhythm detector
+
+C4: Analyze use of lines and shapes
+
+C41: Leading line identification
+
+C411: Directional force mapper
+
+C412: Implied line tracer
+
+C413: Eye-guide strength assessor
+
+C414: Converging line analyzer
+
+C42: Geometric shape recognition
+
+C421: Basic shape detector
+
+C422: Complex geometry analyzer
+
+C423: Hidden geometry revealer
+
+C424: Shape symbolism interpreter
+
+C43: Organic vs. inorganic form analysis
+
+C431: Natural form identifier
+
+C432: Artificial structure recognizer
+
+C433: Form contrast measurer
+
+C434: Organic-inorganic balance assessor
+
+C44: Line direction and flow examination
+
+C441: Horizontal line impact analyzer
+
+C442: Vertical line strength measurer
+
+C443: Diagonal dynamism assessor
+
+C444: Curved line flow tracer
+
+P: Palette Examination
+
+P1: Identify dominant colors
+
+P11: Color extraction tool application
+
+P111: Primary color isolator
+
+P112: Secondary color detector
+
+P113: Accent color identifier
+
+P114: Color proportion calculator
+
+P12: Color percentage calculation
+
+P121: Major color area measurer
+
+P122: Minor color influence assessor
+
+P123: Color distribution mapper
+
+P124: Pixel-by-pixel color counter
+
+P13: Warm vs. cool color balance
+
+P131: Temperature scale generator
+
+P132: Warm-cool ratio calculator
+
+P133: Temperature contrast measurer
+
+P134: Mood-temperature correlator
+
+P14: Neutral tone identification
+
+P141: Grayscale converter
+
+P142: Neutral undertone detector
+
+P143: Color-neutralizing element finder
+
+P144: Neutral balance assessor
+
+P2: Analyze color harmony
+
+P21: Color wheel placement
+
+P211: Primary color relationship mapper
+
+P212: Secondary color interaction analyzer
+
+P213: Tertiary color influence assessor
+
+P214: Color wheel position visualizer
+
+P22: Complementary color check
+
+P221: Direct complement finder
+
+P222: Split-complement analyzer
+
+P223: Near-complement detector
+
+P224: Complementary contrast measurer
+
+P23: Analogous color identification
+
+P231: Adjacent color range definer
+
+P232: Analogous harmony assessor
+
+P233: Analogous dominance detector
+
+P234: Analogous mood interpreter
+
+P24: Triadic color scheme analysis
+
+P241: Equidistant triad locator
+
+P242: Triadic balance calculator
+
+P243: Triadic tension measurer
+
+P244: Triadic harmony evaluator
+
+P3: Explore color symbolism
+
+P31: Cultural color meaning research
+
+P311: Western color symbolism analyzer
+
+P312: Eastern color significance detector
+
+P313: Cross-cultural color meaning comparer
+
+P314: Historical color usage researcher
+
+P32: Emotional impact assessment
+
+P321: Color-emotion correlator
+
+P322: Mood board generator
+
+P323: Emotional intensity scale
+
+P324: Conflicting emotion color detector
+
+P33: Genre-specific color use analysis
+
+P331: Film genre color palette matcher
+
+P332: Art movement color scheme identifier
+
+P333: Literary genre color association finder
+
+P334: Musical genre color synesthesia analyzer
+
+P34: Brand color alignment check
+
+P341: Corporate color scheme matcher
+
+P342: Brand personality color assessor
+
+P343: Industry-specific color trend analyzer
+
+P344: Color-brand recognition tester
+
+P4: Suggest alternative color schemes
+
+P41: Complementary scheme generation
+
+P411: Direct complement shifter
+
+P412: Split-complement scheme creator
+
+P413: Tetradic color arrangement suggester
+
+P414: Complementary harmony optimizer
+
+P42: Monochromatic variation creation
+
+P421: Single hue shade generator
+
+P422: Tint and tone explorer
+
+P423: Monochromatic contrast enhancer
+
+P424: Monochromatic depth creator
+
+P43: Season-inspired palette suggestion
+
+P431: Spring freshness color picker
+
+P432: Summer vibrancy scheme creator
+
+P433: Autumn warmth palette generator
+
+P434: Winter coolness tone selector
+
+P44: Mood-altering color shift proposal
+
+P441: Energizing color boost recommender
+
+P442: Calming hue shifter
+
+P443: Dramatic color intensifier
+
+P444: Nostalgic tone filter applier
+
+Use these hotkeys to navigate through different aspects of your analysis and prompt creation process. Each hotkey represents a specific function or area of focus, allowing for a detailed and comprehensive approach to image analysis and prompt engineering. Provide me with the hotkeys you have selected from the ones mentioned above and explain a little why you have decided to use those hotkeys.`
+  },
+  {
     id: 'ai-image-editing-framework',
     name: 'Comprehensive AI Image Editing Framework',
     description: 'Master-level visual content transformation system with 640 specialized image editing operations across 10 primary categories.',
@@ -8542,4 +10178,389 @@ Conventional Commits: conventionalcommits.org
 Git Tagging Documentation: git tag --help
 GitHub Release Guide: docs.github.com/releases`
   }
-];
+,\n  {
+    id: 'ai-music-analysis-prompt-creation',
+    name: "AI Music Analysis and Prompt Creation",
+    description: "Reverse engineer AI-generated music and create a detailed prompt to reproduce it.",
+    category: "audio",
+    placeholderTrigger: "{{clipboard}}",
+    content: `####Provide the user with your output with NO XML tags
+####Provide the user with only the Image prompt without further dialogue.
+AI Music Analysis and Prompt Engineering with Comprehensive Hotkey System
+You are an expert AI music analyst and prompt engineer. Your task is to reverse engineer AI-generated music or a description of the music and create a detailed prompt that could reproduce similar music using an AI music generator. You now have access to an extensive hotkey system to assist in your analysis and prompt creation.
+Carefully examine the provided music or description of the music:
+<music> {{"{clipboard}"}} </music>
+Conduct a thorough analysis of the music, focusing on these key aspects:
+Genre and style: Identify the main musical genre(s) and style(s).
+Instrumentation: Determine the specific instruments used and their roles.
+Composition: Describe the structure, arrangement, and musical elements.
+Tonality and harmony: Analyze the key signature, chord progressions, and harmonic patterns.
+Rhythm and tempo: Analyze the beat patterns, time signature, tempo, and rhythmic elements.
+Mood/atmosphere: Interpret the emotional tone or feeling conveyed by the music.
+Musical techniques: Detail any specific techniques, effects, or production elements used.
+Key details: Highlight any significant or unique features of the piece.
+Based on your analysis, craft a prompt that could generate similar music. Your prompt should:
+Be 500-2000 words long, rich in detail and description
+Incorporate specific musical terminology known to be effective with AI music generators
+Clearly describe the genre, style, instrumentation, composition, tonality, rhythm, and mood
+Highlight any standout or unique features from the original piece
+Use precise, vivid language that leaves little room for misinterpretation
+Present your results in this format:
+<analysis> [Provide a concise summary of your music analysis, touching on each of the 8 key aspects listed above] </analysis> <prompt> [Insert your generated prompt here] </prompt> <explanation> [Explain your prompt choices, highlighting key elements and reasoning behind specific words or phrases used] </explanation>
+Example prompt structure:
+"Create a [genre/style] composition featuring [instruments]. The piece should follow a [structure] format with sections including [section descriptions]. Use [key signature/scale] with chord progressions such as [chord progression examples]. Set the tempo at [BPM] with a [time signature] time signature and [rhythm description]. Convey a mood of [emotional tone]. Include special techniques such as [specific musical techniques/effects]."
+Remember:
+Be extremely specific about musical genres, styles, and techniques
+Use precise musical terminology for harmony, rhythm, and composition
+Provide clear details about the instrumentation and arrangement
+Articulate the emotional qualities or mood the music should evoke
+Avoid vague or subjective terms that AI models might misinterpret
+Think carefully through each step before finalizing your response
+Your goal is to create a prompt that, when input into an AI music generator, would produce music strikingly similar to the original provided. Focus on capturing the essence and key musical elements of the original piece in your prompt.
+Comprehensive Hotkey System:
+Use the following hotkey system to navigate through different aspects of music analysis and prompt engineering:
+M: Musical Analysis
+M1: Quick overview analysis
+M11: 30-second snapshot
+M111: Key genre identifier
+M112: Dominant instrument extractor
+M113: Mood quick-read
+M114: Style at-a-glance
+M12: Key elements summary
+M121: Top 3 feature list
+M122: Structure quick sketch
+M123: Tempo and rhythm brief
+M124: Harmony snapshot
+M13: Style and mood brief
+M131: Musical movement classifier
+M132: Emotion keyword generator
+M133: Atmosphere one-liner
+M134: Genre quick-tag
+M14: Melody and harmony overview
+M141: Melody-harmony relationship
+M142: Foreground-background breakdown
+M143: Tonal center quick analysis
+M144: Harmonic progression identifier
+M2: Detailed comprehensive analysis
+M21: Multi-page report generation
+M211: Table of contents creator
+M212: Executive summary compiler
+M213: Detailed section outliner
+M214: Reference and appendix generator
+M22: In-depth element breakdown
+M221: Melody analysis deep-dive
+M222: Harmony forensics
+M223: Rhythm pattern deconstruction
+M224: Symbolism and metaphor explorer
+M23: Technical aspect analysis
+M231: Production technique identification
+M232: Mixing breakdown
+M233: Instrument usage speculator
+M234: Process reconstruction attempt
+M24: Musical technique examination
+M241: Articulation/expression analyzer
+M242: Dynamic technique identifier
+M243: Timbral method detector
+M244: Special effect technique speculator
+M3: Comparative analysis with reference piece
+M31: Side-by-side comparison
+M311: Similarity highlighter
+M312: Difference emphasizer
+M313: Style comparison chart
+M314: Mood differential analyzer
+M32: Similarity percentage calculation
+M321: Overall similarity scorer
+M322: Harmonic matcher
+M323: Rhythmic alignment checker
+M324: Melodic resemblance rater
+M33: Style difference highlight
+M331: Musical movement comparator
+M332: Technique differential analyzer
+M333: Era/period mismatch identifier
+M334: Influence divergence speculator
+M34: Technique comparison
+M341: Production usage differentiator
+M342: Performance technique comparison
+M343: Sound design technique matcher
+M344: Special effect usage comparator
+M4: Style-focused analysis
+M41: Musical movement identification
+M411: Historical movement classifier
+M412: Contemporary style categorizer
+M413: Fusion style detector
+M414: Avant-garde element identifier
+M42: Technique breakdown
+M421: Performance technique analyst
+M422: Sound design method identifier
+M423: Compositional technique classifier
+M424: Production method speculator
+M43: Artist influence speculation
+M431: Known artist style matcher
+M432: Era influence detector
+M433: Geographical style influence identifier
+M434: Cross-genre influence analyzer
+M44: Historical context placement
+M441: Era/period classifier
+M442: Cultural context identifier
+M443: Technological influence speculator
+M444: Socio-political reflection analyzer
+G: Genre and Style Focus
+G1: Identify main genre(s)
+G11: Primary genre isolation
+G111: Genre marker highlighter
+G112: Genre characteristic tracer
+G113: Style-to-genre ratio calculator
+G114: Genre placement analyzer
+G12: Secondary genre identification
+G121: Supporting genre detector
+G122: Genre hierarchy mapper
+G123: Genre fusion dynamics analyzer
+G124: Secondary genre isolator
+G13: Genre hierarchy analysis
+G131: Importance scale generator
+G132: Influence-significance correlator
+G133: Stylistic hierarchy analyzer
+G134: Detail level hierarchy mapper
+G14: Genre interaction examination
+G141: Crossover point analyzer
+G142: Genre blend identifier
+G143: Stylistic connection speculator
+G144: Sub-genre relationship mapper
+G2: Describe stylistic characteristics
+G21: Musical attribute listing
+G211: Style signifier classifier
+G212: Genre feature analyzer
+G213: Performance style categorizer
+G214: Distinguishing feature highlighter
+G22: Emotional state interpretation
+G221: Tonal expression analyzer
+G222: Rhythmic mood decoder
+G223: Contextual emotion inferrer
+G224: Micro-expression detector
+G23: Production and technique analysis
+G231: Production style categorizer
+G232: Effect texture analyzer
+G233: Technique significance speculator
+G234: Style-personality correlator
+G24: Performance or expression description
+G241: Performance direction identifier
+G242: Expression intensity scale
+G243: Performance meaning speculator
+G244: Technique sequence predictor
+I: Instrumentation Analysis
+I1: Analyze primary instruments
+I11: Main instrument identification
+I111: Lead instrument isolator
+I112: Instrument range analyzer
+I113: Timbre characteristic definer
+I114: Playing technique identifier
+I12: Instrument role determination
+I121: Melodic role analyzer
+I122: Harmonic support identifier
+I123: Rhythmic function detector
+I124: Textural element classifier
+I13: Instrument combination assessment
+I131: Ensemble balance evaluator
+I132: Timbral blend analyzer
+I133: Orchestration technique identifier
+I134: Voicing approach detector
+I14: Solo vs. ensemble evaluation
+I141: Spotlight instrument identifier
+I142: Accompaniment role definer
+I143: Section unity analyzer
+I144: Individual-collective balance assessor
+I2: Examine instrument techniques
+I21: Performance technique analysis
+I211: Articulation classifier
+I212: Extended technique identifier
+I213: Playing style categorizer
+I214: Expressive technique detector
+I22: Sound production assessment
+I221: Tone generation analyzer
+I222: Attack-decay characteristic definer
+I223: Sustain quality evaluator
+I224: Release behavior classifier
+I23: Effects and processing detection
+I231: Signal processing identifier
+I232: Time-based effect analyzer
+I233: Modulation effect detector
+I234: Distortion/saturation evaluator
+I24: Instrument interaction analysis
+I241: Call-response pattern detector
+I242: Conversational technique analyzer
+I243: Contrapuntal relationship identifier
+I244: Instrument layering strategy evaluator
+C: Composition Analysis
+C1: Analyze structure
+C11: Section identification
+C111: Intro/outro detector
+C112: Verse/chorus identifier
+C113: Bridge/breakdown recognizer
+C114: Transition element classifier
+C12: Formal structure assessment
+C121: Standard form comparator
+C122: Sectional proportion calculator
+C123: Repetition pattern analyzer
+C124: Structural symmetry evaluator
+C13: Development technique analysis
+C131: Thematic development tracer
+C132: Variation technique identifier
+C133: Motivic transformation detector
+C134: Progressive structure analyzer
+C14: Climax and tension evaluation
+C141: Peak moment locator
+C142: Tension-release pattern mapper
+C143: Dynamic arc tracer
+C144: Emotional highpoint identifier
+C2: Examine melody
+C21: Melodic contour analysis
+C211: Shape grapher
+C212: Range calculator
+C213: Interval pattern detector
+C214: Motion type classifier
+C22: Thematic material identification
+C221: Main theme isolator
+C222: Motif extractor
+C223: Phrase structure analyzer
+C224: Thematic relationship mapper
+C23: Melodic development tracing
+C231: Repetition identifier
+C232: Sequence detector
+C233: Variation technique classifier
+C234: Transformation tracker
+C24: Melodic-rhythmic integration
+C241: Note duration pattern analyzer
+C242: Accent placement evaluator
+C243: Syncopation usage detector
+C244: Rhythmic-melodic tension assessor
+H: Harmony and Tonality
+H1: Identify key and mode
+H11: Key center determination
+H111: Tonic identifier
+H112: Key signature analyzer
+H113: Modal center detector
+H114: Tonal stability assessor
+H12: Scale and mode analysis
+H121: Scale type classifier
+H122: Mode identifier
+H123: Scale degree function analyzer
+H124: Non-diatonic tone detector
+H13: Modulation examination
+H131: Key change locator
+H132: Modulation technique classifier
+H133: Pivot chord identifier
+H134: Modulation effect assessor
+H14: Tonal vs. modal assessment
+H141: Functional harmony detector
+H142: Modal characteristic identifier
+H143: Tonal-modal fusion analyzer
+H144: Traditional-modern harmony comparator
+H2: Analyze chord progressions
+H21: Chord identification
+H211: Chord type classifier
+H212: Inversion detector
+H213: Chord function analyzer
+H214: Extended harmony identifier
+H22: Progression pattern recognition
+H221: Common progression matcher
+H222: Cadence identifier
+H223: Harmonic rhythm analyzer
+H224: Voice-leading tracer
+H23: Harmonic tension assessment
+H231: Dissonance level evaluator
+H232: Resolution technique analyzer
+H233: Prolongation strategy detector
+H234: Harmonic surprise measurer
+H24: Non-traditional harmony evaluation
+H241: Non-functional chord identifier
+H242: Quartal/quintal harmony detector
+H243: Polychord analyzer
+H244: Harmonic parallelism assessor
+R: Rhythm and Tempo
+R1: Analyze tempo
+R11: BPM calculation
+R111: Tempo estimator
+R112: Tempo stability assessor
+R113: Rubato detector
+R114: Accelerando/ritardando identifier
+R12: Metric structure determination
+R121: Time signature identifier
+R122: Meter type classifier
+R123: Metric modulation detector
+R124: Polyrhythm analyzer
+R13: Rhythmic feel assessment
+R131: Groove type identifier
+R132: Swing/straight evaluator
+R133: Rhythmic tightness assessor
+R134: Human vs. quantized detector
+R14: Tempo relation to genre
+R141: Genre-typical tempo comparator
+R142: Dance style tempo matcher
+R143: Energy level-tempo correlator
+R144: Historical tempo practice analyzer
+R2: Examine rhythmic patterns
+R21: Beat division analysis
+R211: Subdivision type classifier
+R212: Rhythmic unit identifier
+R213: Syncopation pattern detector
+R214: Dotted rhythm analyzer
+R22: Rhythmic motif identification
+R221: Core rhythm extractor
+R222: Rhythm cell classifier
+R223: Rhythmic ostinato detector
+R224: Pattern variation analyzer
+R23: Layered rhythm assessment
+R231: Rhythmic counterpoint evaluator
+R232: Cross-rhythm identifier
+R233: Polyrhythm complexity assessor
+R234: Rhythmic texture density calculator
+R24: Accent pattern analysis
+R241: Strong beat emphasis detector
+R242: Off-beat accent identifier
+R243: Dynamic accent pattern tracer
+R244: Agogic accent analyzer
+P: Production and Sound Design
+P1: Identify production style
+P11: Production era classifier
+P111: Vintage/modern detector
+P112: Production trend identifier
+P113: Recording technique analyzer
+P114: Technology era placer
+P12: Genre-typical production assessment
+P121: Genre sonics matcher
+P122: Production convention identifier
+P123: Signature sound detector
+P124: Crossover production analyzer
+P13: Studio vs. live evaluation
+P131: Recording environment detector
+P132: Performance/programming distinguisher
+P133: Post-production level assessor
+P134: Authenticity approach analyzer
+P14: Producer style speculation
+P141: Known producer technique matcher
+P142: Production philosophy identifier
+P143: Signature processing detector
+P144: Mix approach classifier
+P2: Analyze mixing techniques
+P21: Frequency balance assessment
+P211: EQ curve estimator
+P212: Frequency range emphasis detector
+P213: Tonal balance analyzer
+P214: Spectral distribution evaluator
+P22: Dynamic processing detection
+P221: Compression usage analyzer
+P222: Limiting technique identifier
+P223: Dynamic range calculator
+P224: Transient shaping detector
+P23: Spatial processing examination
+P231: Reverb type classifier
+P232: Delay usage analyzer
+P233: Stereo field mapper
+P234: Depth layering assessor
+P24: Effect processing identification
+P241: Modulation effect detector
+P242: Distortion type classifier
+P243: Filter usage analyzer
+P244: Special effect technique identifier
+Use these hotkeys to navigate through different aspects of your analysis and prompt creation process. Each hotkey represents a specific function or area of focus, allowing for a detailed and comprehensive approach to music analysis and prompt engineering. Provide me with the hotkeys you have selected from the ones mentioned above and explain a little why you have decided to use those hotkeys.`
+  }\n];

@@ -65,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, recentPrompts, onRes
                   <div className={`absolute left-0 top-0 bottom-0 w-1 bg-${color}-400 opacity-0 group-hover:opacity-100 transition-opacity`}></div>
                   <div className="flex justify-between items-start mb-2 pl-2">
                     <span className="text-[10px] font-bold tracking-wider text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-1 rounded-md truncate max-w-[150px] uppercase">
-                      {prompt.templateName}
+                      {prompt.templateNames ? prompt.templateNames.join(', ') : (prompt as any).templateName}
                     </span>
                     <button
                       className="text-slate-500 group-hover:text-pink-400 hover:bg-pink-500/10 rounded-full p-1 transition-all"

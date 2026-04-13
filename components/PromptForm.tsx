@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { PromptTemplate, AttachmentInput } from '../types';
 import { CHAR_LIMIT_OPTIONS, FORMAT_STYLES } from '../constants';
 import TextStyleToolbar, { SelectedModifiers } from './TextStyleToolbar';
@@ -8,12 +8,12 @@ import { AttachmentZone } from './AttachmentZone';
 
 interface PromptFormProps {
   templates: PromptTemplate[];
-  selectedTemplateId: string;
+  selectedTemplateIds: string[];
   selectedFormatId: string;
   userContent: string;
   includeExamples: boolean;
   charLimit?: number | null;
-  onTemplateChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onTemplateToggle: (templateId: string) => void;
   onFormatChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onContentChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onExamplesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -51,12 +51,12 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 
 const PromptForm: React.FC<PromptFormProps> = ({
   templates,
-  selectedTemplateId,
+  selectedTemplateIds,
   selectedFormatId,
   userContent,
   includeExamples,
   charLimit,
-  onTemplateChange,
+  onTemplateToggle,
   onFormatChange,
   onContentChange,
   onExamplesChange,
@@ -81,8 +81,20 @@ const PromptForm: React.FC<PromptFormProps> = ({
   modelFamily,
   onModelFamilyChange
 }) => {
-  const currentTemplate = templates.find(t => t.id === selectedTemplateId);
-  const cat = CATEGORY_COLORS[currentTemplate?.category || 'custom'] || CATEGORY_COLORS.custom;
+  const [isTemplateDropdownOpen, setIsTemplateDropdownOpen] = useState(false);
+  const templateDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (templateDropdownRef.current && !templateDropdownRef.current.contains(event.target as Node)) {
+        setIsTemplateDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedTemplates = templates.filter(t => selectedTemplateIds.includes(t.id));
   
   // Compute input analytics
   const wordCount = userContent.trim() ? userContent.trim().split(/\s+/).length : 0;
@@ -115,39 +127,82 @@ const PromptForm: React.FC<PromptFormProps> = ({
               NEW
             </button>
           </div>
-          <div className="flex gap-2 sm:gap-3">
-            <div className="relative flex-grow group">
-              <select
-                id="template"
-                value={selectedTemplateId}
-                onChange={onTemplateChange}
-                className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-purple-500/50 text-sm sm:text-base"
+          <div className="flex gap-2 sm:gap-3 items-start">
+            <div className="relative flex-grow group" ref={templateDropdownRef}>
+              <div 
+                onClick={() => setIsTemplateDropdownOpen(!isTemplateDropdownOpen)}
+                className="w-full px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent text-slate-200 font-medium transition-all cursor-pointer group-hover:border-purple-500/50 text-sm sm:text-base flex justify-between items-center"
               >
-                <option value="none">— Default (No Engine) —</option>
-                {templates.map(template => {
-                  const tCat = CATEGORY_COLORS[template.category || 'custom'] || CATEGORY_COLORS.custom;
-                  return (
-                    <option key={template.id} value={template.id}>
-                      {tCat.emoji} {template.isCustom ? `★ ${template.name}` : template.name}
-                    </option>
-                  );
-                })}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-purple-400 group-hover:scale-110 transition-transform">
-                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                </svg>
+                <div className="truncate pr-4 flex flex-wrap gap-1">
+                  {selectedTemplates.length === 0 ? (
+                    <span className="text-slate-400">— Default (No Engine) —</span>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                       {selectedTemplates.length === 1 ? (
+                         <span>{CATEGORY_COLORS[selectedTemplates[0].category || 'custom']?.emoji} {selectedTemplates[0].name}</span>
+                       ) : (
+                         <span className="text-purple-300">{selectedTemplates.length} Templates Selected</span>
+                       )}
+                    </div>
+                  )}
+                </div>
+                <div className="text-purple-400 group-hover:scale-110 transition-transform">
+                  <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                  </svg>
+                </div>
               </div>
+              
+              {isTemplateDropdownOpen && (
+                <div className="absolute z-50 w-full mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-h-80 mx-h-60 overflow-y-auto">
+                  <div className="p-2 space-y-1">
+                     <div 
+                        onClick={() => {
+                           if (selectedTemplateIds.length > 0) {
+                              // If any are selected, unselect all (set to none implicitly by calling parent if needed, or parent handles empty array)
+                              templates.forEach(t => {
+                                if(selectedTemplateIds.includes(t.id)) onTemplateToggle(t.id);
+                              });
+                           }
+                        }}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${selectedTemplateIds.length === 0 ? 'bg-purple-500/20 text-purple-300' : 'hover:bg-slate-700/50 text-slate-300'}`}
+                     >
+                       <div className={`w-4 h-4 rounded border flex mt-0.5 items-center justify-center ${selectedTemplateIds.length === 0 ? 'bg-purple-500 border-purple-400' : 'border-slate-500 bg-slate-900'}`}>
+                         {selectedTemplateIds.length === 0 && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>}
+                       </div>
+                       <span className="font-medium">— Default (No Engine) —</span>
+                     </div>
+                     <div className="h-px bg-slate-700/50 my-1"></div>
+                    {templates.map(template => {
+                      const tCat = CATEGORY_COLORS[template.category || 'custom'] || CATEGORY_COLORS.custom;
+                      const isSelected = selectedTemplateIds.includes(template.id);
+                      return (
+                        <div 
+                          key={template.id} 
+                          onClick={() => onTemplateToggle(template.id)}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${isSelected ? 'bg-purple-500/10 text-purple-300 border-l-2 border-purple-400' : 'hover:bg-slate-700/50 text-slate-300 border-l-2 border-transparent'}`}
+                        >
+                          <div className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${isSelected ? 'bg-purple-500 border-purple-400' : 'border-slate-500 bg-slate-900'}`}>
+                            {isSelected && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>}
+                          </div>
+                          <span className="flex-shrink-0">{tCat.emoji}</span>
+                          <span className="font-medium truncate">{template.isCustom ? `★ ${template.name}` : template.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
-            {currentTemplate?.isCustom && onDeleteTemplate && (
+            {selectedTemplates.some(t => t.isCustom) && onDeleteTemplate && (
               <button
                 onClick={() => {
-                  if(confirm('Are you sure you want to delete this template?')) {
-                    onDeleteTemplate(currentTemplate.id);
+                  if(confirm('Are you sure you want to delete the selected custom templates?')) {
+                    selectedTemplates.filter(t => t.isCustom).forEach(t => onDeleteTemplate(t.id));
                   }
                 }}
-                className="px-3 sm:px-4 bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all duration-300 border border-red-500/30 hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:rotate-3"
-                title="Delete Custom Template"
+                className="px-3 sm:px-4 mt-1 bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all duration-300 border border-red-500/30 hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:rotate-3 self-stretch"
+                title="Delete Selected Custom Templates"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -189,24 +244,29 @@ const PromptForm: React.FC<PromptFormProps> = ({
       </div>
 
       {/* Template Preview with Color-Coded Category Badge */}
-      {currentTemplate && (
-        <div className={`mb-6 sm:mb-8 bg-slate-800/40 border rounded-xl p-4 sm:p-5 transition-all duration-300 hover:scale-[1.01] origin-center ${cat.border}`}
-             style={{ borderLeftWidth: '3px' }}>
-          <div className="flex items-start gap-3 sm:gap-4">
-            {/* Colored emoji badge */}
-            <div className={`p-2 rounded-lg hidden sm:flex items-center justify-center text-xl border ${cat.bg} ${cat.border} ${cat.glow}`}>
-              {cat.emoji}
-            </div>
-            <div className="flex-grow">
-              <div className="flex items-center gap-2 flex-wrap mb-1">
-                <p className="text-sm sm:text-base text-slate-200 font-bold">{currentTemplate.name}</p>
-                <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${cat.bg} ${cat.text} ${cat.border}`}>
-                  {cat.label}
-                </span>
+      {selectedTemplates.length > 0 && (
+        <div className="mb-6 sm:mb-8 flex flex-col gap-3">
+          {selectedTemplates.map(template => {
+            const cat = CATEGORY_COLORS[template.category || 'custom'] || CATEGORY_COLORS.custom;
+            return (
+              <div key={template.id} className={`bg-slate-800/40 border rounded-xl p-3 sm:p-4 transition-all duration-300 hover:scale-[1.01] origin-center ${cat.border}`} style={{ borderLeftWidth: '3px' }}>
+                 <div className="flex items-start gap-3 sm:gap-4">
+                   <div className={`p-1.5 rounded-lg hidden sm:flex items-center justify-center text-lg border ${cat.bg} ${cat.border} ${cat.glow}`}>
+                     {cat.emoji}
+                   </div>
+                   <div className="flex-grow">
+                     <div className="flex items-center gap-2 flex-wrap mb-1">
+                       <p className="text-sm font-bold text-slate-200">{template.name}</p>
+                       <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${cat.bg} ${cat.text} ${cat.border}`}>
+                         {cat.label}
+                       </span>
+                     </div>
+                     <p className="text-xs text-slate-400 line-clamp-2" title={template.description}>{template.description}</p>
+                   </div>
+                 </div>
               </div>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">{currentTemplate.description}</p>
-            </div>
-          </div>
+            );
+          })}
         </div>
       )}
 

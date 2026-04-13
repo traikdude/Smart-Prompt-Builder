@@ -15,12 +15,13 @@ import TemplateModal from './components/TemplateModal';
 
 // Types & Constants
 import { TEMPLATES as DEFAULT_TEMPLATES, FORMAT_STYLES } from './constants';
-import { ToastState, PromptTemplate, RecentPrompt, AttachmentInput } from './types';
+import { ToastState, PromptTemplate, RecentPrompt, AttachmentInput, PromptTaskState } from './types';
 import { MODIFIER_CATEGORIES } from './textModifiers';
 import { OUTPUT_CATEGORIES } from './engineConstants';
 import { OutputFormatOption } from './types';
 import { SelectedModifiers } from './components/TextStyleToolbar';
 import { OutputConfigurator } from './components/OutputConfigurator';
+import TaskProgressPanel from './components/TaskProgressPanel';
 
 // Global declaration for Google Apps Script environment
 declare const google: any;
@@ -37,7 +38,7 @@ def validate_highlighting():
 const App: React.FC = () => {
   // --- State Management ---
   const [templates, setTemplates] = useState<PromptTemplate[]>(DEFAULT_TEMPLATES);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('none');
+  const [selectedTemplateIds, setSelectedTemplateIds] = useState<string[]>([]);
   const [selectedFormatId, setSelectedFormatId] = useState<string>('none');
   const [userContent, setUserContent] = useState<string>('');
   const [includeExamples, setIncludeExamples] = useState<boolean>(false);
@@ -45,6 +46,7 @@ const App: React.FC = () => {
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
+  const [promptTasks, setPromptTasks] = useState<PromptTaskState[]>([]);
   
   // Universal Output Engine States
   const [selectedEngineSource, setSelectedEngineSource] = useState<string>('conversation');
@@ -307,15 +309,15 @@ const App: React.FC = () => {
   const saveToHistory = useCallback((template: PromptTemplate, content: string, generated: string) => {
     if (recentPrompts.length > 0) {
       const latest = recentPrompts[0];
-      if (latest.templateId === template.id && latest.userContent === content) {
+      if (latest.templateIds?.includes(template.id) && latest.userContent === content) {
         return; // Prevent duplicate consecutive saves
       }
     }
 
     const newEntry: RecentPrompt = {
       id: Date.now().toString(),
-      templateId: template.id,
-      templateName: template.name,
+      templateIds: selectedTemplateIds.length > 0 ? selectedTemplateIds : ['none'],
+      templateNames: selectedTemplateIds.length > 0 ? templates.filter(t => selectedTemplateIds.includes(t.id)).map(t => t.name) : ['Default'],
       userContent: content,
       generatedContent: generated,
       timestamp: Date.now()
@@ -356,20 +358,22 @@ const App: React.FC = () => {
         let finalPrompt = '';
         let templateForHistory = templates[0]; // fallback
 
-        if (selectedTemplateId === 'none') {
-          finalPrompt = userContent;
-        } else {
-          const template = templates.find(t => t.id === selectedTemplateId);
-          if (!template) throw new Error("Template mapping failure.");
-          templateForHistory = template;
+        const activeTemplates = selectedTemplateIds.length > 0
+          ? templates.filter(t => selectedTemplateIds.includes(t.id))
+          : [{ content: '{{content}}', name: 'Default', id: 'none', placeholderTrigger: '{{content}}', isCustom: false }];
 
+        templateForHistory = activeTemplates[0] as PromptTemplate;
+
+        // If multiple templates selected, we join their final templates for local "handleGenerate" 
+        // to show them together. This is mostly a fallback for manual generation.
+        finalPrompt = activeTemplates.map(template => {
           const placeholder = template.placeholderTrigger || "{{content}}"; 
           if (template.content.includes(placeholder)) {
-            finalPrompt = template.content.replace(placeholder, userContent);
+            return template.content.replace(placeholder, userContent);
           } else {
-            finalPrompt = `${template.content}\n\n${userContent}`;
+            return `${template.content}\n\n${userContent}`;
           }
-        }
+        }).join('\n\n================\n\n');
 
         if (includeExamples) {
           finalPrompt += `\n\n### Requirement: Multiple Options\nPlease provide 4 distinct numbered versions (1-4) of the result, varying in tone, style, or approach to help me choose the best one.`;
@@ -402,7 +406,7 @@ const App: React.FC = () => {
         setIsLoading(false);
       }
     }, 400); 
-  }, [selectedTemplateId, selectedFormatId, userContent, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
+  }, [selectedTemplateIds, selectedFormatId, userContent, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
 
   /**
    * Delegates prompt expansion to Gemini AI capabilities
@@ -416,104 +420,28 @@ const App: React.FC = () => {
     setIsLoading(true);
 
     try {
-      let templateForHistory = templates[0];
-      let promptText = '';
+      // Fetch active templates to spawn parallel tasks
+      const activeTemplates = selectedTemplateIds.length > 0
+        ? templates.filter(t => selectedTemplateIds.includes(t.id))
+        : [{ id: 'none', name: 'Default Engine', content: 'Please process this text:\n\n{{content}}', placeholderTrigger: '{{content}}' } as PromptTemplate];
 
-      if (selectedTemplateId === 'none') {
-         promptText = `Please process this text:\n\n${userContent}`;
-      } else {
-        const template = templates.find(t => t.id === selectedTemplateId);
-        if (!template) throw new Error("Template not found");
-        templateForHistory = template;
-        
-        const placeholder = template.placeholderTrigger || "{{content}}";
-        if (template.content.includes(placeholder)) {
-          promptText = template.content.replace(placeholder, userContent);
-        } else {
-          promptText = `${template.content}\n\n[USER CONTENT]\n${userContent}\n[/USER CONTENT]`;
-        }
-      }
+      templateForHistory = activeTemplates[0];
+
+      // Build base configurations shared across all pipelines
+      let basePromptText = "";
+      if (includeExamples) basePromptText += "\nRequirement: Provide 4 distinct numbered variations.";
+      if (charLimit) basePromptText += `\nRequirement: Target length is approximately ${charLimit} characters.`;
       
-      let apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-      
-      // If we are deployed on Apps Script, dynamically fetch the secure key from Script Properties
-      if (!apiKey && typeof google !== 'undefined' && google.script && google.script.run) {
-        apiKey = await new Promise<string>((resolve, reject) => {
-          google.script.run
-            .withSuccessHandler((key: string) => resolve(key))
-            .withFailureHandler((err: any) => reject(err))
-            .getApiKey();
-        });
-      }
+      basePromptText += getModifierPromptText();
 
-      if (!apiKey) throw new Error("API Key not securely configured in environment properties.");
-      
-      const ai = new GoogleGenAI({ apiKey });
-      
-      const modelMap = {
-        '2.5': {
-          'fast': 'gemini-2.5-flash',
-          'smart': 'gemini-2.5-flash',
-          'thinking': 'gemini-2.5-pro'
-        },
-        '3.1': {
-          'fast': 'gemini-3-flash-preview',
-          'smart': 'gemini-3-flash-preview',
-          'thinking': 'gemini-3.1-pro-preview'
-        }
-      };
-      
-      const model = modelMap[modelFamily][mode];
-      const config: any = {
-        systemInstruction: "You are a highly capable AI execution engine. Your sole objective is to flawlessly execute the user's instructions and strictly adhere to the provided formatting requirements. Do not provide commentary.",
-      };
-
-      if (mode === 'thinking') config.thinkingConfig = { thinkingBudget: 1024 }; // Optimized budget for 2.5 Pro
-
-      if (includeExamples) promptText += "\nRequirement: Provide 4 distinct numbered variations.";
-      if (charLimit) promptText += `\nRequirement: Target length is approximately ${charLimit} characters.`;
-      // UI-Selected Modifiers
-      promptText += getModifierPromptText();
-
-      // ═══════════════════════════════════════════
-      // 🎯 COMPREHENSIVE MULTI-PAYLOAD ARCHITECTURE
-      // Collects labels from ALL three input axes:
-      //   1. Engine (Template)
-      //   2. Output Architecture (Format Configurations)
-      //   3. Lens (Format Style Override)
-      // ═══════════════════════════════════════════
-
-      // Resolve Output Architecture labels (existing helper)
+      // Output Architecture (Formats & Lenses)
       const outputArchLabels = resolveActiveEngineLabels();
+      const formatLenses: { id: string; label: string; icon: string; instruction: string }[] = [...outputArchLabels];
 
-      // Build the FULL payload label set from all axes
-      const allPayloadLabels: { id: string; label: string; icon: string; instruction: string }[] = [];
-
-      // Axis 1: Engine (Template) — if a template is selected, it becomes its own payload
-      if (selectedTemplateId !== 'none') {
-        const template = templates.find(t => t.id === selectedTemplateId);
-        if (template) {
-          const categoryEmojis: Record<string, string> = {
-            communication: '💬', technical: '⚙️', creative: '🎨',
-            analysis: '🔍', development: '💻', custom: '★',
-          };
-          allPayloadLabels.push({
-            id: `engine_${template.id}`,
-            label: template.name,
-            icon: categoryEmojis[template.category || 'custom'] || '⚡',
-            instruction: 'Execute the primary transformation directives specified in the system prompt above. Output the fully transformed, enhanced version of the user\'s content as rich, professionally formatted text. This is the core processed result.',
-          });
-        }
-      }
-
-      // Axis 2: Output Architecture formats
-      allPayloadLabels.push(...outputArchLabels);
-
-      // Axis 3: Lens (Format Style) — if a lens is selected, it becomes its own payload
       if (selectedFormatId && selectedFormatId !== 'none') {
         const formatStyle = FORMAT_STYLES.find(f => f.id === selectedFormatId);
         if (formatStyle) {
-          allPayloadLabels.push({
+          formatLenses.push({
             id: `lens_${formatStyle.id}`,
             label: `${formatStyle.name} (Lens)`,
             icon: '🎛️',
@@ -522,46 +450,10 @@ const App: React.FC = () => {
         }
       }
 
-      // Determine rendering mode based on TOTAL payload count across all axes
-      const isMultiPayload = allPayloadLabels.length > 1;
-
-      if (isMultiPayload) {
-        // ═══ MULTI-PAYLOAD MODE ═══
-        // ALL selected types get their own delimited output section
-        const payloadInstructions = allPayloadLabels.map((label, i) => 
-          `${i + 1}. **${label.label}**: ${label.instruction}`
-        ).join('\n');
-        
-        const delimiterExamples = allPayloadLabels.map(label => 
-          `===BEGIN_PAYLOAD: ${label.label}===\n[Your ${label.label} output here]\n===END_PAYLOAD: ${label.label}===`
-        ).join('\n\n');
-        
-        promptText += `\n\n[UNIVERSAL ENGINE — MULTI-PAYLOAD OUTPUT SCHEMATICS]\nCRITICAL: You are generating MULTIPLE SEPARATE output payloads. Each payload MUST be wrapped in EXACT delimiter markers as shown below. Do NOT merge payloads together. Each payload is an independent, self-contained output block.\n\nRequired Output Types:\n${payloadInstructions}\n\nMANDATORY OUTPUT STRUCTURE — Use these EXACT delimiters (copy them character-for-character):\n${delimiterExamples}\n\nRULES:\n- Each payload must be complete and self-contained\n- Do NOT include any text outside the delimiter blocks\n- Do NOT add introductions, summaries, or commentary between payloads\n- The delimiter lines must appear EXACTLY as shown above (with the === markers)`;
-      } else {
-        // ═══ SINGLE-PAYLOAD / LEGACY MODE ═══
-        // Only inject Output Architecture instruction if present (Engine is handled by template wrapping)
-        if (outputArchLabels.length === 1) {
-          promptText += `\n\n[UNIVERSAL ENGINE — OUTPUT SCHEMATICS]\nIMPORTANT: You must fulfill the following architectural requirement in your output:\n- ${outputArchLabels[0].instruction}`;
-        }
-
-        // Inject Lens format override (legacy global injection — only in single-payload mode)
-        if (selectedFormatId && selectedFormatId !== 'none') {
-          const formatStyle = FORMAT_STYLES.find(f => f.id === selectedFormatId);
-          if (formatStyle) {
-            promptText += `\n\n[CRITICAL PRESENTATION REQUIREMENT — STRUCTURAL FORMAT OVERRIDE]\nIMPORTANT: Regardless of any formatting conventions implied or suggested within the primary directives above, you are strictly required to adhere to the following structural format when composing and delivering your final output. Do not deviate from this presentation architecture under any circumstances.\n\n${formatStyle.content}`;
-          }
-        }
-      }
-
-      // CRITICAL DIRECTIVE: Strip diagnostic commentary
-      promptText += `\n\n[CRITICAL SYSTEM DIRECTIVE — FINAL OUTPUT ISOLATION]\nIMPORTANT: You MUST return ONLY the finalized, transformed result. DO NOT include any conversational filler, analytical commentary, reasoning steps, structural scaffolding, "Here is your output" introductions, or debugging logs. Your entire response must consist strictly of the exact text the user will copy and paste, formatted dynamically based on the requested presentation style.`;
-
-      // Build the final multipart payload (Phase 7)
+      // Attachments Processing
       const contentsParts: any[] = [];
-      
       for (const att of attachments) {
         if (att.status !== 'ready') continue;
-        
         if (att.type === 'file' && att.base64) {
           const b64Data = att.base64.split(',')[1];
           if (b64Data) {
@@ -576,38 +468,138 @@ const App: React.FC = () => {
           contentsParts.push(`\n[BACKGROUND CONTEXT SCRAPED FROM URL: ${att.name}]\n${att.urlContent}\n[END URL CONTEXT]\n`);
         }
       }
+      const initialTasks = activeTemplates.map(t => ({
+         templateId: t.id,
+         templateName: t.name,
+         status: 'queued' as const
+      }));
+      setPromptTasks(initialTasks);
+      setOutputPayloads([]); // Clear active outputs to switch focus to progress panel
 
-      contentsParts.push(promptText);
+      const results = await Promise.allSettled(activeTemplates.map(async (template) => {
+         setPromptTasks(prev => prev.map(pt => pt.templateId === template.id ? { ...pt, status: 'processing' } : pt));
 
-      const response = await ai.models.generateContent({
-        model,
-        contents: contentsParts,
-        config
+         let promptText = "";
+         const placeholder = template.placeholderTrigger || "{{content}}";
+         if (template.content.includes(placeholder)) {
+           promptText = template.content.replace(placeholder, userContent);
+         } else {
+           promptText = `${template.content}\n\n[USER CONTENT]\n${userContent}\n[/USER CONTENT]`;
+         }
+
+         promptText += basePromptText;
+
+         const currentPayloadLabels = [{
+            id: `engine_${template.id}`,
+            label: template.name,
+            icon: '⚡',
+            instruction: 'Execute the primary transformation.'
+         }, ...formatLenses];
+
+         const isMultiPayload = currentPayloadLabels.length > 1;
+
+         if (isMultiPayload) {
+            const payloadInstructions = currentPayloadLabels.map((label, i) => 
+               `${i + 1}. **${label.label}**: ${label.instruction}`
+            ).join('\n');
+            const delimiterExamples = currentPayloadLabels.map(label => 
+               `===BEGIN_PAYLOAD: ${label.label}===\n[Your ${label.label} output here]\n===END_PAYLOAD: ${label.label}===`
+            ).join('\n\n');
+            
+            promptText += `\n\n[UNIVERSAL ENGINE — MULTI-PAYLOAD OUTPUT SCHEMATICS]\nCRITICAL: You are generating MULTIPLE SEPARATE output payloads. Each payload MUST be wrapped in EXACT delimiter markers as shown below.\n\nRequired Output Types:\n${payloadInstructions}\n\nMANDATORY OUTPUT STRUCTURE:\n${delimiterExamples}`;
+         } else if (formatLenses.length === 1) {
+            promptText += `\n\n[UNIVERSAL ENGINE — OUTPUT SCHEMATICS]\nIMPORTANT: You must fulfill the following architectural requirement in your output:\n- ${formatLenses[0].instruction}`;
+         }
+
+         promptText += `\n\n[CRITICAL SYSTEM DIRECTIVE — FINAL OUTPUT ISOLATION]\nIMPORTANT: You MUST return ONLY the finalized, transformed result. DO NOT include any conversational filler.`;
+
+         const pipelineContents = [...contentsParts, promptText];
+         try {
+           const API_URL = "https://smart-prompt-builder-engine-825046261103.us-central1.run.app/api/v1/generate/batch";
+           const response = await fetch(API_URL, {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json'
+             },
+             body: JSON.stringify({
+               model_name: model,
+               tasks: [
+                 { id: template.id, contents: pipelineContents }
+               ]
+             })
+           });
+
+           if (!response.ok) throw new Error(`Backend Error: ${response.status}`);
+           
+           const data = await response.json();
+           const result = data.results[0];
+
+           if (result.status === 'failed') throw new Error(result.error || "Generation failed on server");
+           
+           const rawText = result.raw_text;
+           if (!rawText) throw new Error("No output generated from AI backend");
+           
+           const payloads = isMultiPayload ? parsePayloads(rawText, currentPayloadLabels) : [];
+           
+           setPromptTasks(prev => prev.map(pt => pt.templateId === template.id ? { ...pt, status: 'completed' } : pt));
+           
+           return {
+             id: template.id,
+             isMultiPayload,
+             payloads,
+             rawText: rawText
+           };
+         } catch (err: any) {
+           setPromptTasks(prev => prev.map(pt => pt.templateId === template.id ? { ...pt, status: 'failed', error: err.message || 'Generation failed' } : pt));
+           throw err;
+         }
+      }));
+
+      // Gather all outputs from the parallel runs
+      const aggPayloads: OutputPayload[] = [];
+      const aggSingleTexts: string[] = [];
+
+      results.forEach(res => {
+         if (res.status === 'fulfilled') {
+           if (res.value.isMultiPayload && res.value.payloads.length > 0) {
+              aggPayloads.push(...res.value.payloads);
+           } else {
+              aggSingleTexts.push(res.value.rawText);
+           }
+         } else {
+           console.error("Task failed:", res.reason);
+           showToastMessage(`One or more pipelines failed!`, 'error');
+         }
       });
 
-      if (response.text) {
-        // Parse multi-payload response if applicable
-        if (isMultiPayload) {
-          const parsed = parsePayloads(response.text, allPayloadLabels);
-          setOutputPayloads(parsed);
-          setGeneratedPrompt(null); // Clear single-card output
-        } else {
-          setGeneratedPrompt(response.text);
-          setOutputPayloads([]); // Clear multi-card output
-        }
-        saveToHistory(templateForHistory, userContent, response.text);
-        triggerCelebration();
-        showToastMessage(`Generated with ${mode.toUpperCase()} mode! 🧠`);
+      if (aggPayloads.length > 0) {
+        setOutputPayloads(aggPayloads);
+        const combinedSingle = aggSingleTexts.join('\n\n---\n\n');
+        setGeneratedPrompt(combinedSingle ? combinedSingle : null);
       } else {
-        throw new Error("Received empty response from AI engine.");
+        setGeneratedPrompt(aggSingleTexts.join('\n\n---\n\n'));
+        setOutputPayloads([]);
       }
+
+      const allSuccess = results.every(r => r.status === 'fulfilled');
+      if (allSuccess) {
+        triggerCelebration(); 
+        showToastMessage(`Generated dynamically with ${mode.toUpperCase()} mode! 🧠`);
+      }
+      saveToHistory(templateForHistory, userContent, "Rendered dynamic payloads");
+      
+      // Clear progress tasks after a short delay so the success states are briefly visible
+      setTimeout(() => {
+        setPromptTasks([]);
+      }, 2000);
     } catch (error: any) {
       console.error("AI Generation Runtime Error:", error);
       showToastMessage(`AI Exception: ${error.message || 'Engine failed'}`, 'error');
+      setPromptTasks(prev => prev.map(pt => pt.status === 'processing' || pt.status === 'queued' ? { ...pt, status: 'failed', error: error.message } : pt));
     } finally {
       setIsLoading(false);
     }
-  }, [userContent, selectedTemplateId, selectedFormatId, selectedEngineFormats, attachments, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText, resolveActiveEngineLabels, parsePayloads]);
+  }, [userContent, selectedTemplateIds, selectedFormatId, selectedEngineFormats, attachments, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText, resolveActiveEngineLabels, parsePayloads]);
 
   /**
    * Intelligently expands or compresses the raw user content in-place using AI.
@@ -735,7 +727,7 @@ const App: React.FC = () => {
 
     const updatedTemplates = [...templates, newTemplate];
     setTemplates(updatedTemplates);
-    setSelectedTemplateId(newTemplate.id); 
+    setSelectedTemplateIds(prev => [...prev, newTemplate.id]); 
     
     localStorage.setItem('custom_templates', JSON.stringify(updatedTemplates.filter(t => t.isCustom)));
     setIsModalOpen(false);
@@ -745,25 +737,37 @@ const App: React.FC = () => {
   const handleDeleteTemplate = useCallback((id: string) => {
     const updatedTemplates = templates.filter(t => t.id !== id);
     setTemplates(updatedTemplates);
-    if (selectedTemplateId === id) setSelectedTemplateId(DEFAULT_TEMPLATES[0].id);
+    setSelectedTemplateIds(prev => prev.filter(t => t !== id));
     
     localStorage.setItem('custom_templates', JSON.stringify(updatedTemplates.filter(t => t.isCustom)));
     showToastMessage('Template purged from environment.');
-  }, [templates, selectedTemplateId, showToastMessage]);
+  }, [templates, showToastMessage]);
 
   const handleRestoreFromHistory = useCallback((prompt: RecentPrompt) => {
-      const templateExists = templates.some(t => t.id === prompt.templateId);
-      if (templateExists) {
-        setSelectedTemplateId(prompt.templateId);
+      if (prompt.templateIds && prompt.templateIds.length > 0) {
+        const existingIds = prompt.templateIds.filter(id => templates.some(t => t.id === id));
+        if (existingIds.length > 0) {
+          setSelectedTemplateIds(existingIds);
+        } else {
+          showToastMessage('Orphaned templates: Restoring isolated prompt content context.', 'info');
+        }
       } else {
-        showToastMessage('Orphaned template: Restoring isolated prompt content context.', 'info');
+        // Fallback for legacy history objects
+        const legacyId = (prompt as any).templateId;
+        if (legacyId && templates.some(t => t.id === legacyId)) {
+          setSelectedTemplateIds([legacyId]);
+        } else {
+          showToastMessage('Orphaned template: Restoring isolated prompt content context.', 'info');
+        }
       }
       
       setUserContent(prompt.userContent);
       setGeneratedPrompt(prompt.generatedContent);
-      if (window.innerWidth < 1024) setIsSidebarOpen(false);
-      showToastMessage('State restored from history ledger! 🕒');
-  }, [templates, showToastMessage]);
+      setOutputPayloads([]); // Clear active multi-payloads, as history currently saves text
+      
+      showToastMessage('Memory block retrieved and injected.');
+      if (!isSidebarOpen) setIsSidebarOpen(true);
+  }, [templates, isSidebarOpen, showToastMessage]);
 
   return (
     <div className="min-h-screen relative flex flex-col md:flex-row">
@@ -783,23 +787,23 @@ const App: React.FC = () => {
           <main>
             <PromptForm
               templates={templates}
-              selectedTemplateId={selectedTemplateId}
+              selectedTemplateIds={selectedTemplateIds}
               selectedFormatId={selectedFormatId}
               userContent={userContent}
               includeExamples={includeExamples}
               charLimit={charLimit}
-              onTemplateChange={(e) => setSelectedTemplateId(e.target.value)}
+              onTemplateToggle={(id) => setSelectedTemplateIds(prev => prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id])}
               onFormatChange={(e) => setSelectedFormatId(e.target.value)}
               onContentChange={(e) => setUserContent(e.target.value)}
               onExamplesChange={(e) => setIncludeExamples(e.target.checked)}
               onCharLimitChange={setCharLimit}
-              onGenerate={() => handleAIGenerate('smart')}
+              onGenerate={handleGenerate}
               onAIGenerate={handleAIGenerate}
               isLoading={isLoading}
               onNewTemplate={() => setIsModalOpen(true)}
               onAIRewrite={handleAIRewriteContent}
               onLoadSyntaxTest={() => {
-                if (templates.some(t => t.id === 'direct-message')) setSelectedTemplateId('direct-message');
+                if (templates.some(t => t.id === 'direct-message')) setSelectedTemplateIds(['direct-message']);
                 setUserContent(SYNTAX_TEST_DATA);
                 showToastMessage('Validation syntax payload loaded against scope.');
               }}
@@ -817,6 +821,11 @@ const App: React.FC = () => {
               modelFamily={modelFamily}
               onModelFamilyChange={setModelFamily}
             />
+
+            {/* In-Flight Asynchronous Task State Tracker */}
+            {promptTasks.length > 0 && (
+              <TaskProgressPanel tasks={promptTasks} />
+            )}
 
             {/* Multi-Payload Output — renders when multiple engine formats were selected */}
             {outputPayloads.length > 0 && (

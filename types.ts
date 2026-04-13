@@ -16,6 +16,14 @@ export interface PromptTemplate {
   category?: TemplateCategory; // Color-coded category badge
 }
 
+export interface PromptTaskState {
+  templateId: string;
+  templateName: string;
+  status: 'queued' | 'processing' | 'completed' | 'failed';
+  result?: string;
+  error?: string;
+}
+
 export interface FormatTemplate {
   id: string;
   name: string;
@@ -25,8 +33,8 @@ export interface FormatTemplate {
 
 export interface RecentPrompt {
   id: string;
-  templateId: string;
-  templateName: string; // Store name in case template is deleted
+  templateIds: string[]; // Updated for multi-select
+  templateNames: string[]; // Store names in case template is deleted
   userContent: string;
   generatedContent: string;
   timestamp: number;
