@@ -5,7 +5,6 @@ from typing import List, Optional, Dict, Any
 import os
 import asyncio
 from google import genai
-from google.genai import types
 
 # Initialize the Gemini GenAI Client
 # Automatically picks up GEMINI_API_KEY from the environment
