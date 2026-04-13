@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-prompt-builder-backend
+  labels:
+    app: smart-prompt-builder
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: smart-prompt-builder
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: smart-prompt-builder
+        component: backend
+    spec:
+      containers:
+      - name: engine
+        image: gcr.io/smart-prompt-builder-825046261103/backend:latest # Placeholder - needs actual image push
+        ports:
+        - containerPort: 8080
+        env:
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gemini-secrets
+              key: api-key
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-prompt-builder-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: smart-prompt-builder
+    component: backend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080

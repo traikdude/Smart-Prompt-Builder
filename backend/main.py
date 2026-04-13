@@ -40,7 +40,8 @@ async def global_exception_handler(request: Request, exc: Exception):
 # CORS Middleware for Frontend connectivity
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict this to the exact caller origins (Google Sites URL, etc.)
+    allow_origins=["https://script.google.com"],
+    allow_origin_regex=r"https://.*\.script\.googleusercontent\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

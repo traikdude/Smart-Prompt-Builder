@@ -450,7 +450,7 @@ const App: React.FC = () => {
 
          const pipelineContents = [...contentsParts, promptText];
          try {
-           const API_URL = "https://smart-prompt-builder-engine-825046261103.us-central1.run.app/api/v1/generate/batch";
+           const API_URL = import.meta.env.VITE_API_URL || "https://smart-prompt-builder-825046261103.us-central1.run.app/api/v1/generate/batch";
            const response = await fetch(API_URL, {
              method: 'POST',
              headers: {

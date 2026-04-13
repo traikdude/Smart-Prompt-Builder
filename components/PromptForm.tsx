@@ -525,4 +525,4 @@ const PromptForm: React.FC<PromptFormProps> = ({
   );
 };
 
-export default PromptForm;
+export default React.memo(PromptForm);
