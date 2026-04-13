@@ -25,7 +25,7 @@ client = genai.Client()
 app = FastAPI(
     title="Smart-Prompt-Builder Engine API",
     description="High-performance multi-modal processing backend",
-    version="1.0.0"
+    version="2.11.1"
 )
 
 # Exception handler for unhandled exceptions to catch the 500 error

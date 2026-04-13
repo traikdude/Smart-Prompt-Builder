@@ -1,29 +1,26 @@
 import path from 'path';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
-export default defineConfig(({ mode }) => {
-    const env = loadEnv(mode, '.', '');
-    return {
-      server: {
-        port: 3000,
-        host: '0.0.0.0',
-      },
-      plugins: [react(), viteSingleFile()],
-      build: {
-        outDir: 'appscript',
-        emptyOutDir: false, // Don't wipe out Code.js and appsscript.json!
-        minify: true
-      },
-      define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-      },
-      resolve: {
-        alias: {
-          '@': path.resolve(__dirname, '.'),
-        }
-      }
-    };
+// NOTE: The Gemini API key is intentionally NOT injected here.
+// All AI generation calls route through the Cloud Run backend (/api/v1/generate/batch),
+// which securely retrieves the key from GCP Secret Manager at runtime.
+// Only the backend endpoint URL is needed by the frontend.
+export default defineConfig({
+  server: {
+    port: 3000,
+    host: '0.0.0.0',
+  },
+  plugins: [react(), viteSingleFile()],
+  build: {
+    outDir: 'appscript',
+    emptyOutDir: false, // Preserves Code.js and appsscript.json from being deleted
+    minify: true,
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '.'),
+    },
+  },
 });

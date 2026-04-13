@@ -1,4 +1,7 @@
-fastapi>=0.111.0
-uvicorn[standard]>=0.30.1
-pydantic>=2.7.0
-google-genai>=0.2.0
+# Pinned to exact versions for deterministic, reproducible builds.
+# Last verified: 2026-04-13 — update intentionally via `pip install --upgrade`
+# followed by a full integration test before bumping.
+fastapi==0.135.3
+uvicorn[standard]==0.44.0
+pydantic==2.13.0
+google-genai==1.73.0
