@@ -71,20 +71,16 @@ async def global_exception_handler(request: Request, exc: Exception):
         }
     )
 
-# CORS Middleware — restricted to Google Apps Script origins only.
-# FIX (2026-04-13): allow_credentials=True + allow_headers=["*"] is illegal under
-# the CORS spec — browsers reject the OPTIONS preflight with 400 Bad Request.
-# Resolved by: explicit header allowlist + allow_credentials=False.
+# CORS Middleware — open to all origins so the GAS iframe can reach the backend.
+# The API has no user auth layer — security comes from the server-side Gemini API key.
+# NOTE: Once the real GAS iframe Origin is captured from logs, lock allow_origins
+#       back down to that specific subdomain pattern.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://script.google.com",
-        "https://script.googleusercontent.com",
-    ],
-    allow_origin_regex=r"https://.*\.script\.googleusercontent\.com",
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "Accept", "X-Requested-With"],
+    allow_headers=["*"],
 )
 
 
@@ -159,17 +155,18 @@ async def generate_single_prompt(task: ActiveTemplate, model_name: str) -> TaskR
 @app.get("/")
 def health_check():
     """Health check for Google Cloud Run deployment."""
-    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.12.3"}
+    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.12.5"}
 
 
 @app.post("/api/v1/generate/batch", response_model=Dict[str, List[TaskResult]])
-async def batch_generate(request: BatchGenerateRequest):
+async def batch_generate(request: Request, body: BatchGenerateRequest):
     """
     True server-side concurrent processing via Promise.all equivalent (asyncio.gather).
     Maps model aliases, dispatches all tasks concurrently, and returns aggregated results.
     API key validation is handled at startup via the lifespan manager — not per-request.
     """
-    logger.info("Received batch generation request for %s tasks.", len(request.tasks))
+    origin = request.headers.get("origin", "NO-ORIGIN-HEADER")
+    logger.info("Batch request from Origin: %s | tasks: %s", origin, len(body.tasks))
 
     try:
         # Cost optimization (2026-04-13): '3.1' previously mapped to gemini-2.5-pro
@@ -180,11 +177,11 @@ async def batch_generate(request: BatchGenerateRequest):
             "2.5": "gemini-2.5-flash",
             "3.1": "gemini-2.5-pro"
         }
-        actual_model_name = model_mapping.get(request.model_name, request.model_name)
+        actual_model_name = model_mapping.get(body.model_name, body.model_name)
 
         coroutines = [
             generate_single_prompt(task, actual_model_name)
-            for task in request.tasks
+            for task in body.tasks
         ]
 
         # Process all template nodes concurrently without blocking
