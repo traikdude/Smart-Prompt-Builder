@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
-import { GoogleGenAI } from "@google/genai";
+
 
 // Components
 import Header from './components/Header';
