@@ -362,8 +362,6 @@ const App: React.FC = () => {
         ? templates.filter(t => selectedTemplateIds.includes(t.id))
         : [{ id: 'none', name: 'Default Engine', content: 'Please process this text:\n\n{{content}}', placeholderTrigger: '{{content}}' } as PromptTemplate];
 
-      const templateForHistory = activeTemplates[0];
-
       // Build base configurations shared across all pipelines
       let basePromptText = "";
       if (includeExamples) basePromptText += "\nRequirement: Provide 4 distinct numbered variations.";
