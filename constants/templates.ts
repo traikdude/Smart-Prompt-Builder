@@ -7087,21 +7087,21 @@ If YES - Revision Specification Format:
 #### Revision #1: Enhanced Error Handling with Retry Logic
 **ðŸ“ Location:** Code.gs, lines 45-67
 **📋 Current Implementation:**
-```javascript
+\`\`\`javascript
 function processData() {
   // Existing vulnerable code
 }
-```
+\`\`\`
 
 **🔄 Superior Implementation:**
-```javascript
+\`\`\`javascript
 /**
  * Processes data with exponential backoff for API resilience
  */
 function processData() {
   // Robust code with error handling
 }
-```
+\`\`\`
 **⚡ Implementation Context:** Added try-catch blocks and exponential backoff to ensure reliability during Google API rate limits.
 
 **Question 3: Clasp / Terminal Deployment Integration 💻**
@@ -7109,25 +7109,25 @@ Query: "Would you like the specific Clasp terminal commands to deploy this as a 
 If YES - Terminal Protocol Format:
 **Deployment Sequence:**
 1. Initialize project in your local directory (if needed):
-```bash
+\`\`\`bash
 clasp create --type standalone --title "Enterprise Automation System"
-```
+\`\`\`
 2. Push local code to Apps Script environment:
-```bash
+\`\`\`bash
 clasp push
-```
+\`\`\`
 3. Create an immutable version and deploy as a web app:
-```bash
+\`\`\`bash
 clasp deploy --type webapp --description "Phase 1: Initial Release"
-```
+\`\`\`
 
 **Question 4: Logic Breakdown & Instructional Transfer 🧠**
 Query: "Would a step-by-step logic breakdown be helpful for your long-term maintenance of this system?"
 If YES - Logic Breakdown Format:
 **Architectural Breakdown:**
-1. **Trigger Phase:** Uses `onEdit` combined with state verification to prevent rapid re-execution.
-2. **Processing Phase:** Groups background tasks using `CacheService` to minimize heavy execution costs and quotas.
-3. **Delivery Phase:** Queues email notifications into a batch construct, preventing `MailApp` invocation limits.`
+1. **Trigger Phase:** Uses \`onEdit\` combined with state verification to prevent rapid re-execution.
+2. **Processing Phase:** Groups background tasks using \`CacheService\` to minimize heavy execution costs and quotas.
+3. **Delivery Phase:** Queues email notifications into a batch construct, preventing \`MailApp\` invocation limits.`
   },
   {
     id: 'google-sheets-architect',
@@ -10219,7 +10219,8 @@ Conventional Commits: conventionalcommits.org
 Git Tagging Documentation: git tag --help
 GitHub Release Guide: docs.github.com/releases`
   }
-,\n  {
+,
+  {
     id: 'ai-music-analysis-prompt-creation',
     name: "AI Music Analysis and Prompt Creation",
     description: "Reverse engineer AI-generated music and create a detailed prompt to reproduce it.",
@@ -10604,4 +10605,5 @@ P242: Distortion type classifier
 P243: Filter usage analyzer
 P244: Special effect technique identifier
 Use these hotkeys to navigate through different aspects of your analysis and prompt creation process. Each hotkey represents a specific function or area of focus, allowing for a detailed and comprehensive approach to music analysis and prompt engineering. Provide me with the hotkeys you have selected from the ones mentioned above and explain a little why you have decided to use those hotkeys.`
-  }\n];
+  }
+];
