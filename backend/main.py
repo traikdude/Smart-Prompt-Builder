@@ -72,14 +72,19 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 # CORS Middleware — restricted to Google Apps Script origins only.
-# allow_methods is limited to the three methods actually used by this API.
+# FIX (2026-04-13): allow_credentials=True + allow_headers=["*"] is illegal under
+# the CORS spec — browsers reject the OPTIONS preflight with 400 Bad Request.
+# Resolved by: explicit header allowlist + allow_credentials=False.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://script.google.com"],
+    allow_origins=[
+        "https://script.google.com",
+        "https://script.googleusercontent.com",
+    ],
     allow_origin_regex=r"https://.*\.script\.googleusercontent\.com",
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["*"],
+    allow_headers=["Content-Type", "Authorization", "Accept", "X-Requested-With"],
 )
 
 
