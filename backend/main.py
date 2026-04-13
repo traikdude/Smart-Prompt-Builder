@@ -7,6 +7,7 @@ import logging
 import os
 import traceback
 from contextlib import asynccontextmanager
+from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, Request
@@ -56,18 +57,21 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Exception handler for unhandled exceptions to catch the 500 error
+
+# Exception handler for unhandled exceptions
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Global trap for all unhandled backend HTTP exceptions."""
-    error_trace = traceback.format_exc()
-    logger.error("CRITICAL ERROR on %s:\n%s", request.url.path, error_trace)
+    """
+    Global trap for all unhandled backend exceptions.
+    Sanitizes the response to prevent leaking internal tracebacks to the client
+    while ensuring the full error is captured in server logs for debugging.
+    """
+    logger.exception("CRITICAL ERROR on %s: %s", request.url.path, str(exc))
     return JSONResponse(
         status_code=500,
         content={
-            "detail": "Internal server error caught by global handler.",
-            "trace": str(exc),
-            "traceback": error_trace
+            "detail": "Internal server error. The incident has been logged.",
+            "type": type(exc).__name__
         }
     )
 
@@ -82,6 +86,23 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+
+# ── Configuration ────────────────────────────────────────────────────────────
+
+class ModelAlias(str, Enum):
+    """Stable aliases for frontend-facing model selection."""
+    FLASH = "2.5"
+    PRO = "3.1"
+
+
+# Model version mapping for cost optimization and stability.
+# Maps stable aliases to actual Gemini GenAI model IDs.
+# 💰 Cost reference: Flash = $2.50/1M output tokens | Pro = $10-15/1M output tokens
+MODEL_ID_MAP = {
+    ModelAlias.FLASH: "gemini-2.5-flash",
+    ModelAlias.PRO: "gemini-2.5-pro"
+}
 
 
 # ── Request / Response Models ────────────────────────────────────────────────
@@ -121,11 +142,13 @@ async def generate_single_prompt(task: ActiveTemplate, model_name: str) -> TaskR
         for item in task.contents:
             if isinstance(item, str):
                 final_parts.append(item)
-            elif isinstance(item, dict) and "inlineData" in item:
+            elif (isinstance(item, dict) and
+                  "inlineData" in item and
+                  isinstance(item["inlineData"], dict)):
                 final_parts.append({
                     "inline_data": {
-                        "data": item["inlineData"]["data"],
-                        "mime_type": item["inlineData"]["mimeType"]
+                        "data": item["inlineData"].get("data"),
+                        "mime_type": item["inlineData"].get("mimeType", "application/octet-stream")
                     }
                 })
 
@@ -141,12 +164,11 @@ async def generate_single_prompt(task: ActiveTemplate, model_name: str) -> TaskR
             raw_text=response.text
         )
     except Exception as e:  # pylint: disable=broad-exception-caught
-        error_trace = traceback.format_exc()
-        logger.error("Generate single prompt failed for %s:\n%s", task.id, error_trace)
+        logger.exception("Generate single prompt failed for %s", task.id)
         return TaskResult(
             id=task.id,
             status="failed",
-            error=str(e) + "\nTraceback: " + error_trace
+            error=f"{type(e).__name__}: {str(e)}"
         )
 
 
@@ -155,7 +177,7 @@ async def generate_single_prompt(task: ActiveTemplate, model_name: str) -> TaskR
 @app.get("/")
 def health_check():
     """Health check for Google Cloud Run deployment."""
-    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.12.5"}
+    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.12.6"}
 
 
 @app.post("/api/v1/generate/batch", response_model=Dict[str, List[TaskResult]])
@@ -169,15 +191,9 @@ async def batch_generate(request: Request, body: BatchGenerateRequest):
     logger.info("Batch request from Origin: %s | tasks: %s", origin, len(body.tasks))
 
     try:
-        # Cost optimization (2026-04-13): '3.1' previously mapped to gemini-2.5-pro
-        # which is 8-10x more expensive than Flash for standard workloads. Pro
-        # restored by request — the frontend UI now clearly labels it as a premium model.
-        # 💰 Cost reference: Flash = $2.50/1M output tokens | Pro = $10-15/1M output tokens
-        model_mapping = {
-            "2.5": "gemini-2.5-flash",
-            "3.1": "gemini-2.5-pro"
-        }
-        actual_model_name = model_mapping.get(body.model_name, body.model_name)
+        # Resolve actual model ID from configuration mapping
+        # Maps frontend string alias ("2.5") to stable GenAI ID ("gemini-2.5-flash")
+        actual_model_name = MODEL_ID_MAP.get(body.model_name, body.model_name)
 
         coroutines = [
             generate_single_prompt(task, actual_model_name)

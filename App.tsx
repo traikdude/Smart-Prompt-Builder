@@ -172,58 +172,66 @@ const App: React.FC = () => {
   }, [selectedEngineFormats]);
 
   /**
-   * Parses a delimited AI response into separate OutputPayload objects.
-   * Falls back to a single payload if delimiters are not found.
+   * Robustly parses a delimited AI response into separate OutputPayload objects.
+   * Tolerant of casing, whitespace deviations, and markdown wrapping.
    */
   const parsePayloads = useCallback((rawText: string, labels: { id: string; label: string; icon: string }[]): OutputPayload[] => {
     const payloads: OutputPayload[] = [];
+    const normalizedText = rawText.trim();
     
+    // 1. Primary Attempt: Match specific labels with tolerant regex
     for (const label of labels) {
-      const beginMarker = `===BEGIN_PAYLOAD: ${label.label}===`;
-      const endMarker = `===END_PAYLOAD: ${label.label}===`;
-      const beginIdx = rawText.indexOf(beginMarker);
-      const endIdx = rawText.indexOf(endMarker);
+      // Escape special characters in label for regex safety
+      const escapedLabel = label.label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       
-      if (beginIdx !== -1 && endIdx !== -1 && endIdx > beginIdx) {
-        const content = rawText.substring(beginIdx + beginMarker.length, endIdx).trim();
-        if (content) {
-          payloads.push({
-            id: label.id,
-            label: label.label,
-            icon: label.icon,
-            content,
-          });
-        }
+      // Pattern: optional markdown wrapper, optional whitespace, marker, capture, marker
+      const pattern = new RegExp(
+        `={2,}\\s*BEGIN_PAYLOAD:\\s*${escapedLabel}\\s*={2,}\\s*([\\s\\S]*?)(?:={2,}\\s*END_PAYLOAD:\\s*${escapedLabel}\\s*={2,}|$)`,
+        'i'
+      );
+      
+      const match = normalizedText.match(pattern);
+      if (match && match[1].trim()) {
+        payloads.push({
+          id: label.id,
+          label: label.label,
+          icon: label.icon,
+          content: match[1].trim(),
+        });
       }
     }
     
-    // Fallback: if parsing found nothing, try generic pattern or return as single block
-    if (payloads.length === 0) {
-      // Try generic regex fallback
-      const genericRegex = /===BEGIN_PAYLOAD:\s*(.+?)===([\s\S]*?)===END_PAYLOAD:\s*\1===/g;
+    // 2. Secondary Attempt: Generic pattern match if primary missed anything
+    if (payloads.length < labels.length) {
+      const genericRegex = /={2,}\s*BEGIN_PAYLOAD:\s*(.+?)\s*={2,}\s*([\s\S]*?)(?:={2,}\s*END_PAYLOAD:\s*\1\s*={2,}|$)/gi;
       let match;
-      while ((match = genericRegex.exec(rawText)) !== null) {
+      while ((match = genericRegex.exec(normalizedText)) !== null) {
         const matchLabel = match[1].trim();
         const matchContent = match[2].trim();
-        const matchingLabel = labels.find(l => l.label === matchLabel);
+        
+        // Skip if this specific label was already captured by primary attempt
+        if (payloads.some(p => p.label.toLowerCase() === matchLabel.toLowerCase())) continue;
+        
+        const matchingLabel = labels.find(l => l.label.toLowerCase() === matchLabel.toLowerCase());
         if (matchContent) {
           payloads.push({
-            id: matchingLabel?.id || `payload_${payloads.length}`,
-            label: matchLabel,
-            icon: matchingLabel?.icon || '📄',
+            id: matchingLabel?.id || `ext_${Date.now()}_${payloads.length}`,
+            label: matchingLabel?.label || matchLabel,
+            icon: matchingLabel?.icon || '📝',
             content: matchContent,
           });
         }
       }
     }
     
-    // If still nothing, wrap the entire output as a single payload
-    if (payloads.length === 0 && rawText.trim()) {
+    // 3. Last Resort Fallback: If nothing was parsed but we expected something
+    if (payloads.length === 0 && normalizedText) {
+      // If the AI just returned a single block without markers, or markers were totally mangled
       payloads.push({
-        id: 'combined_output',
-        label: 'Combined Output',
-        icon: '📋',
-        content: rawText.trim(),
+        id: 'fallback_combined',
+        label: labels.length === 1 ? labels[0].label : 'Combined Output',
+        icon: labels.length === 1 ? labels[0].icon : '📋',
+        content: normalizedText,
       });
     }
     
