@@ -344,69 +344,6 @@ const App: React.FC = () => {
     }, 400);
   };
 
-  /**
-   * Generates standard prompt by concatenating templates and appending configurations
-   */
-  const handleGenerate = useCallback(() => {
-    if (!userContent.trim()) return;
-
-    setIsLoading(true);
-    
-    // Simulate slight delay for perceived compilation
-    setTimeout(() => {
-      try {
-        let finalPrompt = '';
-        let templateForHistory = templates[0]; // fallback
-
-        const activeTemplates = selectedTemplateIds.length > 0
-          ? templates.filter(t => selectedTemplateIds.includes(t.id))
-          : [{ content: '{{content}}', name: 'Default', id: 'none', placeholderTrigger: '{{content}}', isCustom: false }];
-
-        templateForHistory = activeTemplates[0] as PromptTemplate;
-
-        // If multiple templates selected, we join their final templates for local "handleGenerate" 
-        // to show them together. This is mostly a fallback for manual generation.
-        finalPrompt = activeTemplates.map(template => {
-          const placeholder = template.placeholderTrigger || "{{content}}"; 
-          if (template.content.includes(placeholder)) {
-            return template.content.replace(placeholder, userContent);
-          } else {
-            return `${template.content}\n\n${userContent}`;
-          }
-        }).join('\n\n================\n\n');
-
-        if (includeExamples) {
-          finalPrompt += `\n\n### Requirement: Multiple Options\nPlease provide 4 distinct numbered versions (1-4) of the result, varying in tone, style, or approach to help me choose the best one.`;
-        }
-
-        if (charLimit) {
-           finalPrompt += `\n\n### Requirement: Length Constraint\nStep 1: Carefully analyze meaning.\nStep 2: Rewrite text to EQUAL approximately ${charLimit} characters.`;
-        }
-
-        // Inject text style modifiers
-        finalPrompt += getModifierPromptText();
-
-        // Inject format style override if selected (The Lens)
-        if (selectedFormatId && selectedFormatId !== 'none') {
-          const formatStyle = FORMAT_STYLES.find(f => f.id === selectedFormatId);
-          if (formatStyle) {
-            finalPrompt += `\n\n[CRITICAL PRESENTATION REQUIREMENT — STRUCTURAL FORMAT OVERRIDE]\nIMPORTANT: Regardless of any formatting conventions implied or suggested within the primary directives above, you are strictly required to adhere to the following structural format when composing and delivering your final output. Do not deviate from this presentation architecture under any circumstances.\n\n${formatStyle.content}`;
-          }
-        }
-
-        setOutputPayloads([]); // Clear any previous multi-payload state
-        setGeneratedPrompt(finalPrompt);
-        saveToHistory(templateForHistory, userContent, finalPrompt);
-        triggerCelebration(); 
-        showToastMessage('✨ Prompt Generated!');
-      } catch (error) {
-        console.error("Generation logic failed:", error);
-        showToastMessage('Error generating prompt', 'error');
-      } finally {
-        setIsLoading(false);
-      }
-    }, 400); 
-  }, [selectedTemplateIds, selectedFormatId, userContent, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText]);
 
   /**
    * Delegates prompt expansion to Gemini AI capabilities
@@ -555,16 +492,24 @@ const App: React.FC = () => {
          }
       }));
 
-      // Gather all outputs from the parallel runs
+      // Gather all outputs — every result gets its own individual OutputPayload card.
+      // This ensures dropdown template selections NEVER merge into a single text block.
       const aggPayloads: OutputPayload[] = [];
-      const aggSingleTexts: string[] = [];
 
       results.forEach(res => {
          if (res.status === 'fulfilled') {
            if (res.value.isMultiPayload && res.value.payloads.length > 0) {
+              // Multi-payload (Output Engine formats selected) — already split by parsePayloads
               aggPayloads.push(...res.value.payloads);
            } else {
-              aggSingleTexts.push(res.value.rawText);
+              // Single result from this template — create its own individual payload card
+              const templateInfo = activeTemplates.find(t => t.id === res.value.id);
+              aggPayloads.push({
+                id: res.value.id,
+                label: templateInfo?.name || 'Output',
+                icon: '⚡',
+                content: res.value.rawText,
+              });
            }
          } else {
            console.error("Task failed:", res.reason);
@@ -572,13 +517,13 @@ const App: React.FC = () => {
          }
       });
 
+      // Always render via MultiOutputCard for consistent individual output blocks
       if (aggPayloads.length > 0) {
         setOutputPayloads(aggPayloads);
-        const combinedSingle = aggSingleTexts.join('\n\n---\n\n');
-        setGeneratedPrompt(combinedSingle ? combinedSingle : null);
+        setGeneratedPrompt(null);
       } else {
-        setGeneratedPrompt(aggSingleTexts.join('\n\n---\n\n'));
         setOutputPayloads([]);
+        setGeneratedPrompt(null);
       }
 
       const allSuccess = results.every(r => r.status === 'fulfilled');
@@ -600,6 +545,14 @@ const App: React.FC = () => {
       setIsLoading(false);
     }
   }, [userContent, selectedTemplateIds, selectedFormatId, selectedEngineFormats, attachments, templates, includeExamples, charLimit, saveToHistory, showToastMessage, getModifierPromptText, resolveActiveEngineLabels, parsePayloads]);
+
+  /**
+   * Primary generation handler — delegates to AI pipeline for real Gemini processing.
+   * The SUBMIT TO GEMINI button now performs actual API-driven generation.
+   */
+  const handleGenerate = useCallback(() => {
+    handleAIGenerate('smart');
+  }, [handleAIGenerate]);
 
   /**
    * Intelligently expands or compresses the raw user content in-place using AI.
