@@ -107,7 +107,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
       <div className="rainbow-bar absolute top-0 left-0 w-full"></div>
 
       {/* Dual Axis Selectors: Template & Formatting */}
-      <div className="mb-6 sm:mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 relative z-30">
+      <div className="mb-10 sm:mb-12 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 relative z-30 pb-4">
         
         {/* The Engine: Template Selector */}
         <div className="group/engine">
@@ -235,7 +235,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
             >
               {FORMAT_STYLES.map(format => (
                 <option key={format.id} value={format.id}>
-                  {format.id === 'none' ? '— ' : '🎨 '} {format.name}
+                  {format.name}
                 </option>
               ))}
             </select>
