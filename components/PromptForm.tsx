@@ -107,7 +107,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
       <div className="rainbow-bar absolute top-0 left-0 w-full"></div>
 
       {/* Dual Axis Selectors: Template & Formatting */}
-      <div className="mb-6 sm:mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 relative z-10">
+      <div className="mb-6 sm:mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 relative z-30">
         
         {/* The Engine: Template Selector */}
         <div className="group/engine">
@@ -158,7 +158,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
               </div>
               
               {isTemplateDropdownOpen && (
-                <div className="absolute z-50 w-full mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-h-80 mx-h-60 overflow-y-auto">
+                <div className="absolute z-50 w-full mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
                   <div className="p-2 space-y-1">
                      <div 
                         onClick={() => {
