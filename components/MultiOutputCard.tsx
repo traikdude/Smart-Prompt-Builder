@@ -20,6 +20,7 @@ interface MultiOutputCardProps {
   onClear: () => void;
   onExport: (format: 'txt' | 'md') => void;
   showToast: (message: string, type?: 'success' | 'info' | 'error') => void;
+  onFeedback?: (payloadId: string, vote: 'up' | 'down') => void;
 }
 
 // ═══════════════════════════════════════════
@@ -36,7 +37,8 @@ const PayloadCard: React.FC<{
   index: number;
   total: number;
   showToast: (message: string, type?: 'success' | 'info' | 'error') => void;
-}> = ({ payload, index, total, showToast }) => {
+  onFeedback?: (payloadId: string, vote: 'up' | 'down') => void;
+}> = ({ payload, index, total, showToast, onFeedback }) => {
   const [showFontMenu, setShowFontMenu] = useState(false);
   const [currentFont, setCurrentFont] = useState(FONTS[0]);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -45,7 +47,11 @@ const PayloadCard: React.FC<{
   const handleFeedback = (vote: 'up' | 'down') => {
     if (feedback) return;
     setFeedback(vote);
-    showToast(vote === 'up' ? `Rated helpful! 🙌` : `Got it — we'll keep improving! 🛠️`, 'info');
+    if (onFeedback) {
+      onFeedback(payload.id, vote);
+    } else {
+      showToast(vote === 'up' ? `Rated helpful! 🙌` : `Got it — we'll keep improving! 🛠️`, 'info');
+    }
   };
 
   const wordCount = payload.content.trim().split(/\s+/).length;
@@ -359,7 +365,7 @@ const ExportDropdown: React.FC<{ onExport: (format: 'txt' | 'md') => void }> = (
 // 🎛️ Master Multi-Output Card Container
 // ═══════════════════════════════════════════
 
-const MultiOutputCard: React.FC<MultiOutputCardProps> = ({ payloads, onClear, onExport, showToast }) => {
+const MultiOutputCard: React.FC<MultiOutputCardProps> = ({ payloads, onClear, onExport, showToast, onFeedback }) => {
   if (payloads.length === 0) return null;
 
   const totalWords = payloads.reduce((acc, p) => acc + p.content.trim().split(/\s+/).length, 0);
@@ -448,6 +454,7 @@ const MultiOutputCard: React.FC<MultiOutputCardProps> = ({ payloads, onClear, on
             index={i}
             total={payloads.length}
             showToast={showToast}
+            onFeedback={onFeedback}
           />
         ))}
       </div>

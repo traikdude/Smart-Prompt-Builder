@@ -5,6 +5,7 @@ import TextStyleToolbar, { SelectedModifiers } from './TextStyleToolbar';
 import { OutputConfigurator } from './OutputConfigurator';
 import { Tooltip } from './Tooltip';
 import { AttachmentZone } from './AttachmentZone';
+import { FormatSuggestions } from './FormatSuggestions';
 
 interface PromptFormProps {
   templates: PromptTemplate[];
@@ -409,6 +410,17 @@ const PromptForm: React.FC<PromptFormProps> = ({
             </div>
           )}
         </div>
+
+        {/* Phase 7: Format Suggestions Copilot */}
+        <FormatSuggestions 
+          promptText={userContent}
+          onSelect={(categoryId, subFormatId) => {
+            onEngineSourceChange(categoryId);
+            if (subFormatId && !selectedEngineFormats.includes(subFormatId)) {
+              onEngineFormatToggle(subFormatId);
+            }
+          }}
+        />
 
         {/* Phase 7: Multimedia Attachment Zone */}
         <AttachmentZone attachments={attachments} onAttachmentsChange={onAttachmentsChange} />

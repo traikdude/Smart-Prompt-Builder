@@ -466,6 +466,7 @@ const App: React.FC = () => {
              },
              body: JSON.stringify({
                model_name: modelFamily,
+               active_lenses: formatLenses.map(fl => fl.label),
                tasks: [
                  { id: template.id, contents: pipelineContents }
                ]
@@ -668,6 +669,41 @@ const App: React.FC = () => {
     showToastMessage(`Exported securely as .${format}`);
   }, [generatedPrompt, showToastMessage]);
 
+  const handleFeedbackSubmit = useCallback(async (payloadId: string, vote: 'up' | 'down') => {
+    const payload = outputPayloads.find(p => p.id === payloadId);
+    if (!payload) return;
+
+    try {
+      const endpoint = import.meta.env.VITE_API_URL 
+        ? import.meta.env.VITE_API_URL.replace('/generate/batch', '/feedback') 
+        : "https://smart-prompt-builder-825046261103.us-central1.run.app/api/v1/feedback";
+      
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          rating: vote === 'up' ? 1 : 0,
+          payload_content: payload.content,
+          original_prompt: userContent,
+          selected_lens: selectedFormatId,
+          model_used: modelFamily === '3.1' ? 'gemini-3.1-pro' : 'gemini-2.5-flash',
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save feedback: ${response.status}`);
+      }
+      
+      showToastMessage(vote === 'up' ? `Rated helpful! 🙌` : `Got it — we'll keep improving! 🛠️`, 'info');
+    } catch (err: any) {
+      console.error("Feedback submission error:", err);
+      // Graceful fallback for offline / disconnected
+      showToastMessage(vote === 'up' ? `Rated helpful! 🙌 (Offline)` : `Got it — we'll keep improving! 🛠️ (Offline)`, 'info');
+    }
+  }, [outputPayloads, userContent, selectedFormatId, modelFamily, showToastMessage]);
+
   const handleSaveTemplate = useCallback((name: string, description: string, content: string) => {
     const customTemplates = templates.filter(t => t.isCustom);
     if (customTemplates.length >= 10) {
@@ -793,6 +829,7 @@ const App: React.FC = () => {
                 onClear={() => { setOutputPayloads([]); setGeneratedPrompt(null); setUserContent(''); }}
                 onExport={handleExport}
                 showToast={showToastMessage}
+                onFeedback={handleFeedbackSubmit}
               />
             )}
 
