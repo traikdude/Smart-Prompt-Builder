@@ -510,12 +510,11 @@ const PromptForm: React.FC<PromptFormProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Smart Generate */}
-          {/* Smart Generate */}
-          <Tooltip content="Standard AI generation. Best balance of speed and reasoning for most tasks." position="bottom">
+          <Tooltip content="Standard AI generation. Best balance of speed and reasoning for most tasks." position="top" wrapperClassName="w-full h-full">
             <button
                 onClick={() => onAIGenerate('smart')}
                 disabled={isLoading || !userContent.trim()}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(168,85,247,0.2)] border border-purple-500/20 hover:border-purple-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
+                className="w-full h-full flex items-center justify-center gap-2 py-3 px-4 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(168,85,247,0.2)] border border-purple-500/20 hover:border-purple-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
             >
                 <span className="group-hover:scale-125 transition-transform">✨</span>
                 <span className="text-sm">Smart Analysis</span>
@@ -523,12 +522,11 @@ const PromptForm: React.FC<PromptFormProps> = ({
           </Tooltip>
 
           {/* Fast Generate */}
-          {/* Fast Generate */}
-          <Tooltip content="Rapid AI generation optimized for speed. Use for simple formatting or short text tasks." position="bottom">
+          <Tooltip content="Rapid AI generation optimized for speed. Use for simple formatting or short text tasks." position="top" wrapperClassName="w-full h-full">
             <button
                 onClick={() => onAIGenerate('fast')}
                 disabled={isLoading || !userContent.trim()}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(251,191,36,0.2)] border border-amber-500/20 hover:border-amber-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
+                className="w-full h-full flex items-center justify-center gap-2 py-3 px-4 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(251,191,36,0.2)] border border-amber-500/20 hover:border-amber-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
             >
                 <span className="group-hover:scale-125 transition-transform">⚡</span>
                 <span className="text-sm">Fast Compile</span>
@@ -536,12 +534,11 @@ const PromptForm: React.FC<PromptFormProps> = ({
           </Tooltip>
 
           {/* Deep Think */}
-          {/* Deep Think */}
-          <Tooltip content={`Advanced AI reasoning using Gemini ${modelFamily === '2.5' ? '2.5 Pro' : '3.1 Pro'} with extended thinking. Best for complex logic, algorithms, and deep analysis.`} position="bottom">
+          <Tooltip content={`Advanced AI reasoning using Gemini ${modelFamily === '2.5' ? '2.5 Pro' : '3.1 Pro'} with extended thinking. Best for complex logic, algorithms, and deep analysis.`} position="top" wrapperClassName="w-full h-full">
             <button
                 onClick={() => onAIGenerate('thinking')}
                 disabled={isLoading || !userContent.trim()}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(52,211,153,0.2)] border border-emerald-500/20 hover:border-emerald-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
+                className="w-full h-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-xl font-bold transition-all hover:shadow-[0_0_15px_rgba(52,211,153,0.2)] border border-emerald-500/20 hover:border-emerald-500/50 disabled:opacity-40 disabled:cursor-not-allowed group"
             >
                 <span className="group-hover:scale-125 transition-transform">🧠</span>
                 <span className="text-sm">Deep Think</span>
