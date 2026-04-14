@@ -158,7 +158,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
               </div>
               
               {isTemplateDropdownOpen && (
-                <div className="absolute z-50 w-full mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
+                <div className="absolute z-50 w-full mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-h-[60vh] overflow-y-auto">
                   <div className="p-2 space-y-1">
                      <div 
                         onClick={() => {

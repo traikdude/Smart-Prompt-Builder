@@ -99,7 +99,7 @@ const ModifierDropdown: React.FC<{
           )}
 
           {/* Scrollable Modifier options */}
-          <div className="max-h-80 overflow-y-auto overscroll-contain">
+          <div className="max-h-[60vh] overflow-y-auto overscroll-contain pb-2">
             {category.modifiers.map(mod => (
               <button
                 key={mod.id}
@@ -253,7 +253,7 @@ const XMLMultiSelectDropdown: React.FC<{
       {isOpen && (
         <div 
           className="absolute left-0 mt-2 w-72 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-30 py-1 overflow-hidden animate-fade-in-up flex flex-col"
-          style={{ boxShadow: '0 0 20px rgba(0,0,0,0.5)', maxHeight: '400px' }}
+          style={{ boxShadow: '0 0 20px rgba(0,0,0,0.5)', maxHeight: '60vh' }}
         >
           <div className={`px-4 py-3 border-b border-slate-800 flex items-center justify-between`}>
             <div className="flex items-center gap-2">
