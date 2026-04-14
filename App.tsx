@@ -26,6 +26,8 @@ import TaskProgressPanel from './components/TaskProgressPanel';
 // Global declaration for Google Apps Script environment
 declare const google: any;
 
+const APP_VERSION = "2.15.0";
+
 const SYNTAX_TEST_DATA = `python
 def validate_highlighting():  
     """Verify syntax colors for keywords, strings, and comments."""  
@@ -684,6 +686,7 @@ const App: React.FC = () => {
         original_prompt: userContent,
         selected_lens: selectedFormatId,
         model_used: modelFamily === '3.1' ? 'gemini-3.1-pro' : 'gemini-2.5-flash',
+        app_version: APP_VERSION,
       };
 
       // Phase 7.4: Include ideal_output for negative feedback corrections

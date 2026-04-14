@@ -101,10 +101,12 @@ async def lifespan(app: FastAPI):  # pylint: disable=redefined-outer-name,unused
     logger.info("Service shutdown complete.")
 
 
+APP_VERSION = "2.15.0"
+
 app = FastAPI(
     title="Smart-Prompt-Builder Engine API",
     description="High-performance multi-modal processing backend",
-    version="2.14.0",
+    version=APP_VERSION,
     lifespan=lifespan,
 )
 
@@ -191,6 +193,7 @@ class FeedbackRequest(BaseModel):
     selected_lens: str
     model_used: str
     ideal_output: Optional[str] = None  # Phase 7.4: user-supplied correction on downvotes
+    app_version: Optional[str] = None   # Phase 7.5 prep: client build tag
 
 
 # ── Core Helpers ─────────────────────────────────────────────────────────────
@@ -286,7 +289,7 @@ async def generate_single_prompt(
 @app.get("/")
 def health_check():
     """Service health check."""
-    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.14.0"}
+    return {"status": "healthy", "service": "smart-prompt-builder", "version": APP_VERSION}
 
 
 @app.post("/api/v1/generate/batch", response_model=Dict[str, List[TaskResult]])
@@ -374,6 +377,7 @@ async def receive_feedback(body: FeedbackRequest):
         service = build('sheets', 'v4', credentials=credentials)
 
         timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        ideal = body.ideal_output or ""
         values = [[
             timestamp,
             body.rating,
@@ -381,17 +385,19 @@ async def receive_feedback(body: FeedbackRequest):
             body.selected_lens,
             body.model_used,
             body.payload_content,
-            body.ideal_output or ""
+            ideal,
+            body.app_version or APP_VERSION,
         ]]
 
-        body_data = {'values': values}
-        # Schema: A=timestamp, B=rating, C=prompt, D=lens, E=model, F=output, G=ideal_output
+        # Schema: A=timestamp, B=rating, C=prompt, D=lens, E=model, F=output, G=ideal_output, H=app_version
+        # Route downvotes-with-correction into the Corrections tab; everything else into Telemetry.
+        target_tab = "Corrections" if (body.rating == 0 and ideal) else "Telemetry"
         request = service.spreadsheets().values().append(  # pylint: disable=no-member
             spreadsheetId=sheet_id,
-            range="A:G",
+            range=f"{target_tab}!A:H",
             valueInputOption="USER_ENTERED",
             insertDataOption="INSERT_ROWS",
-            body=body_data
+            body={'values': values},
         )
         request.execute()
 

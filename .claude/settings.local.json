@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pylint backend/scripts/export_tuning_dataset.py)",
+      "Bash(gcloud secrets:*)",
+      "Bash(gcloud run:*)",
+      "Bash(curl -sS -X POST https://smart-prompt-builder-825046261103.us-central1.run.app/api/v1/feedback -H \"Content-Type: application/json\" -d '{\"rating\":1,\"payload_content\":\"TEST OUTPUT — pipeline smoke test\",\"original_prompt\":\"smoke test prompt from deploy verification\",\"selected_lens\":\"test-lens\",\"model_used\":\"claude-test\",\"ideal_output\":null}')"
+    ]
+  }
+}
