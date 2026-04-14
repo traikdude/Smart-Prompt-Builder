@@ -669,7 +669,7 @@ const App: React.FC = () => {
     showToastMessage(`Exported securely as .${format}`);
   }, [generatedPrompt, showToastMessage]);
 
-  const handleFeedbackSubmit = useCallback(async (payloadId: string, vote: 'up' | 'down') => {
+  const handleFeedbackSubmit = useCallback(async (payloadId: string, vote: 'up' | 'down', idealOutput?: string) => {
     const payload = outputPayloads.find(p => p.id === payloadId);
     if (!payload) return;
 
@@ -678,25 +678,38 @@ const App: React.FC = () => {
         ? import.meta.env.VITE_API_URL.replace('/generate/batch', '/feedback') 
         : "https://smart-prompt-builder-825046261103.us-central1.run.app/api/v1/feedback";
       
+      const feedbackBody: Record<string, any> = {
+        rating: vote === 'up' ? 1 : 0,
+        payload_content: payload.content,
+        original_prompt: userContent,
+        selected_lens: selectedFormatId,
+        model_used: modelFamily === '3.1' ? 'gemini-3.1-pro' : 'gemini-2.5-flash',
+      };
+
+      // Phase 7.4: Include ideal_output for negative feedback corrections
+      if (idealOutput) {
+        feedbackBody.ideal_output = idealOutput;
+      }
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          rating: vote === 'up' ? 1 : 0,
-          payload_content: payload.content,
-          original_prompt: userContent,
-          selected_lens: selectedFormatId,
-          model_used: modelFamily === '3.1' ? 'gemini-3.1-pro' : 'gemini-2.5-flash',
-        })
+        body: JSON.stringify(feedbackBody)
       });
 
       if (!response.ok) {
         throw new Error(`Failed to save feedback: ${response.status}`);
       }
       
-      showToastMessage(vote === 'up' ? `Rated helpful! 🙌` : `Got it — we'll keep improving! 🛠️`, 'info');
+      if (vote === 'up') {
+        showToastMessage('Rated helpful! 🙌', 'info');
+      } else if (idealOutput) {
+        showToastMessage('Correction submitted — thank you for improving the model! 🎯', 'info');
+      } else {
+        showToastMessage("Got it — we'll keep improving! 🛠️", 'info');
+      }
     } catch (err: any) {
       console.error("Feedback submission error:", err);
       // Graceful fallback for offline / disconnected

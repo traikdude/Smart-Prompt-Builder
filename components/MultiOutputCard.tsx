@@ -20,7 +20,7 @@ interface MultiOutputCardProps {
   onClear: () => void;
   onExport: (format: 'txt' | 'md') => void;
   showToast: (message: string, type?: 'success' | 'info' | 'error') => void;
-  onFeedback?: (payloadId: string, vote: 'up' | 'down') => void;
+  onFeedback?: (payloadId: string, vote: 'up' | 'down', idealOutput?: string) => void;
 }
 
 // ═══════════════════════════════════════════
@@ -37,20 +37,50 @@ const PayloadCard: React.FC<{
   index: number;
   total: number;
   showToast: (message: string, type?: 'success' | 'info' | 'error') => void;
-  onFeedback?: (payloadId: string, vote: 'up' | 'down') => void;
+  onFeedback?: (payloadId: string, vote: 'up' | 'down', idealOutput?: string) => void;
 }> = ({ payload, index, total, showToast, onFeedback }) => {
   const [showFontMenu, setShowFontMenu] = useState(false);
   const [currentFont, setCurrentFont] = useState(FONTS[0]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+  const [showCorrectionInput, setShowCorrectionInput] = useState(false);
+  const [idealOutput, setIdealOutput] = useState('');
+  const [feedbackLocked, setFeedbackLocked] = useState(false);
 
   const handleFeedback = (vote: 'up' | 'down') => {
-    if (feedback) return;
+    if (feedbackLocked) return;
     setFeedback(vote);
-    if (onFeedback) {
-      onFeedback(payload.id, vote);
+    if (vote === 'up') {
+      // Thumbs up: immediate submit, no correction needed
+      setFeedbackLocked(true);
+      if (onFeedback) {
+        onFeedback(payload.id, vote);
+      } else {
+        showToast('Rated helpful! 🙌', 'info');
+      }
     } else {
-      showToast(vote === 'up' ? `Rated helpful! 🙌` : `Got it — we'll keep improving! 🛠️`, 'info');
+      // Thumbs down: show correction textarea first
+      setShowCorrectionInput(true);
+    }
+  };
+
+  const handleSubmitCorrection = () => {
+    setFeedbackLocked(true);
+    setShowCorrectionInput(false);
+    if (onFeedback) {
+      onFeedback(payload.id, 'down', idealOutput.trim() || undefined);
+    } else {
+      showToast("Got it — we'll keep improving! 🛠️", 'info');
+    }
+  };
+
+  const handleSkipCorrection = () => {
+    setFeedbackLocked(true);
+    setShowCorrectionInput(false);
+    if (onFeedback) {
+      onFeedback(payload.id, 'down');
+    } else {
+      showToast("Got it — we'll keep improving! 🛠️", 'info');
     }
   };
 
@@ -272,49 +302,83 @@ const PayloadCard: React.FC<{
         </div>
 
         {/* ── Feedback Row ── */}
-        <div className={`flex items-center justify-between mt-4 pt-4 border-t border-slate-700/20 ${isCollapsed ? 'hidden' : ''}`}>
-          <div className="flex flex-col gap-1">
-            <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Quality Control</span>
-            <span className="text-xs text-slate-400 font-medium h-5 flex items-center">
-              {feedback ? (
-                <span className="flex items-center gap-1.5 animate-fade-in">
-                  <span className={feedback === 'up' ? 'text-emerald-400' : 'text-pink-400'}>
-                    {feedback === 'up' ? '✨ Helpful' : '🔧 Needs Tuning'}
+        <div className={`mt-4 pt-4 border-t border-slate-700/20 ${isCollapsed ? 'hidden' : ''}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Quality Control</span>
+              <span className="text-xs text-slate-400 font-medium h-5 flex items-center">
+                {feedbackLocked ? (
+                  <span className="flex items-center gap-1.5 animate-fade-in">
+                    <span className={feedback === 'up' ? 'text-emerald-400' : 'text-pink-400'}>
+                      {feedback === 'up' ? '✨ Helpful' : '🔧 Correction Logged'}
+                    </span>
                   </span>
-                </span>
-              ) : 'Rate this generation'}
-            </span>
+                ) : showCorrectionInput ? (
+                  <span className="text-amber-400 animate-fade-in">📝 Paste the ideal output below</span>
+                ) : 'Rate this generation'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleFeedback('up')}
+                disabled={feedbackLocked || showCorrectionInput}
+                className={`flex items-center justify-center w-9 h-9 rounded-xl transition-all border ${
+                  feedback === 'up'
+                    ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.3)]'
+                    : feedback === 'down'
+                    ? 'opacity-20 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
+                    : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400 hover:scale-110 active:scale-95'
+                }`}
+                title="This was helpful"
+              >
+                👍
+              </button>
+              <button
+                onClick={() => handleFeedback('down')}
+                disabled={feedbackLocked || showCorrectionInput}
+                className={`flex items-center justify-center w-9 h-9 rounded-xl transition-all border ${
+                  feedback === 'down'
+                    ? 'bg-pink-500/20 border-pink-500/50 text-pink-400 shadow-[0_0_12px_rgba(244,114,182,0.3)]'
+                    : feedback === 'up'
+                    ? 'opacity-20 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
+                    : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-pink-500/10 hover:border-pink-500/40 hover:text-pink-400 hover:scale-110 active:scale-95'
+                }`}
+                title="This needs improvement"
+              >
+                👎
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleFeedback('up')}
-              disabled={!!feedback}
-              className={`flex items-center justify-center w-9 h-9 rounded-xl transition-all border ${
-                feedback === 'up'
-                  ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.3)]'
-                  : feedback === 'down'
-                  ? 'opacity-20 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
-                  : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400 hover:scale-110 active:scale-95'
-              }`}
-              title="This was helpful"
-            >
-              👍
-            </button>
-            <button
-              onClick={() => handleFeedback('down')}
-              disabled={!!feedback}
-              className={`flex items-center justify-center w-9 h-9 rounded-xl transition-all border ${
-                feedback === 'down'
-                  ? 'bg-pink-500/20 border-pink-500/50 text-pink-400 shadow-[0_0_12px_rgba(244,114,182,0.3)]'
-                  : feedback === 'up'
-                  ? 'opacity-20 cursor-not-allowed bg-slate-800 border-slate-700 text-slate-500'
-                  : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-pink-500/10 hover:border-pink-500/40 hover:text-pink-400 hover:scale-110 active:scale-95'
-              }`}
-              title="This needs improvement"
-            >
-              👎
-            </button>
-          </div>
+
+          {/* ── Phase 7.4: Ideal Output Correction Textarea ── */}
+          {showCorrectionInput && !feedbackLocked && (
+            <div className="mt-3 animate-fade-in-up space-y-3">
+              <div className="relative">
+                <textarea
+                  value={idealOutput}
+                  onChange={(e) => setIdealOutput(e.target.value)}
+                  placeholder="Paste the output you expected here... (optional but extremely valuable for model improvement)"
+                  className="w-full min-h-[120px] bg-slate-900/90 border border-amber-500/30 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-amber-400/60 focus:shadow-[0_0_15px_rgba(251,191,36,0.1)] transition-all resize-y font-mono"
+                  rows={4}
+                />
+                <span className="absolute top-2 right-3 text-[9px] font-bold text-amber-500/50 uppercase tracking-widest">Ideal Output</span>
+              </div>
+              <div className="flex items-center gap-2 justify-end">
+                <button
+                  onClick={handleSkipCorrection}
+                  className="px-3 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-300 rounded-lg transition-colors border border-transparent hover:border-slate-600"
+                >
+                  Skip
+                </button>
+                <button
+                  onClick={handleSubmitCorrection}
+                  className="px-4 py-1.5 text-xs font-bold rounded-xl transition-all transform hover:-translate-y-0.5 bg-gradient-to-r from-amber-500/20 to-pink-500/20 border border-amber-500/40 text-amber-300 hover:border-amber-400/60 hover:shadow-[0_0_12px_rgba(251,191,36,0.2)]"
+                >
+                  {idealOutput.trim() ? '📨 Submit Correction' : '📨 Submit Without Correction'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

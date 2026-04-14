@@ -53,7 +53,7 @@ async def refresh_rlhf_cache():
 
         result = service.spreadsheets().values().get(  # pylint: disable=no-member
             spreadsheetId=sheet_id,
-            range="A:F"
+            range="A:G"
         ).execute()
 
         rows = result.get('values', [])
@@ -104,7 +104,7 @@ async def lifespan(app: FastAPI):  # pylint: disable=redefined-outer-name,unused
 app = FastAPI(
     title="Smart-Prompt-Builder Engine API",
     description="High-performance multi-modal processing backend",
-    version="2.13.0",
+    version="2.14.0",
     lifespan=lifespan,
 )
 
@@ -190,6 +190,7 @@ class FeedbackRequest(BaseModel):
     original_prompt: str
     selected_lens: str
     model_used: str
+    ideal_output: Optional[str] = None  # Phase 7.4: user-supplied correction on downvotes
 
 
 # ── Core Helpers ─────────────────────────────────────────────────────────────
@@ -285,7 +286,7 @@ async def generate_single_prompt(
 @app.get("/")
 def health_check():
     """Service health check."""
-    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.13.0"}
+    return {"status": "healthy", "service": "smart-prompt-builder", "version": "2.14.0"}
 
 
 @app.post("/api/v1/generate/batch", response_model=Dict[str, List[TaskResult]])
@@ -379,14 +380,15 @@ async def receive_feedback(body: FeedbackRequest):
             body.original_prompt,
             body.selected_lens,
             body.model_used,
-            body.payload_content
+            body.payload_content,
+            body.ideal_output or ""
         ]]
 
         body_data = {'values': values}
-        # We assume the first sheet/tab is active, appending to A-F
+        # Schema: A=timestamp, B=rating, C=prompt, D=lens, E=model, F=output, G=ideal_output
         request = service.spreadsheets().values().append(  # pylint: disable=no-member
             spreadsheetId=sheet_id,
-            range="A:F",
+            range="A:G",
             valueInputOption="USER_ENTERED",
             insertDataOption="INSERT_ROWS",
             body=body_data
