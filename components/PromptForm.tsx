@@ -115,7 +115,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
             <Tooltip content="Select a transformation template to process your input through." position="top">
               <label htmlFor="template" className="block text-xs font-black text-slate-400 tracking-[0.2em] uppercase flex items-center gap-2 cursor-help group-hover/engine:text-purple-400 transition-colors">
                 <span className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span>
-                THE ENGINE
+                THE ENGINE <span className="text-sm sm:text-xl ml-1 animate-bounce">⚡</span>
               </label>
             </Tooltip>
             <button
@@ -222,7 +222,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
             <Tooltip content="Apply a structural format override to your output." position="top">
               <label htmlFor="format" className="block text-xs font-black text-slate-400 tracking-[0.2em] uppercase flex items-center gap-2 cursor-help group-hover/lens:text-pink-400 transition-colors">
                  <span className="w-2 h-2 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(244,114,182,0.6)]"></span>
-                 THE LENS
+                 THE LENS <span className="text-sm sm:text-xl ml-1 animate-pulse">🎛️</span>
               </label>
             </Tooltip>
           </div>
@@ -290,7 +290,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
           <Tooltip content="Paste the raw text, code, or context you want the AI to analyze and transform." position="top">
             <label htmlFor="content" className="block text-xs font-black text-slate-400 tracking-[0.2em] uppercase flex items-center gap-2 cursor-help">
               <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.6)]"></span>
-              YOUR CONTENT
+              YOUR CONTENT <span className="text-sm sm:text-xl ml-1">✍️</span>
             </label>
           </Tooltip>
           <Tooltip content="Populates the form with a demo payload so you can test how the agent processes inputs." position="top">
@@ -313,21 +313,19 @@ const PromptForm: React.FC<PromptFormProps> = ({
         {/* 📊 Input Intelligence Hub */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mt-4 bg-slate-900/40 p-3 sm:p-2.5 rounded-xl border border-slate-700/30 shadow-inner backdrop-blur-sm">
           
-          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800/50 border border-slate-700/50">
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider mr-1">Intelligence</span>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className={`text-[10px] font-mono font-bold transition-all ${wordCount > 0 ? 'text-pink-400' : 'text-slate-600'}`}>
-                {wordCount} words
-              </span>
-              <span className="text-slate-700">•</span>
-              <span className={`text-[10px] font-mono font-bold transition-all ${sentenceCount > 0 ? 'text-amber-400' : 'text-slate-600'}`}>
-                {sentenceCount} sentences
-              </span>
-              <span className="text-slate-700">•</span>
-              <span className={`text-[10px] font-mono font-bold transition-all ${userContent.length > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
-                ~{readingTime}m read
-              </span>
-            </div>
+          <div className="flex-1 flex flex-wrap gap-2 items-center">
+            <span className={`text-[10px] sm:text-xs font-mono font-bold px-2.5 py-1 rounded-full border transition-all ${wordCount > 0 ? 'bg-pink-500/15 text-pink-400 border-pink-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'}`}>
+              📝 {wordCount} words
+            </span>
+            <span className={`text-[10px] sm:text-xs font-mono font-bold px-2.5 py-1 rounded-full border transition-all ${sentenceCount > 0 ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'}`}>
+              📖 {sentenceCount} sentences
+            </span>
+            <span className={`text-[10px] sm:text-xs font-mono font-bold px-2.5 py-1 rounded-full border transition-all hidden sm:inline-flex ${userContent.length > 0 ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'}`}>
+              ⏱️ ~{readingTime}m read
+            </span>
+            <span className={`text-[10px] sm:text-xs font-mono font-bold px-2.5 py-1 rounded-full border transition-all ${userContent.length > 0 ? 'bg-purple-500/15 text-purple-400 border-purple-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'}`}>
+              ⌨️ {userContent.length.toLocaleString()} chars
+            </span>
           </div>
 
           {/* Spacer */}
