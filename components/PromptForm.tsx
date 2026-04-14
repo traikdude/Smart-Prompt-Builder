@@ -276,7 +276,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
       )}
 
       {/* 🎨 Text Style Toolbar — Font / Emoji / ASCII dropdowns */}
-      <div className="mb-6 sm:mb-8 bg-slate-900/40 backdrop-blur-md border border-slate-700/30 rounded-xl p-4 shadow-inner">
+      <div className="relative z-20 mb-6 sm:mb-8 bg-slate-900/40 backdrop-blur-md border border-slate-700/30 rounded-xl p-4 shadow-inner">
         <TextStyleToolbar
           selectedModifiers={selectedModifiers}
           onModifierChange={onModifierChange}

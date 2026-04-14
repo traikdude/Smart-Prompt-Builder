@@ -41,7 +41,7 @@ const ModifierDropdown: React.FC<{
   }, [isOpen]);
 
   return (
-    <div ref={dropdownRef} className="relative">
+    <div ref={dropdownRef} className={`relative ${isOpen ? 'z-40' : 'z-10'}`}>
       <Tooltip content={hasOptions ? `${category.label} Styles` : `${category.label} — coming soon`} position="top">
         <button
           onClick={() => hasOptions && setIsOpen(!isOpen)}
@@ -211,7 +211,7 @@ const XMLMultiSelectDropdown: React.FC<{
   };
 
   return (
-    <div ref={dropdownRef} className="relative">
+    <div ref={dropdownRef} className={`relative ${isOpen ? 'z-40' : 'z-10'}`}>
       <Tooltip content={hasOptions ? `Multiple Selection for ${category.label}` : `${category.label} — coming soon`} position="top">
         <button
           onClick={() => {
