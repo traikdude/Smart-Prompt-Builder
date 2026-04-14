@@ -65,7 +65,7 @@ jobs:
       
     - name: 🔐 Configure Clasp credentials
       run: |
-        echo "$CLASPRC_JSON" > ~/.clasprc.json
+        printf '%s\n' "$CLASPRC_JSON" > ~/.clasprc.json
       env:
         CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
         
